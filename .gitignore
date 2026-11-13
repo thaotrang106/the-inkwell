@@ -39,3 +39,6 @@ Thumbs.db
 # Large Samples / Temp
 Đồ án sample/
 
+
+.vercel
+.env*
