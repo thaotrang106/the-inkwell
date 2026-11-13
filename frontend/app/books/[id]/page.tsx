@@ -20,6 +20,25 @@ const cleanTitle = (title: string) => {
 // Cache bộ nhớ Client-side để mở lại sách đã xem trong 0.001 giây
 const CLIENT_BOOK_CACHE = new Map<string, any>();
 
+// Định dạng URL ảnh sách chuẩn CDN
+const formatImageUrl = (url?: string) => {
+  if (!url) return "";
+  let clean = url.trim();
+  clean = clean.replace(/^http:\/\//i, "https://");
+  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
+  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
+  return clean;
+};
+
+// Bảng màu sang trọng cho bìa sách thay thế
+const COVER_THEMES = [
+  { bg: "from-[#1A2A3A] via-[#0D1B2A] to-[#050D1A]", text: "text-amber-200", border: "border-amber-400/30" },
+  { bg: "from-[#3D1418] via-[#260A0D] to-[#140406]", text: "text-rose-200", border: "border-rose-400/30" },
+  { bg: "from-[#122A1E] via-[#0A1A12] to-[#040D09]", text: "text-emerald-200", border: "border-emerald-400/30" },
+  { bg: "from-[#2B1B3A] via-[#1A0E26] to-[#0D0614]", text: "text-purple-200", border: "border-purple-400/30" },
+  { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
+];
+
 export default function BookDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -28,6 +47,12 @@ export default function BookDetailPage() {
   
   const [book, setBook] = useState<any>(() => CLIENT_BOOK_CACHE.get(id) || null);
   const [loading, setLoading] = useState(() => !CLIENT_BOOK_CACHE.has(id));
+  
+  // Trạng thái ảnh bìa sách với cơ chế 2 tầng tải ảnh và bìa dự phòng
+  const [detailImgSrc, setDetailImgSrc] = useState<string>("");
+  const [useDetailProxy, setUseDetailProxy] = useState(false);
+  const [detailImgFailed, setDetailImgFailed] = useState(false);
+
   // Trạng thái AI Mercy
   const [mercyMessage, setMercyMessage] = useState("");
   const [isMercyThinking, setIsMercyThinking] = useState(false);
@@ -164,22 +189,28 @@ export default function BookDetailPage() {
     return <div className="min-h-screen flex items-center justify-center">Không tìm thấy sách</div>;
   }
 
-  const formatImageUrl = (url?: string) => {
-    if (!url) return "";
-    let clean = url.trim();
-    clean = clean.replace(/^http:\/\//i, "https://");
-    clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
-    clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
-    return clean;
+  useEffect(() => {
+    if (book?.image_url) {
+      setDetailImgSrc(formatImageUrl(book.image_url));
+      setUseDetailProxy(false);
+      setDetailImgFailed(false);
+    }
+  }, [book?.image_url]);
+
+  const handleDetailImageError = () => {
+    if (!useDetailProxy && detailImgSrc) {
+      setUseDetailProxy(true);
+      setDetailImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(detailImgSrc)}&w=500&fit=cover`);
+    } else {
+      setDetailImgFailed(true);
+    }
   };
-  const highResImg = formatImageUrl(book.image_url);
+
   const authorName = typeof book.author === 'string' ? book.author.replace(/\[|\]|'/g, '') : book.author;
   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
   };
-
-
 
     const askMercy = async () => {
     setIsMercyThinking(true); // Hiển thị trạng thái đang load
@@ -252,13 +283,40 @@ export default function BookDetailPage() {
         
         {/* LEFT COLUMN: Image & Samples (col-span-3) */}
         <div className="lg:col-span-3 flex flex-col items-center">
-          <div className="w-full max-w-[300px] mb-6">
-            <img 
-              src={highResImg} 
-              alt={cleanTitle(book.title)} 
-              referrerPolicy="no-referrer"
-              className="w-full h-auto object-contain shadow-[0_4px_15px_rgba(0,0,0,0.15)] border border-ink/5" 
-            />
+          <div className="w-full max-w-[300px] mb-6 aspect-[2/3] relative rounded-xl overflow-hidden shadow-xl border border-ink/10 bg-[#1A1A1A] flex items-center justify-center">
+            {!detailImgFailed && detailImgSrc ? (
+              <img 
+                src={detailImgSrc} 
+                alt={cleanTitle(book.title)} 
+                referrerPolicy="no-referrer"
+                onError={handleDetailImageError}
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+              />
+            ) : (
+              /* Bìa sách mạ vàng cổ điển sang trọng nếu ảnh gốc không tồn tại */
+              <div
+                className={`w-full h-full bg-gradient-to-br ${COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length].bg} p-6 flex flex-col justify-between items-center text-center relative select-none`}
+              >
+                <div className="absolute inset-2 border border-amber-400/30 rounded pointer-events-none"></div>
+                <div className="w-full text-[10px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-2">
+                  THE INKWELL
+                </div>
+
+                <div className="my-auto px-2 z-10">
+                  <p className="font-serif font-bold text-lg leading-snug line-clamp-4 text-amber-200">
+                    {cleanTitle(book.title)}
+                  </p>
+                  <div className="w-12 h-[1px] bg-amber-400/40 mx-auto my-3"></div>
+                  <p className="text-xs text-stone-300 line-clamp-2 italic">
+                    {authorName || "Special Edition"}
+                  </p>
+                </div>
+
+                <div className="text-[9px] text-amber-300/60 uppercase tracking-widest font-mono mb-2">
+                  Collector's Edition
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Sample Buttons (Like Amazon's Read Sample / Audible Sample) */}
