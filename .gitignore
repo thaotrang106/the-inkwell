@@ -1,7 +1,6 @@
 # Environment variables (Bảo vệ thông tin bí mật: Supabase, Gemini Key)
 .env
 .env*.local
-.env.production
 .env.development
 
 # Python
