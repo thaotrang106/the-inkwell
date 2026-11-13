@@ -17,14 +17,17 @@ const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, '').trim();
 };
 
+// Cache bộ nhớ Client-side để mở lại sách đã xem trong 0.001 giây
+const CLIENT_BOOK_CACHE = new Map<string, any>();
+
 export default function BookDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { addToCart } = useCart();
   const { user } = useAuth();
   
-  const [book, setBook] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [book, setBook] = useState<any>(() => CLIENT_BOOK_CACHE.get(id) || null);
+  const [loading, setLoading] = useState(() => !CLIENT_BOOK_CACHE.has(id));
   // Trạng thái AI Mercy
   const [mercyMessage, setMercyMessage] = useState("");
   const [isMercyThinking, setIsMercyThinking] = useState(false);
@@ -34,8 +37,14 @@ export default function BookDetailPage() {
   const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchBook = async () => {
+    if (CLIENT_BOOK_CACHE.has(id)) {
+      setBook(CLIENT_BOOK_CACHE.get(id));
+      setLoading(false);
+    } else {
       setLoading(true);
+    }
+
+    const fetchBook = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/books/${id}`);
         const json = await res.json();
@@ -43,11 +52,13 @@ export default function BookDetailPage() {
         // Dữ liệu API trả về nằm trong json.data
         const demoBook = json.data;
         
-        if (demoBook && !demoBook.price) {
-          demoBook.price = Math.floor(Math.random() * (260 - 80) + 80) * 1000;
+        if (demoBook) {
+          if (!demoBook.price) {
+            demoBook.price = Math.floor(Math.random() * (260 - 80) + 80) * 1000;
+          }
+          CLIENT_BOOK_CACHE.set(id, demoBook);
+          setBook(demoBook);
         }
-        
-        setBook(demoBook);
         setRelatedBooks(json.data?.slice(1, 5) || []);
 
         // Ghi nhận hành vi 'view' vào backend (Giai đoạn C)
@@ -103,7 +114,50 @@ export default function BookDetailPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-[80vh] flex items-center justify-center font-serif text-2xl text-ink/40 animate-pulse">Đang tải nội dung sách...</div>;
+    return (
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white min-h-screen">
+        {/* Breadcrumb Skeleton */}
+        <div className="h-4 w-48 bg-ink/10 rounded animate-pulse mb-8"></div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Cột trái: Khung ảnh bìa sách Skeleton */}
+          <div className="lg:col-span-3 flex flex-col items-center">
+            <div className="w-full max-w-[280px] aspect-[2/3] bg-gradient-to-br from-ink/10 via-ink/5 to-ink/10 rounded-2xl animate-pulse shadow-md mb-6 flex items-center justify-center border border-ink/5">
+              <span className="font-serif text-ink/20 text-sm">The Inkwell</span>
+            </div>
+            <div className="flex gap-2 w-full max-w-[280px]">
+              <div className="h-10 flex-1 bg-ink/5 rounded-full animate-pulse"></div>
+              <div className="h-10 flex-1 bg-ink/5 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Cột giữa: Tiêu đề, tác giả & mô tả Skeleton */}
+          <div className="lg:col-span-6 flex flex-col gap-4">
+            <div className="h-9 w-3/4 bg-ink/10 rounded-lg animate-pulse"></div>
+            <div className="h-5 w-1/3 bg-ink/10 rounded animate-pulse"></div>
+            <div className="h-5 w-1/4 bg-ink/5 rounded animate-pulse mb-2"></div>
+            <div className="h-10 w-1/3 bg-amber-500/10 rounded-xl animate-pulse"></div>
+            
+            <div className="space-y-3 pt-6 border-t border-ink/5">
+              <div className="h-4 w-full bg-ink/5 rounded animate-pulse"></div>
+              <div className="h-4 w-5/6 bg-ink/5 rounded animate-pulse"></div>
+              <div className="h-4 w-4/6 bg-ink/5 rounded animate-pulse"></div>
+              <div className="h-4 w-3/4 bg-ink/5 rounded animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Cột phải: Hộp mua hàng Skeleton */}
+          <div className="lg:col-span-3">
+            <div className="p-6 border border-ink/10 rounded-2xl space-y-4 bg-ink/[0.02]">
+              <div className="h-7 w-1/2 bg-ink/10 rounded animate-pulse"></div>
+              <div className="h-4 w-3/4 bg-emerald-500/15 rounded animate-pulse"></div>
+              <div className="h-11 w-full bg-ink/10 rounded-xl animate-pulse mt-4"></div>
+              <div className="h-11 w-full bg-ink/15 rounded-xl animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!book) {

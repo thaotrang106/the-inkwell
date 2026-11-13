@@ -229,23 +229,32 @@ def search_books(q: str, limit: int = 5, db: Session = Depends(get_db)):
 
     return {"data": result}
 
+# Cache bộ nhớ RAM cho chi tiết sách để phản hồi trong 1ms
+BOOK_DETAILS_CACHE: dict = {}
+
 # ----------------- API THỨ 6 (LẤY CHI TIẾT SÁCH) -----------------
 @app.get("/api/books/{book_id}")
 def get_book_details(book_id: int, db: Session = Depends(get_db)):
-    """API lấy toàn bộ thông tin chi tiết của 1 cuốn sách"""
+    """API lấy toàn bộ thông tin chi tiết của 1 cuốn sách (kèm Cache RAM siêu tốc)"""
+    if book_id in BOOK_DETAILS_CACHE:
+        return {"status": "success", "data": BOOK_DETAILS_CACHE[book_id], "cached": True}
+
     try:
         book = db.query(Book).filter(Book.book_id == book_id).first()
         if book:
+            clean_author = book.authors.replace("[", "").replace("]", "").replace("'", "").strip() if book.authors else ""
+            data = {
+                "book_id": book.book_id,
+                "title": book.title,
+                "author": clean_author,
+                "image_url": book.image_url,
+                "description": book.description or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
+                "language_code": book.language_code or "eng"
+            }
+            BOOK_DETAILS_CACHE[book_id] = data
             return {
                 "status": "success",
-                "data": {
-                    "book_id": book.book_id,
-                    "title": book.title,
-                    "author": book.authors,
-                    "image_url": book.image_url,
-                    "description": book.description,
-                    "language_code": book.language_code
-                }
+                "data": data
             }
     except Exception as e:
         print(f"[Book Details] DB error: {e}")
@@ -261,16 +270,18 @@ def get_book_details(book_id: int, db: Session = Depends(get_db)):
                 for row in reader:
                     if int(row["book_id"]) == book_id:
                         clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                        data = {
+                            "book_id": book_id,
+                            "title": row.get("title", ""),
+                            "author": clean_author,
+                            "image_url": row.get("image_url", ""),
+                            "description": row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
+                            "language_code": row.get("language_code", "eng")
+                        }
+                        BOOK_DETAILS_CACHE[book_id] = data
                         return {
                             "status": "success",
-                            "data": {
-                                "book_id": book_id,
-                                "title": row.get("title", ""),
-                                "author": clean_author,
-                                "image_url": row.get("image_url", ""),
-                                "description": row.get("description", ""),
-                                "language_code": row.get("language_code", "eng")
-                            }
+                            "data": data
                         }
     except Exception as csv_err:
         print(f"[Book Details] Fallback error: {csv_err}")
