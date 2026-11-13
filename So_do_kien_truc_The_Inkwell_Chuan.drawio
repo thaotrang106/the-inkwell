@@ -1,0 +1,185 @@
+<mxfile host="app.diagrams.net" modified="2026-10-28T14:45:00.000Z" agent="Antigravity" version="24.0.0">
+  <diagram id="InkwellPipelinePro" name="Kien_Truc_Pipeline_The_Inkwell">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="950" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ==================== KHỐI 1: NGUỒN DỮ LIỆU INPUT ==================== -->
+        <mxCell id="box_input" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF9C3;strokeColor=#CA8A04;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="30" width="680" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_input" value="&lt;b&gt;1. Nguồn dữ liệu đầu vào (Input Data Sources)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontFamily=Times New Roman;fontColor=#854D0E;" vertex="1" parent="1">
+          <mxGeometry x="460" y="35" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inp_books" value="Thông tin sách &amp;amp; Vector&lt;br&gt;&lt;i&gt;(Goodbooks-10k Extended)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EAB308;fontSize=11;fontFamily=Times New Roman;fontColor=#713F12;" vertex="1" parent="1">
+          <mxGeometry x="460" y="65" width="180" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="inp_history" value="Lịch sử xem / click / giỏ hàng&lt;br&gt;&lt;i&gt;(Implicit Interactions)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EAB308;fontSize=11;fontFamily=Times New Roman;fontColor=#713F12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="65" width="200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="inp_ratings" value="Đánh giá &amp;amp; Gu sở thích&lt;br&gt;&lt;i&gt;(Ratings ≥ 4★ &amp;amp; Tags)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EAB308;fontSize=11;fontFamily=Times New Roman;fontColor=#713F12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="65" width="220" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHỐI 2: HỆ THỐNG LƯU TRỮ DATABASE ==================== -->
+        <mxCell id="box_storage" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="160" width="680" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_storage" value="&lt;b&gt;2. Hệ thống lưu trữ CSDL Đám mây (Supabase PostgreSQL 15 + pgvector)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontFamily=Times New Roman;fontColor=#065F46;" vertex="1" parent="1">
+          <mxGeometry x="460" y="170" width="480" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- CSDL chính -->
+        <mxCell id="db_main" value="&lt;b&gt;CSDL QUAN HỆ CHÍNH&lt;/b&gt;&lt;br&gt;• &lt;b&gt;books:&lt;/b&gt; 10.000 đầu sách (kèm Vector 768d &amp;amp; ai_explanation)&lt;br&gt;• &lt;b&gt;ratings:&lt;/b&gt; ~981k lượt chấm điểm (1 - 5 sao)&lt;br&gt;• &lt;b&gt;interactions:&lt;/b&gt; view, click, wishlist, add_to_cart, purchase&lt;br&gt;• &lt;b&gt;users, tags, book_tags, reviews&lt;/b&gt;" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#D1FAE5;strokeColor=#10B981;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#064E3B;align=center;" vertex="1" parent="1">
+          <mxGeometry x="540" y="210" width="480" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Bảng Cache nằm ngay trong CSDL -->
+        <mxCell id="db_cache" value="&lt;b&gt;BỘ NHỚ ĐỆM TẦNG 2 (CACHE TABLES TRONG POSTGRESQL)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;recommendation_cache:&lt;/b&gt; Mảng book_ids &amp;amp; scores gợi ý theo user_id (TTL 1 giờ)&lt;br&gt;• &lt;b&gt;popular_books:&lt;/b&gt; Bảng xếp hạng Trending theo công thức Bayesian Average (Cold-Start)" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#A7F3D0;strokeColor=#059669;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#064E3B;align=center;" vertex="1" parent="1">
+          <mxGeometry x="540" y="420" width="480" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHỐI 3: HỆ THỐNG AI ENGINE & GENAI ==================== -->
+        <mxCell id="box_ai" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#7C3AED;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="360" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_ai" value="&lt;b&gt;3. Hệ thống Trí tuệ Nhân tạo (AI Engine &amp;amp; GenAI)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontFamily=Times New Roman;fontColor=#5B21B6;" vertex="1" parent="1">
+          <mxGeometry x="50" y="170" width="340" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai_cf" value="&lt;b&gt;Collaborative Filtering&lt;/b&gt;&lt;br&gt;Item-based, Chuẩn hóa Ochiai&lt;br&gt;&lt;i&gt;(Triệt tiêu Popularity Bias)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;fontSize=11;fontFamily=Times New Roman;fontColor=#4C1D95;" vertex="1" parent="1">
+          <mxGeometry x="60" y="210" width="150" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai_cb" value="&lt;b&gt;Content-Based&lt;/b&gt;&lt;br&gt;pgvector Cosine &amp;lt;=&amp;gt;&lt;br&gt;&lt;i&gt;(Vector Embedding 768d)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;fontSize=11;fontFamily=Times New Roman;fontColor=#4C1D95;" vertex="1" parent="1">
+          <mxGeometry x="230" y="210" width="150" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai_hybrid" value="&lt;b&gt;Hybrid Aggregator&lt;/b&gt;&lt;br&gt;Borda Count Fusion&lt;br&gt;(Trọng số α = 0.5)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EDE9FE;strokeColor=#7C3AED;fontSize=11;fontFamily=Times New Roman;fontColor=#4C1D95;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="130" y="290" width="180" height="75" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai_trending" value="&lt;b&gt;Trending / Popularity&lt;/b&gt;&lt;br&gt;Bayesian Average (Giải quyết Cold-Start)&lt;br&gt;&lt;i&gt;WR = [v/(v+m)]*R + [m/(v+m)]*C&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;fontSize=10.5;fontFamily=Times New Roman;fontColor=#4C1D95;" vertex="1" parent="1">
+          <mxGeometry x="60" y="390" width="320" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai_gemini" value="&lt;b&gt;Google Gemini 2.5 Flash (Mercy AI)&lt;/b&gt;&lt;br&gt;Explainable AI: Sinh lời bình giải thích đề xuất&lt;br&gt;phong cách Dark Academia &amp;amp; lưu đệm ai_explanation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDD6FE;strokeColor=#6D28D9;fontSize=10.5;fontFamily=Times New Roman;fontColor=#3B0764;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="60" y="465" width="320" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHỐI 4: BACKEND API ==================== -->
+        <mxCell id="box_backend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="610" width="680" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_backend" value="&lt;b&gt;4. Tầng Xử Lý &amp;amp; Điều Phối Nghiệp Vụ (FastAPI Backend Server · Python)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontFamily=Times New Roman;fontColor=#1E40AF;" vertex="1" parent="1">
+          <mxGeometry x="460" y="615" width="500" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="be_core" value="&lt;b&gt;FastAPI Controllers &amp;amp; Router Endpoints&lt;/b&gt;&lt;br&gt;Xử lý xác thực tham số Pydantic, kiểm tra Cache Hit/Miss, kích hoạt AI Services và định dạng gói JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;fontSize=11.5;fontFamily=Times New Roman;fontColor=#1E3A8A;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="460" y="645" width="640" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHỐI 5: FRONTEND ==================== -->
+        <mxCell id="box_frontend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#E11D48;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="750" width="680" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_frontend" value="&lt;b&gt;5. Tầng Giao Diện Người Dùng (Web Frontend · Next.js 16 + React 19 trên Vercel)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontFamily=Times New Roman;fontColor=#9F1239;" vertex="1" parent="1">
+          <mxGeometry x="460" y="755" width="550" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_core" value="&lt;b&gt;Giao diện The Inkwell (Dark Academia Theme)&lt;/b&gt;&lt;br&gt;Trang chủ (Trending &amp;amp; Just For You) • Chi tiết sách • Cửa sổ Mercy AI Chat • Giỏ hàng • Đánh giá sách" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE4E6;strokeColor=#F43F5E;fontSize=11.5;fontFamily=Times New Roman;fontColor=#881337;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="460" y="785" width="640" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== CÁC ĐƯỜNG MŨI TÊN PIPELINE LUỒNG 7 BƯỚC ==================== -->
+
+        <!-- Input nạp vào CSDL chính -->
+        <mxCell id="flow_in_db" value="Đồng bộ dữ liệu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#CA8A04;strokeWidth=1.5;fontSize=11;fontFamily=Times New Roman;fontColor=#854D0E;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="box_input" target="db_main">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CSDL chính cấp dữ liệu cho AI -->
+        <mxCell id="flow_db_cf" value="Dữ liệu ma trận ratings" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#8B5CF6;strokeWidth=1.5;fontSize=10;fontFamily=Times New Roman;fontColor=#5B21B6;exitX=0;exitY=0.25;entryX=1;entryY=0.5;" edge="1" parent="1" source="db_main" target="ai_cf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow_db_cb" value="Vector 768d &amp;amp; Sở thích" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#8B5CF6;strokeWidth=1.5;fontSize=10;fontFamily=Times New Roman;fontColor=#5B21B6;exitX=0;exitY=0.75;entryX=1;entryY=0.5;" edge="1" parent="1" source="db_main" target="ai_cb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CF & CB đổ vào Hybrid -->
+        <mxCell id="flow_cf_hyb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#7C3AED;strokeWidth=1.5;" edge="1" parent="1" source="ai_cf" target="ai_hybrid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow_cb_hyb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#7C3AED;strokeWidth=1.5;" edge="1" parent="1" source="ai_cb" target="ai_hybrid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Hybrid lưu kết quả vào Cache -->
+        <mxCell id="flow_hyb_cache" value="Lưu gợi ý cá nhân hóa (Borda score)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#7C3AED;strokeWidth=1.5;fontSize=10.5;fontFamily=Times New Roman;fontColor=#5B21B6;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="ai_hybrid" target="db_cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Trending lưu vào Cache -->
+        <mxCell id="flow_trend_cache" value="Batch Job: Cập nhật sách Trending" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#7C3AED;strokeWidth=1.5;fontSize=10.5;fontFamily=Times New Roman;fontColor=#5B21B6;exitX=1;exitY=0.5;entryX=0;entryY=0.75;" edge="1" parent="1" source="ai_trending" target="db_cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gemini lưu ai_explanation vào CSDL -->
+        <mxCell id="flow_gemini_db" value="Cache lời giải thích Mercy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6D28D9;strokeWidth=1.5;fontSize=10;fontFamily=Times New Roman;fontColor=#3B0764;exitX=0.5;exitY=1;entryX=0;entryY=0.9;" edge="1" parent="1" source="ai_gemini" target="db_cache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="550" />
+              <mxPoint x="490" y="550" />
+              <mxPoint x="490" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- BƯỚC 1: Frontend -> Backend -->
+        <mxCell id="step1" value="1. Gửi yêu cầu gợi ý (User ID / Book ID)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#1E40AF;exitX=0.25;exitY=0;entryX=0.25;entryY=1;" edge="1" parent="1" source="box_frontend" target="box_backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BƯỚC 2: Backend -> Cache DB -->
+        <mxCell id="step2" value="2. Kiểm tra Cache (8ms)&lt;br&gt;Lấy danh sách ID sách" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#065F46;exitX=0.3;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="box_backend" target="db_cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BƯỚC 3: Cache DB -> Backend -->
+        <mxCell id="step3" value="3. Trả về mảng book_ids" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#065F46;dashed=1;exitX=0.45;exitY=1;entryX=0.45;entryY=0;" edge="1" parent="1" source="db_cache" target="box_backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BƯỚC 4: Backend -> CSDL chính -->
+        <mxCell id="step4" value="4. Truy vấn chi tiết sách theo ID" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#065F46;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" edge="1" parent="1" source="box_backend" target="db_main">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="882" y="580" />
+              <mxPoint x="852" y="580" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- BƯỚC 5: CSDL chính -> Backend -->
+        <mxCell id="step5" value="5. Trả về tên, ảnh bìa, tác giả, giá, rating" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#065F46;dashed=1;exitX=0.8;exitY=1;entryX=0.8;entryY=0;" edge="1" parent="1" source="db_main" target="box_backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BƯỚC 6: Backend -> Frontend -->
+        <mxCell id="step6" value="6. Trả JSON dữ liệu hoàn chỉnh (sách + because)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#E11D48;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#9F1239;exitX=0.75;exitY=1;entryX=0.75;entryY=0;" edge="1" parent="1" source="box_backend" target="box_frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BƯỚC 7: FEEDBACK LOOP (Frontend -> Input -> DB) -->
+        <mxCell id="step7" value="7. Ghi nhận hành vi mới (view, click, cart, review) &amp;amp; Invalidate Cache cũ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;strokeWidth=2;fontSize=11;fontFamily=Times New Roman;fontColor=#1E293B;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="box_frontend" target="box_input">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="795" />
+              <mxPoint x="1160" y="75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

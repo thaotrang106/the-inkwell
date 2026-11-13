@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+pandas
+numpy
+pg8000
+pgvector
+requests
+python-dotenv
+pydantic

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="Sequence_TheInkwell_Perfect" name="Sơ đồ Tuần tự The Inkwell (Personalized For-You Flow)">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1580" pageHeight="1380" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Times New Roman;fontStyle=1;fontSize=22;fontColor=#1E3A8A;" vertex="1" value="SƠ ĐỒ TUẦN TỰ (SEQUENCE DIAGRAM) - LUỒNG GỢI Ý CÁ NHÂN HÓA /FORYOU">
+          <mxGeometry as="geometry" x="240" y="25" width="1080" height="35" />
+        </mxCell>
+        <mxCell id="sub_title" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Times New Roman;fontStyle=2;fontSize=15;fontColor=#475569;" vertex="1" value="Mỗi yêu cầu /foryou đi qua 3 lần truy vấn database chuyên biệt trước khi hợp nhất bằng thuật toán Borda Count">
+          <mxGeometry as="geometry" x="220" y="62" width="1120" height="28" />
+        </mxCell>
+        <mxCell id="ll_browser" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&amp;quot;edgeStyle&amp;quot;:&amp;quot;elbowEdgeStyle&amp;quot;,&amp;quot;elbow&amp;quot;:&amp;quot;vertical&amp;quot;,&amp;quot;curved&amp;quot;:0,&amp;quot;rounded&amp;quot;:0};size=60;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;fontFamily=Segoe UI, Arial;fontStyle=1;fontSize=16;fontColor=#92400E;" vertex="1" value="Trình duyệt&#10;(Client / Next.js 16)">
+          <mxGeometry as="geometry" x="140" y="110" width="220" height="1080" />
+        </mxCell>
+        <mxCell id="ll_api" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&amp;quot;edgeStyle&amp;quot;:&amp;quot;elbowEdgeStyle&amp;quot;,&amp;quot;elbow&amp;quot;:&amp;quot;vertical&amp;quot;,&amp;quot;curved&amp;quot;:0,&amp;quot;rounded&amp;quot;:0};size=60;fillColor=#EFF6FF;strokeColor=#1D4ED8;strokeWidth=2.5;fontFamily=Segoe UI, Arial;fontStyle=1;fontSize=16;fontColor=#1E3A8A;" vertex="1" value="FastAPI&#10;(Backend Server)">
+          <mxGeometry as="geometry" x="670" y="110" width="220" height="1080" />
+        </mxCell>
+        <mxCell id="ll_db" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&amp;quot;edgeStyle&amp;quot;:&amp;quot;elbowEdgeStyle&amp;quot;,&amp;quot;elbow&amp;quot;:&amp;quot;vertical&amp;quot;,&amp;quot;curved&amp;quot;:0,&amp;quot;rounded&amp;quot;:0};size=60;fillColor=#ECFDF5;strokeColor=#059669;strokeWidth=2;fontFamily=Segoe UI, Arial;fontStyle=1;fontSize=16;fontColor=#065F46;" vertex="1" value="PostgreSQL + pgvector&#10;(Supabase Database)">
+          <mxGeometry as="geometry" x="1200" y="110" width="240" height="1080" />
+        </mxCell>
+        <mxCell id="act_c1" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#FEF3C7;strokeColor=#D97706;" vertex="1" value="">
+          <mxGeometry as="geometry" x="245" y="210" width="10" height="770" />
+        </mxCell>
+        <mxCell id="act_c2" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#FEF3C7;strokeColor=#D97706;" vertex="1" value="">
+          <mxGeometry as="geometry" x="245" y="1050" width="10" height="80" />
+        </mxCell>
+        <mxCell id="act_api1" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#DBEAFE;strokeColor=#1D4ED8;" vertex="1" value="">
+          <mxGeometry as="geometry" x="775" y="210" width="10" height="770" />
+        </mxCell>
+        <mxCell id="act_api2" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#DBEAFE;strokeColor=#1D4ED8;" vertex="1" value="">
+          <mxGeometry as="geometry" x="775" y="1050" width="10" height="120" />
+        </mxCell>
+        <mxCell id="act_db1" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#D1FAE5;strokeColor=#059669;" vertex="1" value="">
+          <mxGeometry as="geometry" x="1315" y="280" width="10" height="70" />
+        </mxCell>
+        <mxCell id="act_db2" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#D1FAE5;strokeColor=#059669;" vertex="1" value="">
+          <mxGeometry as="geometry" x="1315" y="430" width="10" height="70" />
+        </mxCell>
+        <mxCell id="act_db3" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#D1FAE5;strokeColor=#059669;" vertex="1" value="">
+          <mxGeometry as="geometry" x="1315" y="580" width="10" height="70" />
+        </mxCell>
+        <mxCell id="act_db4" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#D1FAE5;strokeColor=#059669;" vertex="1" value="">
+          <mxGeometry as="geometry" x="1315" y="840" width="10" height="60" />
+        </mxCell>
+        <mxCell id="act_db5" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;strokeWidth=1.5;fillColor=#D1FAE5;strokeColor=#059669;" vertex="1" value="">
+          <mxGeometry as="geometry" x="1315" y="1090" width="10" height="60" />
+        </mxCell>
+        <mxCell id="msg1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E293B;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F172A;endArrow=block;endFill=1;" edge="1" value="1: GET /api/recommendations/foryou/{user_id}" source="act_c1" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="255" y="210" />
+              <mxPoint x="775" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg2" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E293B;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F172A;endArrow=block;endFill=1;" edge="1" value="2: [Truy vấn 1] Lấy 5 cuốn hạt giống (ratings &gt;= 4★ hoặc tương tác cao)" source="act_api1" target="act_db1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="280" />
+              <mxPoint x="1315" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg3" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="3: Trả về danh sách 5 cuốn hạt giống [seed_ids]" source="act_db1" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315" y="350" />
+              <mxPoint x="785" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg4" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E293B;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F172A;endArrow=block;endFill=1;" edge="1" value="4: [Truy vấn 2] AVG(embedding) &amp; Tìm kiếm vector láng giềng k-NN Cosine (HNSW)" source="act_api1" target="act_db2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="430" />
+              <mxPoint x="1315" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg5" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="5: Trả về 30 ứng viên Content-Based (theo khoảng cách vector)" source="act_db2" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315" y="500" />
+              <mxPoint x="785" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg6" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E293B;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F172A;endArrow=block;endFill=1;" edge="1" value="6: [Truy vấn 3] Tính hệ số tương đồng Ochiai đồng xuất hiện từng hạt giống" source="act_api1" target="act_db3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="580" />
+              <mxPoint x="1315" y="580" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg7" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="7: Trả về 30 ứng viên Collaborative Filtering [cf_candidates]" source="act_db3" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315" y="650" />
+              <mxPoint x="785" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg8" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4338CA;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#3730A3;endArrow=block;endFill=1;" edge="1" value="8: Thuật toán Borda Count Fusion &amp; Lọc sách đã đọc/đã mua (seen)" source="act_api1" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="720" />
+              <mxPoint x="910" y="720" />
+              <mxPoint x="910" y="780" />
+              <mxPoint x="785" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg9" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E293B;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F172A;endArrow=block;endFill=1;" edge="1" value="9: Ghi đệm danh sách Top-K vào recommendation_cache (TTL = 1 giờ)" source="act_api1" target="act_db4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="840" />
+              <mxPoint x="1315" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg9b" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="9b: Lưu cache thành công (200 OK Cache Hit)" source="act_db4" target="act_api1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315" y="900" />
+              <mxPoint x="785" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg10" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="10: 200 OK: JSON {items, because: &quot;Vì bạn đã thích...&quot;, seeds}" source="act_api1" target="act_c1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="775" y="970" />
+              <mxPoint x="255" y="970" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg11" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0D9488;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F766E;endArrow=block;endFill=1;" edge="1" value="11: POST /api/interactions (Sự kiện vi mô: view / click / add_to_cart)" source="act_c2" target="act_api2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="255" y="1050" />
+              <mxPoint x="775" y="1050" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg12" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0D9488;strokeWidth=2.5;fontSize=14;fontFamily=Segoe UI, Arial;fontStyle=1;fontColor=#0F766E;endArrow=block;endFill=1;" edge="1" value="12: INSERT INTO interactions (user_id, book_id, type) (Lưu vết hành vi)" source="act_api2" target="act_db5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="1090" />
+              <mxPoint x="1315" y="1090" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg12b" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;fontSize=13;fontFamily=Segoe UI, Arial;fontStyle=2;fontColor=#475569;endArrow=open;endFill=0;" edge="1" value="12b: 201 Created (Ghi nhận hành vi thành công)" source="act_db5" target="act_api2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315" y="1150" />
+              <mxPoint x="785" y="1150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="summary" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;align=left;spacingLeft=18;spacingRight=18;" vertex="1" value="&lt;div style=&quot;font-family:Segoe UI, Arial;font-size:13px;line-height:1.7;color:#1E293B;&quot;&gt;&#10;&lt;b&gt;GIẢI THÍCH 3 PHA XỬ LÝ TRUY VẤN CỦA LUỒNG GỢI Ý CÁ NHÂN HÓA (/FORYOU):&lt;/b&gt;&lt;br/&gt;&#10;• &lt;b&gt;Pha 1 (Seed Mining):&lt;/b&gt; FastAPI kết hợp bảng &lt;code&gt;ratings&lt;/code&gt; (sao &amp;ge; 4) và bảng &lt;code&gt;interactions&lt;/code&gt; (trọng số hành vi) để trích xuất 5 tác phẩm hạt giống tiêu biểu nhất theo thời gian thực.&lt;br/&gt;&#10;• &lt;b&gt;Pha 2 (Dual-Branch Search):&lt;/b&gt; (1) Nhánh &lt;i&gt;Content-Based&lt;/i&gt; tính trọng tâm vector profile và quét chỉ mục HNSW trên không gian 768 chiều; (2) Nhánh &lt;i&gt;Collaborative&lt;/i&gt; tính hệ số Ochiai cho từng hạt giống từ dữ liệu cộng đồng.&lt;br/&gt;&#10;• &lt;b&gt;Pha 3 (Fusion &amp; Loop):&lt;/b&gt; Hợp nhất thứ hạng bằng thuật toán &lt;i&gt;Borda Count&lt;/i&gt;, loại trừ toàn bộ sách đã đọc/đã mua, lưu đệm vào &lt;code&gt;recommendation_cache&lt;/code&gt;, gắn nhãn giải thích AI, và ghi nhận phản hồi ngầm &lt;i&gt;Implicit Feedback&lt;/i&gt;.&#10;&lt;/div&gt;">
+          <mxGeometry as="geometry" x="140" y="1210" width="1300" height="130" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,68 @@
+sequenceDiagram
+    autonumber off
+    
+    %% ==========================================
+    %% KHAI BÁO CÁC TÁC NHÂN (LIFELINES)
+    %% ==========================================
+    box LightYellow Phía Client
+        participant Client as Trình duyệt<br/>(Client / Next.js 16)
+    end
+    box LightCyan Phía Backend
+        participant FastAPI as FastAPI<br/>(Backend Server / Python)
+    end
+    box LightGreen Phía Cơ sở dữ liệu
+        participant DB as PostgreSQL + pgvector<br/>(Supabase Database 3NF)
+    end
+
+    %% ==========================================
+    %% LUỒNG CHÍNH: KHỞI TẠO VÀ XỬ LÝ GỢI Ý CÁ NHÂN HÓA
+    %% ==========================================
+    activate Client
+    Client->>FastAPI: 1: GET /api/recommendations/foryou/{user_id}<br/>[Yêu cầu danh mục gợi ý cá nhân hóa cho độc giả]
+    activate FastAPI
+
+    %% --- PHA 1: KHAI PHÁ HẠT GIỐNG ---
+    FastAPI->>DB: 2: [Truy vấn 1] Lấy 5 tác phẩm hạt giống (ratings >= 4⭐ hoặc tương tác cao)<br/>SQL: SELECT book_id FROM ratings UNION ALL interactions ORDER BY created_at DESC LIMIT 5
+    activate DB
+    DB-->>FastAPI: 3: Trả về danh sách 5 tác phẩm hạt giống [seed_ids]
+    deactivate DB
+
+    %% --- PHA 2: TRUY VẤN KÉP SONG SONG (CONTENT-BASED & COLLABORATIVE) ---
+    FastAPI->>DB: 4: [Truy vấn 2] AVG(embedding) & Tìm kiếm vector láng giềng k-NN Cosine (HNSW)<br/>SQL: ORDER BY embedding <=> cast(profile as vector) LIMIT 30
+    activate DB
+    DB-->>FastAPI: 5: Trả về 30 ứng viên Content-Based [cb_candidates]
+    deactivate DB
+
+    FastAPI->>DB: 6: [Truy vấn 3] Tính hệ số tương đồng Ochiai đồng xuất hiện từng hạt giống<br/>Công thức: Ochiai(i, j) = |U_i ∩ U_j| / sqrt(|U_i| * |U_j|)
+    activate DB
+    DB-->>FastAPI: 7: Trả về 30 ứng viên Collaborative Filtering [cf_candidates]
+    deactivate DB
+
+    %% --- PHA 3: HỢP NHẤT THỨ HẠNG BORDA & GHI NHẬN CACHE ---
+    FastAPI->>FastAPI: 8: Thuật toán Borda Count Fusion & Lọc sách đã đọc/đã mua (seen)<br/>Điểm: Score_Borda(b) = (P - Rank_CB) + (P - Rank_CF) → Top 10 đề xuất
+
+    FastAPI->>DB: 9: Ghi đệm danh sách Top-K vào bảng recommendation_cache (TTL = 1 giờ)<br/>SQL: INSERT INTO recommendation_cache (user_id, model_version, book_ids, scores)
+    activate DB
+    DB-->>FastAPI: 9b: Ghi nhận Cache thành công (Cache Hit sẵn sàng cho 1 giờ)
+    deactivate DB
+
+    FastAPI-->>Client: 10: 200 OK: Trả về JSON (items, because: "Vì bạn đã thích...", seeds)<br/>[Client render giao diện và hiển thị huy hiệu giải thích AI Explainable]
+    deactivate FastAPI
+
+    %% ==========================================
+    %% TIẾN TRÌNH NỀN: THU THẬP PHẢN HỒI NGẦM (IMPLICIT FEEDBACK)
+    %% ==========================================
+    rect rgb(240, 245, 255)
+        Note over Client,DB: TIẾN TRÌNH CHẠY NỀN: GHI NHẬN HÀNH VI NGẦM (IMPLICIT FEEDBACK EVENT LOOP)
+        Client->>FastAPI: 11: POST /api/interactions (Sự kiện vi mô: view / click / add_to_cart)<br/>[Beacon ngầm gửi dữ liệu khi độc giả tương tác với sách được gợi ý]
+        activate FastAPI
+        FastAPI->>DB: 12: INSERT INTO interactions (user_id, book_id, type) (Lưu vết hành vi)<br/>Lưu vết vào CSDL để cập nhật hồ sơ độc giả và làm hạt giống cho phiên sau
+        activate DB
+        DB-->>FastAPI: 12b: 201 Created (Ghi nhận thành công)
+        deactivate DB
+        deactivate FastAPI
+    end
+    deactivate Client
+
+    %% Ghi chú tóm tắt kiến trúc 3 pha
+    Note over Client,DB: <b>GIẢI THÍCH 3 PHA XỬ LÝ TRUY VẤN VÀ TÍNH TOÁN CỦA LUỒNG GỢI Ý CÁ NHÂN HÓA (/FORYOU):</b><br/>• <b>Pha 1 - Khai phá Hạt giống (Seed Mining):</b> FastAPI kết hợp ratings >= 4⭐ và tương tác ngầm (purchase 5, cart 4, wishlist 3) trích xuất 5 tác phẩm gần nhất.<br/>• <b>Pha 2 - Truy vấn Kép Song song (Dual-Branch Search):</b> (1) Nhánh Content-Based: AVG(vector) và quét HNSW Cosine (768D); (2) Nhánh Collaborative: quét ma trận đồng xuất hiện tính hệ số Ochiai.<br/>• <b>Pha 3 - Hợp nhất Borda & Vòng lặp phản hồi (Fusion & Loop):</b> Hợp nhất thứ hạng Borda Count, loại trừ sách đã xem, ghi đệm recommendation_cache (1 giờ), trả JSON kèm giải thích AI, và thu thập hành vi qua POST /interactions.
