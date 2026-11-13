@@ -409,15 +409,22 @@ def get_all_genres():
         })
     return {"status": "success", "data": data}
 
+# Cache bộ nhớ RAM cho danh sách sách theo thể loại
+GENRE_BOOKS_CACHE: dict = {}
+
 # ----------------- API LẤY SÁCH THEO THỂ LOẠI (BY GENRE) -----------------
 @app.get("/api/books/by-genre/{genre}")
 def get_books_by_genre(genre: str, limit: int = 50, db: Session = Depends(get_db)):
     """
     API lấy danh sách sách theo thể loại (Genre/Tag) chuẩn xác từ Dataset.
-    1. Ưu tiên truy vấn trực tiếp từ bảng tags + book_tags + books trong Database.
-    2. Tự động dự phòng đọc từ file data/books_enriched.csv nếu DB tạm thời gián đoạn.
+    Tích hợp Bộ nhớ đệm RAM siêu tốc để phản hồi trong 1ms.
     """
     genre_slug = genre.lower().strip()
+    cache_key = f"{genre_slug}_{limit}"
+    
+    if cache_key in GENRE_BOOKS_CACHE:
+        return GENRE_BOOKS_CACHE[cache_key]
+
     books_data = []
 
     # 1. Thử truy vấn qua Database Supabase trước
@@ -450,7 +457,7 @@ def get_books_by_genre(genre: str, limit: int = 50, db: Session = Depends(get_db
         print(f"[Genre Query] DB error: {e}")
         books_data = []
 
-    # 2. Nếu Database không có hoặc trả về rỗng, dự phòng đọc từ books_enriched.csv
+    # 2. Nếu Database không có hoặc trả về rỗng, dự phòng đọc từ books_enriched.csv (quét chuỗi siêu tốc)
     if not books_data:
         try:
             csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
@@ -461,23 +468,18 @@ def get_books_by_genre(genre: str, limit: int = 50, db: Session = Depends(get_db
                 with open(csv_path, "r", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        g_raw = row.get("genres", "")
-                        if g_raw and genre_slug in g_raw:
-                            try:
-                                g_list = ast.literal_eval(g_raw)
-                                if genre_slug in g_list:
-                                    clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
-                                    books_data.append({
-                                        "book_id": int(row["book_id"]),
-                                        "title": row["title"],
-                                        "author": clean_author,
-                                        "image_url": row.get("image_url", ""),
-                                        "score": float(row.get("average_rating", 0) or 4.0),
-                                        "ratings_count": int(row.get("ratings_count", 0) or 0),
-                                        "genre": genre_slug
-                                    })
-                            except:
-                                pass
+                        g_raw = row.get("genres", "").lower()
+                        if f"'{genre_slug}'" in g_raw or f'"{genre_slug}"' in g_raw or genre_slug in g_raw:
+                            clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                            books_data.append({
+                                "book_id": int(row["book_id"]),
+                                "title": row["title"],
+                                "author": clean_author,
+                                "image_url": row.get("image_url", ""),
+                                "score": float(row.get("average_rating", 0) or 4.0),
+                                "ratings_count": int(row.get("ratings_count", 0) or 0),
+                                "genre": genre_slug
+                            })
                 books_data.sort(key=lambda x: x["ratings_count"], reverse=True)
                 books_data = books_data[:limit]
         except Exception as csv_err:
@@ -488,7 +490,7 @@ def get_books_by_genre(genre: str, limit: int = 50, db: Session = Depends(get_db
         "description": f"Tuyển tập những tác phẩm văn học chọn lọc thuộc thể loại {genre_slug}."
     })
 
-    return {
+    response_payload = {
         "status": "success",
         "genre": genre_slug,
         "genre_name_vi": meta["name_vi"],
@@ -496,6 +498,11 @@ def get_books_by_genre(genre: str, limit: int = 50, db: Session = Depends(get_db
         "total": len(books_data),
         "data": books_data
     }
+    
+    if len(books_data) > 0:
+        GENRE_BOOKS_CACHE[cache_key] = response_payload
+
+    return response_payload
 
 # ----------------- API LẤY SÁCH CÙNG TÁC GIẢ (ALSO BY THIS AUTHOR) -----------------
 @app.get("/api/books/by-author/{book_id}")

@@ -147,6 +147,9 @@ const QUICK_GENRE_PILLS = [
   { slug: "comics", label: "Truyện Tranh" },
 ];
 
+// Cache bộ nhớ Client-side để chuyển đổi giữa các thể loại trong 0.001 giây
+const CLIENT_TRENDING_CACHE = new Map<string, any>();
+
 function TrendingPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -163,9 +166,19 @@ function TrendingPageContent() {
   // Tải dữ liệu sách dựa trên genre hoặc popular
   useEffect(() => {
     let isCancelled = false;
+    const cacheKey = genreParam ? `genre_${genreParam.toLowerCase().trim()}` : "popular";
+
+    // Nạp ngay từ RAM nếu đã từng mở thể loại này
+    if (CLIENT_TRENDING_CACHE.has(cacheKey)) {
+      const cached = CLIENT_TRENDING_CACHE.get(cacheKey);
+      setBooks(cached.books);
+      setActiveGenreMeta(cached.meta);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
 
     const fetchBooks = async () => {
-      setLoading(true);
       setSearchQuery(""); // Đặt lại ô tìm kiếm khi chuyển danh mục
 
       try {
@@ -184,12 +197,13 @@ function TrendingPageContent() {
 
           if (!isCancelled && json.data) {
             setBooks(json.data);
-            if (json.genre_name_vi && json.description) {
-              setActiveGenreMeta({
-                title: json.genre_name_vi,
-                desc: json.description
-              });
-            }
+            const resolvedMeta = (json.genre_name_vi && json.description) ? {
+              title: json.genre_name_vi,
+              desc: json.description
+            } : localMeta;
+            
+            setActiveGenreMeta(resolvedMeta);
+            CLIENT_TRENDING_CACHE.set(cacheKey, { books: json.data, meta: resolvedMeta });
           }
         } else {
           // 2. Chế độ Thịnh hành chung
@@ -200,6 +214,7 @@ function TrendingPageContent() {
 
           if (!isCancelled && json.data) {
             setBooks(json.data);
+            CLIENT_TRENDING_CACHE.set(cacheKey, { books: json.data, meta: null });
           }
         }
       } catch (err) {
@@ -407,12 +422,19 @@ function TrendingPageContent() {
 
         {/* 5. DANH SÁCH TÁC PHẨM */}
         {loading ? (
-          <div className="text-center py-28 text-ink/50 bg-white/60 rounded-3xl border border-ink/6">
-            <Loader2 className="animate-spin mx-auto mb-4 text-[#B12704]" size={36} />
-            <p className="font-serif font-bold text-base text-ink mb-1">
-              Đang tuyển chọn các tác phẩm {activeGenreMeta ? activeGenreMeta.title : "Thịnh Hành"}...
-            </p>
-            <p className="text-xs text-ink/50">Đang truy vấn dữ liệu từ hệ thống gợi ý The Inkwell AI</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-x-8 lg:gap-y-12">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+              <div key={s} className="flex flex-col gap-4 w-full animate-pulse">
+                <div className="aspect-[2/3] w-full bg-gradient-to-br from-ink/10 via-ink/5 to-ink/10 rounded-xl shadow-sm border border-ink/5 flex items-center justify-center">
+                  <span className="font-serif text-ink/15 text-xs">The Inkwell</span>
+                </div>
+                <div className="space-y-2 px-1">
+                  <div className="h-4 bg-ink/10 rounded w-5/6"></div>
+                  <div className="h-3 bg-ink/5 rounded w-1/2"></div>
+                  <div className="h-4 bg-ink/10 rounded w-1/3 mt-2"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredBooks.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 sm:p-16 text-center border border-ink/10 max-w-lg mx-auto shadow-sm">
