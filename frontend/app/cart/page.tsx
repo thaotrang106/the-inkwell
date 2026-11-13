@@ -48,7 +48,7 @@ export default function CartPage() {
               className="flex gap-6 p-6 bg-white border border-ink/10 rounded-2xl shadow-sm relative group"
             >
               <img 
-                src={item.image_url.replace("s.gr-assets", "i.gr-assets")} 
+                src={item.image_url.replace(/^http:\/\//i, "https://").replace("imagei.gr-assets", "images.gr-assets")} 
                 alt={item.title} 
                 referrerPolicy="no-referrer" className="w-24 h-36 object-cover rounded-lg shadow-md"
               />
@@ -135,4 +135,5 @@ export default function CartPage() {
     </div>
   );
 }
+
 

@@ -110,7 +110,15 @@ export default function BookDetailPage() {
     return <div className="min-h-screen flex items-center justify-center">Không tìm thấy sách</div>;
   }
 
-  const highResImg = book.image_url ? book.image_url.replace("s.gr-assets", "i.gr-assets") : "";
+  const formatImageUrl = (url?: string) => {
+    if (!url) return "";
+    let clean = url.trim();
+    clean = clean.replace(/^http:\/\//i, "https://");
+    clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
+    clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
+    return clean;
+  };
+  const highResImg = formatImageUrl(book.image_url);
   const authorName = typeof book.author === 'string' ? book.author.replace(/\[|\]|'/g, '') : book.author;
   
   const formatPrice = (price: number) => {

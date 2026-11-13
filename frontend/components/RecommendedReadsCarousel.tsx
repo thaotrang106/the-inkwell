@@ -26,12 +26,13 @@ const getBookPricing = (bookId: number) => {
   return { salePrice, listPrice };
 };
 
-// Chuyển đổi URL ảnh sang CDN i.gr-assets.com có độ phân giải cao
+// Định dạng URL ảnh sách chuẩn CDN
 const formatImageUrl = (url?: string) => {
   if (!url) return "";
   let clean = url.trim();
-  clean = clean.replace("s.gr-assets.com", "i.gr-assets.com");
-  clean = clean.replace("images.gr-assets.com", "i.gr-assets.com");
+  clean = clean.replace(/^http:\/\//i, "https://");
+  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
+  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
   return clean;
 };
 
@@ -118,20 +119,37 @@ const DEFAULT_RECOMMENDED: BookItem[] = [
  * mạ vàng kim cổ điển (Luxury Hardcover Jacket) có tên sách và tác giả.
  */
 function Book3DCover({ book }: { book: BookItem }) {
-  const [imgError, setImgError] = useState(false);
+  const initialUrl = formatImageUrl(book.image_url);
+  const [imgSrc, setImgSrc] = useState<string>(initialUrl);
+  const [useProxy, setUseProxy] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
   const theme = COVER_THEMES[Math.abs(book.book_id) % COVER_THEMES.length];
-  const formattedUrl = formatImageUrl(book.image_url);
+
+  useEffect(() => {
+    setImgSrc(formatImageUrl(book.image_url));
+    setUseProxy(false);
+    setImgFailed(false);
+  }, [book.image_url]);
+
+  const handleImageError = () => {
+    if (!useProxy && imgSrc) {
+      setUseProxy(true);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=350&fit=cover`);
+    } else {
+      setImgFailed(true);
+    }
+  };
 
   return (
     <div className="relative my-2">
       <div className="relative w-[130px] h-[195px] sm:w-[145px] sm:h-[218px] transition-transform duration-300 group-hover/card:-translate-y-2">
-        {!imgError && formattedUrl ? (
+        {!imgFailed && imgSrc ? (
           <img
-            src={formattedUrl}
+            src={imgSrc}
             alt={cleanTitle(book.title)}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover rounded-r-md rounded-l-xs shadow-[0_12px_24px_-6px_rgba(0,0,0,0.3),0_6px_12px_-4px_rgba(0,0,0,0.2)]"
-            onError={() => setImgError(true)}
+            onError={handleImageError}
           />
         ) : (
           /* Bìa sách bìa cứng sang trọng thay thế nếu ảnh gốc gặp lỗi */

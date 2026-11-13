@@ -604,7 +604,7 @@ export default function Home() {
                                 className="flex items-center gap-3.5 flex-1 min-w-0 cursor-pointer"
                               >
                                 <img 
-                                  src={book.image_url ? book.image_url.replace("s.gr-assets", "i.gr-assets") : ""} 
+                                  src={book.image_url ? book.image_url.replace(/^http:\/\//i, "https://").replace("imagei.gr-assets", "images.gr-assets") : ""} 
                                   alt={cleanName} 
                                   referrerPolicy="no-referrer"
                                   className="w-10 h-14 object-cover rounded shadow-xs flex-shrink-0 bg-ink/5" 

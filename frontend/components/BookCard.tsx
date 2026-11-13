@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent } from "react";
 import { Star, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
@@ -13,13 +13,13 @@ const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
 
-// Định dạng URL ảnh sách chuẩn CDN
+// Định dạng URL ảnh sách chuẩn CDN (không phá vỡ domain của Goodreads)
 const formatImageUrl = (url?: string) => {
   if (!url) return "";
   let clean = url.trim();
-  clean = clean.replace("http://", "https://");
-  clean = clean.replace("s.gr-assets.com", "i.gr-assets.com");
-  clean = clean.replace("images.gr-assets.com", "i.gr-assets.com");
+  clean = clean.replace(/^http:\/\//i, "https://");
+  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
+  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
   return clean;
 };
 
@@ -35,9 +35,31 @@ const COVER_THEMES = [
 export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: number, isHybrid?: boolean }) {
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const [imgError, setImgError] = useState(false);
-  const highResImg = formatImageUrl(book.image_url);
+  
+  const initialUrl = formatImageUrl(book.image_url);
+  const [imgSrc, setImgSrc] = useState<string>(initialUrl);
+  const [useProxy, setUseProxy] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  
   const theme = COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length];
+
+  useEffect(() => {
+    const formatted = formatImageUrl(book.image_url);
+    setImgSrc(formatted);
+    setUseProxy(false);
+    setImgFailed(false);
+  }, [book.image_url]);
+
+  const handleImageError = () => {
+    if (!useProxy && imgSrc) {
+      // Nếu link trực tiếp bị chặn hoặc gặp lỗi mạng, chuyển sang CDN Proxy để tải ảnh thật
+      setUseProxy(true);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=350&fit=cover`);
+    } else {
+      // Nếu ảnh gốc thật sự không còn tồn tại trên Internet thì mới hiển thị bìa sách dự phòng
+      setImgFailed(true);
+    }
+  };
 
   // Giả lập giá tiền VNĐ (VD: 150.000đ)
   const randomPrice = book.price || Math.floor(Math.random() * (260 - 80) + 80) * 1000;
@@ -82,16 +104,16 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl shadow-md transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl bg-[#1A1A1A] flex items-center justify-center p-0">
         <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/20 transition-colors z-10 pointer-events-none"></div>
         
-        {!imgError && highResImg ? (
+        {!imgFailed && imgSrc ? (
           <img 
-            src={highResImg} 
+            src={imgSrc} 
             alt={cleanTitle(book.title)} 
             referrerPolicy="no-referrer"
-            onError={() => setImgError(true)}
+            onError={handleImageError}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          /* Bìa sách bìa cứng mạ vàng kim cổ điển thay thế nếu ảnh gốc gặp lỗi */
+          /* Bìa sách bìa cứng mạ vàng kim cổ điển thay thế nếu sách không có ảnh thật */
           <div
             className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none`}
           >
