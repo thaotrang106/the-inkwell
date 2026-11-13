@@ -1,3 +1,11 @@
+import sys
+from pathlib import Path
+
+# Đảm bảo python luôn tìm thấy app dù chạy từ thư mục root hay backend
+backend_dir = Path(__file__).resolve().parent.parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
