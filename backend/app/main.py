@@ -16,6 +16,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 import csv
 import ast
+import re
 from pathlib import Path
 
 # Import các file
@@ -176,6 +177,14 @@ GENRE_METADATA = {
 POPULAR_BOOKS_CACHE: dict = {}
 GENRE_BOOKS_CACHE: dict = {}
 
+def format_hd_image_url(url: str) -> str:
+    """Nâng cấp ảnh bìa từ thumbnail nhỏ (m/ hoặc s/) thành ảnh gốc HD (l/) độ nét cao từ Goodreads CDN"""
+    if not url:
+        return ""
+    clean = url.strip().replace("http://", "https://")
+    clean = re.sub(r'://(?:imagei|s)\.gr-assets\.com', '://images.gr-assets.com', clean)
+    return re.sub(r'(\d+)[ms]/', r'\g<1>l/', clean)
+
 def preload_popular_and_genres():
     """
     Nạp sẵn toàn bộ Sách Thịnh Hành & 26 Thể loại vào RAM siêu tốc (In-Memory Cache).
@@ -203,7 +212,7 @@ def preload_popular_and_genres():
                     "book_id": int(row["book_id"]),
                     "title": row["title"],
                     "author": clean_author,
-                    "image_url": row.get("image_url", ""),
+                    "image_url": format_hd_image_url(row.get("image_url", "")),
                     "score": float(row.get("average_rating", 0) or 4.0),
                     "rank": rank_idx
                 })
@@ -220,7 +229,7 @@ def preload_popular_and_genres():
                             "book_id": int(row["book_id"]),
                             "title": row["title"],
                             "author": clean_author,
-                            "image_url": row.get("image_url", ""),
+                            "image_url": format_hd_image_url(row.get("image_url", "")),
                             "score": float(row.get("average_rating", 0) or 4.0),
                             "ratings_count": int(row.get("ratings_count", 0) or 0),
                             "genre": genre_slug
@@ -409,7 +418,7 @@ def get_book_details(book_id: int, db: Session = Depends(get_db)):
                 "book_id": book.book_id,
                 "title": book.title,
                 "author": clean_author,
-                "image_url": book.image_url,
+                "image_url": format_hd_image_url(book.image_url),
                 "description": book.description or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
                 "language_code": book.language_code or "eng"
             }
@@ -436,7 +445,7 @@ def get_book_details(book_id: int, db: Session = Depends(get_db)):
                             "book_id": book_id,
                             "title": row.get("title", ""),
                             "author": clean_author,
-                            "image_url": row.get("image_url", ""),
+                            "image_url": format_hd_image_url(row.get("image_url", "")),
                             "description": row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
                             "language_code": row.get("language_code", "eng")
                         }
@@ -507,7 +516,7 @@ def get_books_by_genre(genre: str, limit: int = 50, response: Response = None, d
                             "book_id": int(row["book_id"]),
                             "title": row["title"],
                             "author": clean_author,
-                            "image_url": row.get("image_url", ""),
+                            "image_url": format_hd_image_url(row.get("image_url", "")),
                             "score": float(row.get("average_rating", 0) or 4.0),
                             "ratings_count": int(row.get("ratings_count", 0) or 0),
                             "genre": genre_slug

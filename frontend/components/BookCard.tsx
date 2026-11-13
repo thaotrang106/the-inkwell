@@ -13,13 +13,14 @@ const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
 
-// Định dạng URL ảnh sách chuẩn CDN (không phá vỡ domain của Goodreads)
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
 const formatImageUrl = (url?: string) => {
   if (!url) return "";
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
-  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
-  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
+  clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
+  // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
+  clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
   return clean;
 };
 
@@ -54,7 +55,7 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
     if (!useProxy && imgSrc) {
       // Nếu link trực tiếp bị chặn hoặc gặp lỗi mạng, chuyển sang CDN Proxy để tải ảnh thật
       setUseProxy(true);
-      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=350&fit=cover`);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=450&fit=cover&q=90`);
     } else {
       // Nếu ảnh gốc thật sự không còn tồn tại trên Internet thì mới hiển thị bìa sách dự phòng
       setImgFailed(true);

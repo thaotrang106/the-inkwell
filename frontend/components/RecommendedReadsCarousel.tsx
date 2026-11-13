@@ -26,13 +26,14 @@ const getBookPricing = (bookId: number) => {
   return { salePrice, listPrice };
 };
 
-// Định dạng URL ảnh sách chuẩn CDN
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
 const formatImageUrl = (url?: string) => {
   if (!url) return "";
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
-  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
-  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
+  clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
+  // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
+  clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
   return clean;
 };
 
@@ -134,7 +135,7 @@ function Book3DCover({ book }: { book: BookItem }) {
   const handleImageError = () => {
     if (!useProxy && imgSrc) {
       setUseProxy(true);
-      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=350&fit=cover`);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=450&fit=cover&q=90`);
     } else {
       setImgFailed(true);
     }

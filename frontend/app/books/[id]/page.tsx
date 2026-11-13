@@ -20,13 +20,14 @@ const cleanTitle = (title: string) => {
 // Cache bộ nhớ Client-side để mở lại sách đã xem trong 0.001 giây
 const CLIENT_BOOK_CACHE = new Map<string, any>();
 
-// Định dạng URL ảnh sách chuẩn CDN
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
 const formatImageUrl = (url?: string) => {
   if (!url) return "";
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
-  clean = clean.replace("imagei.gr-assets.com", "images.gr-assets.com");
-  clean = clean.replace(/:\/\/s\.gr-assets\.com/i, "://images.gr-assets.com");
+  clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
+  // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
+  clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
   return clean;
 };
 
@@ -200,7 +201,7 @@ export default function BookDetailPage() {
   const handleDetailImageError = () => {
     if (!useDetailProxy && detailImgSrc) {
       setUseDetailProxy(true);
-      setDetailImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(detailImgSrc)}&w=500&fit=cover`);
+      setDetailImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(detailImgSrc)}&w=600&fit=cover&q=90`);
     } else {
       setDetailImgFailed(true);
     }
