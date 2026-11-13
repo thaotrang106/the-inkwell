@@ -15,6 +15,33 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
+
+// Hàm prefetch ngầm dữ liệu danh mục vào sessionStorage để người dùng bấm vào là hiển thị ngay lập tức
+const prefetchGenreData = (genre: string) => {
+  if (typeof window === "undefined") return;
+  const cacheKey = genre ? `genre_${genre.toLowerCase().trim()}` : "popular";
+  try {
+    if (sessionStorage.getItem(`inkwell_${cacheKey}`)) return;
+  } catch {}
+  const url = genre 
+    ? `${API_BASE_URL}/api/books/by-genre/${genre}?limit=60`
+    : `${API_BASE_URL}/api/recommendations/popular?limit=50`;
+  fetch(url)
+    .then((r) => r.json())
+    .then((json) => {
+      if (json && json.data) {
+        try {
+          const meta = (json.genre_name_vi && json.description) ? {
+            title: json.genre_name_vi,
+            desc: json.description
+          } : null;
+          sessionStorage.setItem(`inkwell_${cacheKey}`, JSON.stringify({ books: json.data, meta }));
+        } catch {}
+      }
+    })
+    .catch(() => {});
+};
 
 export default function Navbar() {
   const { itemCount } = useCart();
@@ -26,10 +53,25 @@ export default function Navbar() {
   const menuRef = useRef<HTMLDivElement>(null);
   const megaMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Xử lý hover mở/đóng Mega Menu có độ trễ nhẹ để tránh giật
+  // Xử lý hover mở/đóng Mega Menu có độ trễ nhẹ để tránh giật + Tự động prefetch trước các danh mục tương ứng
   const handleMouseEnter = (menuType: "categories" | "fiction" | "nonfiction") => {
     if (megaMenuTimeoutRef.current) clearTimeout(megaMenuTimeoutRef.current);
     setActiveMegaMenu(menuType);
+    if (menuType === "categories") {
+      prefetchGenreData("");
+      prefetchGenreData("classics");
+      prefetchGenreData("young-adult");
+    } else if (menuType === "fiction") {
+      prefetchGenreData("fiction");
+      prefetchGenreData("fantasy");
+      prefetchGenreData("romance");
+      prefetchGenreData("mystery");
+    } else if (menuType === "nonfiction") {
+      prefetchGenreData("nonfiction");
+      prefetchGenreData("philosophy");
+      prefetchGenreData("psychology");
+      prefetchGenreData("biography");
+    }
   };
 
   const handleMouseLeave = () => {
@@ -37,6 +79,19 @@ export default function Navbar() {
       setActiveMegaMenu(null);
     }, 150);
   };
+
+  useEffect(() => {
+    // Tự động tải trước (Prefetch) các danh mục chính trong nền sau 1s để khi bấm là hiện ngay
+    const timer = setTimeout(() => {
+      prefetchGenreData("");
+      prefetchGenreData("fiction");
+      prefetchGenreData("nonfiction");
+      prefetchGenreData("young-adult");
+      prefetchGenreData("classics");
+      prefetchGenreData("philosophy");
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -252,6 +307,7 @@ export default function Navbar() {
             {/* MỤC 4: TUỔI TRẺ & THIẾU NHI */}
             <Link 
               href="/trending?genre=young-adult" 
+              onMouseEnter={() => prefetchGenreData("young-adult")}
               className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors whitespace-nowrap"
             >
               Tuổi Trẻ &amp; Thiếu Nhi
@@ -260,6 +316,7 @@ export default function Navbar() {
             {/* MỤC 5: KINH ĐIỂN */}
             <Link 
               href="/trending?genre=classics" 
+              onMouseEnter={() => prefetchGenreData("classics")}
               className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors whitespace-nowrap"
             >
               Kinh Điển
@@ -268,6 +325,7 @@ export default function Navbar() {
             {/* MỤC 6: THỊNH HÀNH */}
             <Link 
               href="/trending" 
+              onMouseEnter={() => prefetchGenreData("")}
               className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors text-[#B12704] font-bold whitespace-nowrap"
             >
               Thịnh Hành

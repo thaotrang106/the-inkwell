@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL as BACKEND_URL } from "@/lib/api";
 
 // Hàm làm sạch tên sách: loại bỏ phần (Harry Potter, #1) thô của dataset
-export const cleanTitle = (title: string) => {
+const cleanTitle = (title: string) => {
   if (!title) return "";
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };

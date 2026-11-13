@@ -168,13 +168,31 @@ function TrendingPageContent() {
     let isCancelled = false;
     const cacheKey = genreParam ? `genre_${genreParam.toLowerCase().trim()}` : "popular";
 
-    // Nạp ngay từ RAM nếu đã từng mở thể loại này
+    // 1. Nạp ngay từ RAM hoặc sessionStorage nếu đã từng mở hoặc được prefetch
+    let hasImmediateData = false;
     if (CLIENT_TRENDING_CACHE.has(cacheKey)) {
       const cached = CLIENT_TRENDING_CACHE.get(cacheKey);
       setBooks(cached.books);
       setActiveGenreMeta(cached.meta);
       setLoading(false);
-    } else {
+      hasImmediateData = true;
+    } else if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem(`inkwell_${cacheKey}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && Array.isArray(parsed.books) && parsed.books.length > 0) {
+            setBooks(parsed.books);
+            setActiveGenreMeta(parsed.meta);
+            setLoading(false);
+            CLIENT_TRENDING_CACHE.set(cacheKey, parsed);
+            hasImmediateData = true;
+          }
+        }
+      } catch {}
+    }
+
+    if (!hasImmediateData) {
       setLoading(true);
     }
 
@@ -204,6 +222,9 @@ function TrendingPageContent() {
             
             setActiveGenreMeta(resolvedMeta);
             CLIENT_TRENDING_CACHE.set(cacheKey, { books: json.data, meta: resolvedMeta });
+            try {
+              sessionStorage.setItem(`inkwell_${cacheKey}`, JSON.stringify({ books: json.data, meta: resolvedMeta }));
+            } catch {}
           }
         } else {
           // 2. Chế độ Thịnh hành chung
@@ -215,6 +236,9 @@ function TrendingPageContent() {
           if (!isCancelled && json.data) {
             setBooks(json.data);
             CLIENT_TRENDING_CACHE.set(cacheKey, { books: json.data, meta: null });
+            try {
+              sessionStorage.setItem(`inkwell_${cacheKey}`, JSON.stringify({ books: json.data, meta: null }));
+            } catch {}
           }
         }
       } catch (err) {
