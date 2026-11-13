@@ -15,9 +15,103 @@ export const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
 
+// Dữ liệu đệm tức thì (Instant Fallback) hiển thị ngay lập tức khi mở web
+const DEFAULT_POPULAR_BOOKS = [
+  {
+    book_id: 1,
+    title: "The Hunger Games",
+    author: "Suzanne Collins",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1447303603i/2767052.jpg",
+    rating: 4.34,
+    price: 221000,
+    rank: 1,
+  },
+  {
+    book_id: 2,
+    title: "Harry Potter and the Sorcerer's Stone",
+    author: "J.K. Rowling, Mary GrandPré",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
+    rating: 4.47,
+    price: 166000,
+    rank: 2,
+  },
+  {
+    book_id: 3,
+    title: "Twilight",
+    author: "Stephenie Meyer",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1361039443i/41865.jpg",
+    rating: 3.61,
+    price: 187000,
+    rank: 3,
+  },
+  {
+    book_id: 4,
+    title: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg",
+    rating: 4.28,
+    price: 119000,
+    rank: 4,
+  },
+  {
+    book_id: 5,
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1490528560i/4671.jpg",
+    rating: 3.93,
+    price: 243000,
+    rank: 5,
+  },
+  {
+    book_id: 6,
+    title: "The Fault in Our Stars",
+    author: "John Green",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1360206420i/11870085.jpg",
+    rating: 4.26,
+    price: 195000,
+    rank: 6,
+  },
+  {
+    book_id: 7,
+    title: "The Hobbit",
+    author: "J.R.R. Tolkien",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg",
+    rating: 4.27,
+    price: 210000,
+    rank: 7,
+  },
+  {
+    book_id: 8,
+    title: "The Catcher in the Rye",
+    author: "J.D. Salinger",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300i/5107.jpg",
+    rating: 3.81,
+    price: 175000,
+    rank: 8,
+  },
+  {
+    book_id: 9,
+    title: "Angels & Demons",
+    author: "Dan Brown",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg",
+    rating: 3.91,
+    price: 180000,
+    rank: 9,
+  },
+  {
+    book_id: 10,
+    title: "Pride and Prejudice",
+    author: "Jane Austen",
+    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351i/1885.jpg",
+    rating: 4.26,
+    price: 160000,
+    rank: 10,
+  },
+];
+
 export default function Home() {
   const { user, isLoggedIn } = useAuth();
-  const [popularBooks, setPopularBooks] = useState<any[]>([]);
+  const [popularBooks, setPopularBooks] = useState<any[]>(DEFAULT_POPULAR_BOOKS);
   const [hybridBooks, setHybridBooks] = useState<any[]>([]);
   const [personalizedBooks, setPersonalizedBooks] = useState<any[]>([]);
   const [isPersonalizedLoading, setIsPersonalizedLoading] = useState(false);
