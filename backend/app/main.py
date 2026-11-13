@@ -75,18 +75,46 @@ def get_popular_books(limit: int = 20, db: Session = Depends(get_db)):
     """
     API 1: Lấy danh sách Sách Thịnh Hành (Dành cho Cold-start - Khách mới vào chưa biết gì)
     """
-    populars = db.query(PopularBook).order_by(PopularBook.rank.asc()).limit(limit).all()
-    
     result = []
-    for p in populars:
-        result.append({
-            "book_id": p.book_id,
-            "title": p.book.title,
-            "author": p.book.authors,
-            "image_url": p.book.image_url,
-            "score": round(p.score, 2),
-            "rank": p.rank
-        })
+    try:
+        populars = db.query(PopularBook).order_by(PopularBook.rank.asc()).limit(limit).all()
+        for p in populars:
+            result.append({
+                "book_id": p.book_id,
+                "title": p.book.title,
+                "author": p.book.authors,
+                "image_url": p.book.image_url,
+                "score": round(p.score, 2),
+                "rank": p.rank
+            })
+    except Exception as e:
+        print(f"[Popular Query] DB error: {e}")
+        result = []
+
+    # Dự phòng đọc từ books_enriched.csv nếu DB tạm thời kết nối chậm hoặc chưa nạp biến môi trường
+    if not result:
+        try:
+            csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
+            if not csv_path.exists():
+                csv_path = Path("data/books_enriched.csv")
+            if csv_path.exists():
+                with open(csv_path, "r", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    all_rows = list(reader)
+                    all_rows.sort(key=lambda x: int(x.get("ratings_count", 0) or 0), reverse=True)
+                    for rank_idx, row in enumerate(all_rows[:limit], start=1):
+                        clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                        result.append({
+                            "book_id": int(row["book_id"]),
+                            "title": row["title"],
+                            "author": clean_author,
+                            "image_url": row.get("image_url", ""),
+                            "score": float(row.get("average_rating", 0) or 4.0),
+                            "rank": rank_idx
+                        })
+        except Exception as csv_err:
+            print(f"[Popular Query] Fallback error: {csv_err}")
+
     return {"data": result}
 
 # ----------------- API THỨ 2 -----------------
@@ -159,39 +187,95 @@ def search_books(q: str, limit: int = 5, db: Session = Depends(get_db)):
     if not q or len(q) < 2:
         return {"data": []}
         
-    search_pattern = f"%{q}%"
-    books = db.query(Book).filter(Book.title.ilike(search_pattern)).limit(limit).all()
-    
     result = []
-    for b in books:
-        result.append({
-            "book_id": b.book_id,
-            "title": b.title,
-            "author": b.authors,
-            "image_url": b.image_url
-        })
+    try:
+        search_pattern = f"%{q}%"
+        books = db.query(Book).filter(Book.title.ilike(search_pattern)).limit(limit).all()
+        for b in books:
+            result.append({
+                "book_id": b.book_id,
+                "title": b.title,
+                "author": b.authors,
+                "image_url": b.image_url
+            })
+    except Exception as e:
+        print(f"[Search Query] DB error: {e}")
+        result = []
+
+    if not result:
+        try:
+            csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
+            if not csv_path.exists():
+                csv_path = Path("data/books_enriched.csv")
+            if csv_path.exists():
+                q_lower = q.lower().strip()
+                with open(csv_path, "r", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        title = row.get("title", "")
+                        author = row.get("authors", "")
+                        if q_lower in title.lower() or q_lower in author.lower():
+                            clean_author = author.replace("[", "").replace("]", "").replace("'", "").strip()
+                            result.append({
+                                "book_id": int(row["book_id"]),
+                                "title": title,
+                                "author": clean_author,
+                                "image_url": row.get("image_url", "")
+                            })
+                            if len(result) >= limit:
+                                break
+        except Exception as csv_err:
+            print(f"[Search Query] Fallback error: {csv_err}")
+
     return {"data": result}
 
 # ----------------- API THỨ 6 (LẤY CHI TIẾT SÁCH) -----------------
 @app.get("/api/books/{book_id}")
 def get_book_details(book_id: int, db: Session = Depends(get_db)):
     """API lấy toàn bộ thông tin chi tiết của 1 cuốn sách"""
-    book = db.query(Book).filter(Book.book_id == book_id).first()
-    
-    if not book:
-        raise HTTPException(status_code=404, detail="Không tìm thấy cuốn sách này")
-    
-    return {
-        "status": "success",
-        "data": {
-            "book_id": book.book_id,
-            "title": book.title,
-            "author": book.authors,
-            "image_url": book.image_url,
-            "description": book.description,
-            "language_code": book.language_code
-        }
-    }
+    try:
+        book = db.query(Book).filter(Book.book_id == book_id).first()
+        if book:
+            return {
+                "status": "success",
+                "data": {
+                    "book_id": book.book_id,
+                    "title": book.title,
+                    "author": book.authors,
+                    "image_url": book.image_url,
+                    "description": book.description,
+                    "language_code": book.language_code
+                }
+            }
+    except Exception as e:
+        print(f"[Book Details] DB error: {e}")
+
+    # Fallback đọc từ CSV
+    try:
+        csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
+        if not csv_path.exists():
+            csv_path = Path("data/books_enriched.csv")
+        if csv_path.exists():
+            with open(csv_path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if int(row["book_id"]) == book_id:
+                        clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                        return {
+                            "status": "success",
+                            "data": {
+                                "book_id": book_id,
+                                "title": row.get("title", ""),
+                                "author": clean_author,
+                                "image_url": row.get("image_url", ""),
+                                "description": row.get("description", ""),
+                                "language_code": row.get("language_code", "eng")
+                            }
+                        }
+    except Exception as csv_err:
+        print(f"[Book Details] Fallback error: {csv_err}")
+
+    raise HTTPException(status_code=404, detail="Không tìm thấy cuốn sách này")
 
 # ================= TỪ ĐIỂN THỂ LOẠI & MÔ TẢ THEO DATASET GOODREADS-10K =================
 GENRE_METADATA = {
