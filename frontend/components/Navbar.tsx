@@ -289,16 +289,6 @@ export default function Navbar() {
               Về Chúng Tôi
             </Link>
 
-            {/* MỤC 9: ALGORITHM LAB (SO SÁNH 3 THUẬT TOÁN) */}
-            <Link 
-              href="/lab" 
-              className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors whitespace-nowrap text-[#4B6584] font-bold flex items-center gap-1.5"
-              title="Phòng thí nghiệm so sánh 3 thuật toán AI"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Algorithm Lab
-            </Link>
-
           </div>
 
         </div>
