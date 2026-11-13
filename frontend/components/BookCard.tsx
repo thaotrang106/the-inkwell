@@ -1,23 +1,44 @@
 "use client";
 
+import { useState, MouseEvent } from "react";
 import { Star, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
-import { MouseEvent } from "react";
-
 
 // Hàm làm sạch tên sách
 const cleanTitle = (title: string) => {
-  if (!title) return '';
-  return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, '').trim();
+  if (!title) return "";
+  return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
+
+// Định dạng URL ảnh sách chuẩn CDN
+const formatImageUrl = (url?: string) => {
+  if (!url) return "";
+  let clean = url.trim();
+  clean = clean.replace("http://", "https://");
+  clean = clean.replace("s.gr-assets.com", "i.gr-assets.com");
+  clean = clean.replace("images.gr-assets.com", "i.gr-assets.com");
+  return clean;
+};
+
+// Bảng màu sang trọng cho bìa sách thay thế (Luxury Hardcover Jackets)
+const COVER_THEMES = [
+  { bg: "from-[#1A2A3A] via-[#0D1B2A] to-[#050D1A]", text: "text-amber-200", border: "border-amber-400/30" },
+  { bg: "from-[#3D1418] via-[#260A0D] to-[#140406]", text: "text-rose-200", border: "border-rose-400/30" },
+  { bg: "from-[#122A1E] via-[#0A1A12] to-[#040D09]", text: "text-emerald-200", border: "border-emerald-400/30" },
+  { bg: "from-[#2B1B3A] via-[#1A0E26] to-[#0D0614]", text: "text-purple-200", border: "border-purple-400/30" },
+  { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
+];
 
 export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: number, isHybrid?: boolean }) {
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const highResImg = book.image_url ? book.image_url.replace("s.gr-assets", "i.gr-assets") : "";
+  const [imgError, setImgError] = useState(false);
+  const highResImg = formatImageUrl(book.image_url);
+  const theme = COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length];
+
   // Giả lập giá tiền VNĐ (VD: 150.000đ)
   const randomPrice = book.price || Math.floor(Math.random() * (260 - 80) + 80) * 1000;
   book.price = randomPrice;
@@ -58,13 +79,42 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
         </div>
       )}
 
-      <div className="relative aspect-[2/3] overflow-hidden rounded-xl shadow-md transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl bg-white flex items-center justify-center p-0">
+      <div className="relative aspect-[2/3] overflow-hidden rounded-xl shadow-md transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl bg-[#1A1A1A] flex items-center justify-center p-0">
         <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/20 transition-colors z-10 pointer-events-none"></div>
-        <img 
-          src={highResImg} 
-          alt={cleanTitle(book.title)} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        
+        {!imgError && highResImg ? (
+          <img 
+            src={highResImg} 
+            alt={cleanTitle(book.title)} 
+            referrerPolicy="no-referrer"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          /* Bìa sách bìa cứng mạ vàng kim cổ điển thay thế nếu ảnh gốc gặp lỗi */
+          <div
+            className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none`}
+          >
+            <div className={`absolute inset-2 border ${theme.border} rounded pointer-events-none`}></div>
+            <div className="w-full text-[9px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-1">
+              THE INKWELL
+            </div>
+
+            <div className="my-auto px-2 z-10">
+              <p className={`font-serif font-bold text-sm leading-snug line-clamp-3 ${theme.text}`}>
+                {cleanTitle(book.title)}
+              </p>
+              <div className="w-8 h-[1px] bg-amber-400/40 mx-auto my-2"></div>
+              <p className="text-[11px] text-stone-300 line-clamp-1 italic">
+                {book.author || book.authors || "Special Edition"}
+              </p>
+            </div>
+
+            <div className="text-[8px] text-amber-300/60 uppercase tracking-widest font-mono mb-1">
+              Collector's Pick
+            </div>
+          </div>
+        )}
         
         {/* Nút Thêm vào giỏ hiện ra khi hover */}
         <button 

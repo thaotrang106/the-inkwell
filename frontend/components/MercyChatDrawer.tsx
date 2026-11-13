@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RotateCcw, Send, Loader2, BookOpen } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Message {
   role: "user" | "mercy";
@@ -118,7 +119,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/chat/mercy", {
+      const res = await fetch(`${API_BASE_URL}/api/chat/mercy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: textToSend }),

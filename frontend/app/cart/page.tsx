@@ -50,7 +50,7 @@ export default function CartPage() {
               <img 
                 src={item.image_url.replace("s.gr-assets", "i.gr-assets")} 
                 alt={item.title} 
-                className="w-24 h-36 object-cover rounded-lg shadow-md"
+                referrerPolicy="no-referrer" className="w-24 h-36 object-cover rounded-lg shadow-md"
               />
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div>
@@ -135,3 +135,4 @@ export default function CartPage() {
     </div>
   );
 }
+

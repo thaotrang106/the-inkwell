@@ -52,7 +52,7 @@ export default function BookDetailPage() {
 
         // Ghi nhận hành vi 'view' vào backend (Giai đoạn C)
         const currentUserId = user?.user_id || 1;
-        fetch("${API_BASE_URL}/api/interactions", {
+        fetch(`${API_BASE_URL}/api/interactions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -136,7 +136,7 @@ export default function BookDetailPage() {
   const handleAddToCartDetail = () => {
     addToCart(book, quantity);
     const currentUserId = user?.user_id || 1;
-    fetch("${API_BASE_URL}/api/interactions", {
+    fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -150,7 +150,7 @@ export default function BookDetailPage() {
   const handlePurchaseDetail = () => {
     addToCart(book, quantity);
     const currentUserId = user?.user_id || 1;
-    fetch("${API_BASE_URL}/api/interactions", {
+    fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -164,7 +164,7 @@ export default function BookDetailPage() {
 
   const handleWishlistDetail = () => {
     const currentUserId = user?.user_id || 1;
-    fetch("${API_BASE_URL}/api/interactions", {
+    fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -194,6 +194,7 @@ export default function BookDetailPage() {
             <img 
               src={highResImg} 
               alt={cleanTitle(book.title)} 
+              referrerPolicy="no-referrer"
               className="w-full h-auto object-contain shadow-[0_4px_15px_rgba(0,0,0,0.15)] border border-ink/5" 
             />
           </div>

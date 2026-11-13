@@ -512,6 +512,7 @@ export default function Home() {
                                 <img 
                                   src={book.image_url ? book.image_url.replace("s.gr-assets", "i.gr-assets") : ""} 
                                   alt={cleanName} 
+                                  referrerPolicy="no-referrer"
                                   className="w-10 h-14 object-cover rounded shadow-xs flex-shrink-0 bg-ink/5" 
                                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />

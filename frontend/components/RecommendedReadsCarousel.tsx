@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 // Hàm làm sạch tên sách
 const cleanTitle = (title: string) => {
@@ -208,8 +209,8 @@ export default function RecommendedReadsCarousel({
     const fetchBooks = async () => {
       try {
         const url = user?.user_id
-          ? `http://127.0.0.1:8000/api/recommendations/foryou/${user.user_id}?limit=15`
-          : "http://127.0.0.1:8000/api/recommendations/popular?limit=15";
+          ? `${API_BASE_URL}/api/recommendations/foryou/${user.user_id}?limit=15`
+          : `${API_BASE_URL}/api/recommendations/popular?limit=15`;
 
         const res = await fetch(url);
         if (res.ok) {
@@ -283,7 +284,7 @@ export default function RecommendedReadsCarousel({
     }, 1500);
 
     const currentUserId = user?.user_id || 1;
-    fetch("http://127.0.0.1:8000/api/interactions", {
+    fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

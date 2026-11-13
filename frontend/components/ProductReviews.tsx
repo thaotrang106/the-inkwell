@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Star, ThumbsUp, MessageSquarePlus, CheckCircle2, Filter, Loader2, PenLine, Sparkles, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 interface ReviewItem {
   review_id: number;
@@ -65,7 +66,7 @@ export default function ProductReviews({
   // Nạp danh sách đánh giá từ API backend
   const fetchReviews = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/books/${bookId}/reviews`);
+      const res = await fetch(`${API_BASE_URL}/api/books/${bookId}/reviews`);
       if (res.ok) {
         const json = await res.json();
         if (json.data) {
@@ -102,7 +103,7 @@ export default function ProductReviews({
     setSubmitting(true);
     try {
       const userId = user?.user_id || 1;
-      const res = await fetch(`http://localhost:8000/api/books/${bookId}/reviews`, {
+      const res = await fetch(`${API_BASE_URL}/api/books/${bookId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -175,7 +176,7 @@ export default function ProductReviews({
     });
 
     try {
-      await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful`, {
+      await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/helpful`, {
         method: "POST",
       });
     } catch (e) {

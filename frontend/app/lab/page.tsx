@@ -84,7 +84,7 @@ export default function AlgorithmLabPage() {
       setHybridBooks(hybridData.data || []);
     } catch (err) {
       console.error("Lỗi khi tải dữ liệu Algorithm Lab:", err);
-      setErrorMsg("Không thể kết nối đến máy chủ Backend FastAPI (127.0.0.1:8000). Vui lòng đảm bảo server đang chạy!");
+      setErrorMsg("Không thể kết nối đến máy chủ Backend FastAPI. Vui lòng kiểm tra lại server!");
     } finally {
       setIsLoading(false);
     }
@@ -207,7 +207,7 @@ export default function AlgorithmLabPage() {
               <img 
                 src={currentBook.image_url} 
                 alt={currentBook.title}
-                className="w-full h-full object-cover" 
+                referrerPolicy="no-referrer" className="w-full h-full object-cover" 
               />
             </div>
             <div className="flex-1 text-center sm:text-left">
@@ -269,7 +269,7 @@ export default function AlgorithmLabPage() {
                     <img 
                       src={b.image_url} 
                       alt={b.title} 
-                      className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
+                      referrerPolicy="no-referrer" className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-ink truncate" title={b.title}>
@@ -324,7 +324,7 @@ export default function AlgorithmLabPage() {
                     <img 
                       src={b.image_url} 
                       alt={b.title} 
-                      className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
+                      referrerPolicy="no-referrer" className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-ink truncate" title={b.title}>
@@ -383,7 +383,7 @@ export default function AlgorithmLabPage() {
                     <img 
                       src={b.image_url} 
                       alt={b.title} 
-                      className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
+                      referrerPolicy="no-referrer" className="w-10 h-14 object-cover rounded shadow-xs bg-ink/10 shrink-0" 
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-ink truncate" title={b.title}>
@@ -461,3 +461,4 @@ export default function AlgorithmLabPage() {
     </div>
   );
 }
+
