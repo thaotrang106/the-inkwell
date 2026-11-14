@@ -131,7 +131,7 @@ export default function Home() {
   // Quản lý Lịch sử tìm kiếm gần đây (Cách 2)
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  // Danh sách các banner trang chủ (Tự động chuyển slide sau mỗi 7 giây)
+  // Danh sách các banner trang chủ (Tự động chuyển slide sau mỗi 5 giây)
   const heroSlides = [
     {
       id: 1,
@@ -159,18 +159,6 @@ export default function Home() {
     },
     {
       id: 3,
-      tag: "Tuyển tập tinh hoa • Book Tome",
-      titleLine1: "Mỗi Cuốn Sách",
-      titleLine2: "Là Một Thế Giới",
-      description: "Mở rộng từng trang bách khoa văn chương với các ấn bản bìa vải lanh mạ vàng độc bản và tác phẩm kinh điển được tuyển chọn kỹ lưỡng.",
-      desktopImg: "/banner_tome_bg_desktop.png",
-      mobileImg: "/banner_tome_bg_mobile.png",
-      objectPosition: "object-center",
-      badge: "Ấn bản Sách Khảo Cứu Cổ Điển",
-      layout: "left" as const,
-    },
-    {
-      id: 4,
       tag: "Tuyển tập ấn bản cổ điển",
       titleLine1: "Vintage Classics",
       titleLine2: "Dấu Ấn Thời Gian",
@@ -186,12 +174,12 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Tự động chuyển banner mỗi 7 giây (tự tạm dừng khi đang gõ tìm kiếm hoặc hover chuột)
+  // Tự động chuyển banner mỗi 5 giây (tự tạm dừng khi đang gõ tìm kiếm hoặc hover chuột)
   useEffect(() => {
     if (isPaused || showDropdown || isSearching) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 7000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isPaused, showDropdown, isSearching, heroSlides.length]);
 
