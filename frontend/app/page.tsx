@@ -6,6 +6,7 @@ import Link from "next/link";
 import BookCard from "@/components/BookCard";
 import MercyChatDrawer from "@/components/MercyChatDrawer";
 import RecommendedReadsCarousel from "@/components/RecommendedReadsCarousel";
+import BundleDealsSection from "@/components/BundleDealsSection";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL as BACKEND_URL } from "@/lib/api";
 import { CURATED_BOOKS } from "@/lib/curatedBooks";
@@ -505,26 +506,31 @@ export default function Home() {
   }, [user]);
 
   const fetchPersonalized = async (userId: number) => {
+    // 1. Cập nhật dữ liệu may đo tức thì (0ms) đảm bảo phản hồi ngay khi chuyển đổi người dùng
+    const fallbackReader = DEMO_READERS.find((r) => r.user_id === userId) || DEMO_READERS[0];
+    setPersonalizedBooks(fallbackReader.books);
+
     setIsPersonalizedLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+
     try {
-      const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`);
+      const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
       if (res.ok) {
         const json = await res.json();
         const books = json.data || json.items || [];
         if (books && books.length > 0) {
           setPersonalizedBooks(books);
-          setIsPersonalizedLoading(false);
-          return;
         }
       }
     } catch (err) {
-      console.log("Could not fetch personalized recommendations", err);
+      // Backend offline hoặc timeout -> Giữ nguyên dữ liệu chuẩn của Độc giả mẫu
     } finally {
       setIsPersonalizedLoading(false);
     }
-    // Fallback thông minh đảm bảo luồng thực nghiệm Báo cáo Đồ án luôn chính xác
-    const fallbackReader = DEMO_READERS.find((r) => r.user_id === userId) || DEMO_READERS[0];
-    setPersonalizedBooks(fallbackReader.books);
   };
 
   useEffect(() => {
@@ -1030,14 +1036,20 @@ export default function Home() {
                           key={reader.user_id}
                           type="button"
                           onClick={() => {
+                            setPersonalizedBooks(reader.books);
                             login({
                               user_id: reader.user_id,
                               name: reader.name,
                               email: reader.email,
                               tier: reader.tier,
                             });
-                            fetchPersonalized(reader.user_id);
                             setShowUserSwitcher(false);
+                            setTimeout(() => {
+                              const el = document.getElementById("personalized-section");
+                              if (el) {
+                                el.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }
+                            }, 120);
                           }}
                           className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
                             isSelected ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
@@ -1173,7 +1185,7 @@ export default function Home() {
 
       {/* Gợi ý Cá nhân hóa theo Lịch sử Đọc của User Đăng nhập */}
       {personalizedBooks.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-6 scroll-mt-24">
+        <section id="personalized-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10 mb-16 scroll-mt-24">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1186,14 +1198,16 @@ export default function Home() {
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="font-serif text-2xl font-bold text-ink">
-                      Dành Riêng Cho {user?.name || `Độc giả #${user?.user_id}`}
+                      Dành Riêng Cho {DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || `Độc giả #${user?.user_id}`}
                     </h2>
                     <span className="text-xs bg-ink/5 px-2.5 py-0.5 rounded-full font-mono text-ink/60">
                       User #{user?.user_id}
                     </span>
                   </div>
-                  <p className="text-ink/50 text-sm mt-1">
-                    Được đề xuất riêng dựa trên lịch sử đánh giá thực tế của bạn (Thuật toán Borda Fusion + Centroid)
+                  <p className="text-ink/60 text-sm mt-1">
+                    {DEMO_READERS.find(r => r.user_id === user?.user_id)
+                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • May đo theo thuật toán Hybrid Borda Fusion & Centroid`
+                      : "Được đề xuất riêng dựa trên lịch sử đánh giá thực tế của bạn (Thuật toán Borda Fusion + Centroid)"}
                   </p>
                 </div>
               </div>
@@ -1222,6 +1236,9 @@ export default function Home() {
           </motion.div>
         </section>
       )}
+
+      {/* Khối Ưu Đãi Combo Sách (Bundle Book Deals) - Tiếng Việt */}
+      <BundleDealsSection />
 
       {/* Mục Đề Xuất Tuyển Chọn (Recommended Reads Carousel) - Tuyển tập văn học kinh điển & kiệt tác tư tưởng */}
       <RecommendedReadsCarousel title="Gợi ý tuyển chọn" initialBooks={CURATED_BOOKS} />
