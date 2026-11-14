@@ -153,18 +153,6 @@ export default function Home() {
   const heroSlides: HeroSlide[] = [
     {
       id: 1,
-      tag: "Đồng hành tri thức • Mercy AI",
-      titleLine1: "Thủ Thư Số",
-      titleLine2: "Thấu Cảm Độc Giả",
-      description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
-      desktopImg: "/cozy_sunlit_reading_nook_banner.png",
-      mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
-      objectPosition: "object-[left_center] md:object-[left_center]",
-      badge: "Trợ lý Văn học AI",
-      layout: "left",
-    },
-    {
-      id: 2,
       tag: "Khơi nguồn cảm hứng",
       titleLine1: "Good Books",
       titleLine2: "Better Days",
@@ -173,6 +161,18 @@ export default function Home() {
       mobileImg: "/hero banner_mobile.jpg",
       objectPosition: "object-bottom md:object-[right_bottom]",
       badge: "Không gian Văn chương",
+      layout: "left",
+    },
+    {
+      id: 2,
+      tag: "Đồng hành tri thức • Mercy AI",
+      titleLine1: "Thủ Thư Số",
+      titleLine2: "Thấu Cảm Độc Giả",
+      description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
+      desktopImg: "/cozy_sunlit_reading_nook_banner.png",
+      mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
+      objectPosition: "object-[left_center] md:object-[left_center]",
+      badge: "Trợ lý Văn học AI",
       layout: "left",
     },
     {
