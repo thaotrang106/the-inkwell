@@ -264,6 +264,16 @@ def preload_popular_and_genres():
                 clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
                 clean_img = format_hd_image_url(row.get("image_url", ""), row.get("isbn", ""))
                 desc = row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao."
+                
+                # Nạp phân bổ số sao thực tế (ratings_1 đến ratings_5) từ 200+ triệu lượt đánh giá Goodreads
+                r1 = int(float(row.get("ratings_1", 0) or 0))
+                r2 = int(float(row.get("ratings_2", 0) or 0))
+                r3 = int(float(row.get("ratings_3", 0) or 0))
+                r4 = int(float(row.get("ratings_4", 0) or 0))
+                r5 = int(float(row.get("ratings_5", 0) or 0))
+                dist = {5: r5, 4: r4, 3: r3, 2: r2, 1: r1}
+                tot_ratings = sum(dist.values()) or int(float(row.get("ratings_count", 0) or 0))
+                
                 BOOK_DETAILS_CACHE[b_id] = {
                     "book_id": b_id,
                     "title": row.get("title", ""),
@@ -273,7 +283,8 @@ def preload_popular_and_genres():
                     "description": desc,
                     "language_code": row.get("language_code", "eng"),
                     "score": float(row.get("average_rating", 0) or 4.0),
-                    "ratings_count": int(row.get("ratings_count", 0) or 0),
+                    "ratings_count": tot_ratings,
+                    "ratings_distribution": dist,
                     "sample_read_url": row.get("sample_read_url") or row.get("preview_url") or "",
                     "audio_sample_url": row.get("audio_sample_url") or row.get("audio_url") or ""
                 }
@@ -497,6 +508,13 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
                     if int(row["book_id"]) == book_id:
                         clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
                         isbn = row.get("isbn", "") or ""
+                        r1 = int(float(row.get("ratings_1", 0) or 0))
+                        r2 = int(float(row.get("ratings_2", 0) or 0))
+                        r3 = int(float(row.get("ratings_3", 0) or 0))
+                        r4 = int(float(row.get("ratings_4", 0) or 0))
+                        r5 = int(float(row.get("ratings_5", 0) or 0))
+                        dist = {5: r5, 4: r4, 3: r3, 2: r2, 1: r1}
+                        tot_ratings = sum(dist.values()) or int(float(row.get("ratings_count", 0) or 0))
                         data = {
                             "book_id": book_id,
                             "title": row.get("title", ""),
@@ -505,6 +523,9 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
                             "isbn": isbn,
                             "description": row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
                             "language_code": row.get("language_code", "eng"),
+                            "score": float(row.get("average_rating", 0) or 4.0),
+                            "ratings_count": tot_ratings,
+                            "ratings_distribution": dist,
                             "sample_read_url": row.get("sample_read_url") or row.get("preview_url") or "",
                             "audio_sample_url": row.get("audio_sample_url") or row.get("audio_url") or ""
                         }
@@ -910,45 +931,93 @@ def format_reader_name(user_id: int, original_username: Optional[str] = None) ->
 def get_book_reviews(book_id: int, db: Session = Depends(get_db)):
     """
     Lấy danh sách đánh giá của độc giả cho cuốn sách và bảng phân bổ số sao.
-    Phân bổ số sao được lấy từ 200,000+ lượt đánh giá thực tế trong bảng ratings.
+    Phân bổ số sao được lấy từ hàng triệu lượt đánh giá thực tế của Goodreads cho từng tác phẩm.
     """
-    book = db.query(Book).filter(Book.book_id == book_id).first()
-    if not book:
+    cached_book = BOOK_DETAILS_CACHE.get(book_id)
+    book = None
+    if db:
+        try:
+            book = db.query(Book).filter(Book.book_id == book_id).first()
+        except Exception as e:
+            print(f"[Reviews] DB error: {e}")
+
+    if not book and not cached_book:
         raise HTTPException(status_code=404, detail="Không tìm thấy sách")
 
-    # 1. Tính toán phân bổ số sao thực tế từ bảng ratings
-    ratings_dist = db.execute(text("""
-        SELECT rating, count(*) 
-        FROM ratings 
-        WHERE book_id = :b AND rating BETWEEN 1 AND 5
-        GROUP BY rating
-    """), {"b": book_id}).fetchall()
-    
+    # 1. Tính toán phân bổ số sao thực tế (ratings_1 đến ratings_5)
     distribution = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
-    total_ratings_db = 0
-    total_rating_sum = 0
-    for r_val, count in ratings_dist:
-        r_int = int(r_val)
-        distribution[r_int] = count
-        total_ratings_db += count
-        total_rating_sum += r_int * count
-        
-    avg_score = round(total_rating_sum / total_ratings_db, 1) if total_ratings_db > 0 else round(float(book.average_rating or 4.5), 1)
+    total_ratings_count = 0
+    avg_score = 4.5
+
+    # Ưu tiên lấy từ cache RAM của dataset Goodreads
+    if cached_book and cached_book.get("ratings_distribution"):
+        distribution = dict(cached_book["ratings_distribution"])
+        total_ratings_count = sum(distribution.values())
+        avg_score = round(float(cached_book.get("score") or 4.5), 2)
+    else:
+        # Fallback đọc từ CSV nếu chưa có trong RAM
+        try:
+            csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
+            if not csv_path.exists():
+                csv_path = Path("data/books_enriched.csv")
+            if csv_path.exists():
+                with open(csv_path, "r", encoding="utf-8") as f:
+                    for row in csv.DictReader(f):
+                        if int(row["book_id"]) == book_id:
+                            r1 = int(float(row.get("ratings_1", 0) or 0))
+                            r2 = int(float(row.get("ratings_2", 0) or 0))
+                            r3 = int(float(row.get("ratings_3", 0) or 0))
+                            r4 = int(float(row.get("ratings_4", 0) or 0))
+                            r5 = int(float(row.get("ratings_5", 0) or 0))
+                            distribution = {5: r5, 4: r4, 3: r3, 2: r2, 1: r1}
+                            total_ratings_count = sum(distribution.values())
+                            avg_score = round(float(row.get("average_rating", 0) or 4.5), 2)
+                            break
+        except Exception as csv_err:
+            print(f"[Reviews] CSV fallback error: {csv_err}")
+
+    # Nếu vẫn bằng 0 (ví dụ sách mới tạo riêng), truy vấn bảng ratings
+    if total_ratings_count == 0 and db:
+        try:
+            ratings_dist = db.execute(text("""
+                SELECT rating, count(*) 
+                FROM ratings 
+                WHERE book_id = :b AND rating BETWEEN 1 AND 5
+                GROUP BY rating
+            """), {"b": book_id}).fetchall()
+            tot_sum = 0
+            for r_val, count in ratings_dist:
+                r_int = int(r_val)
+                distribution[r_int] = count
+                total_ratings_count += count
+                tot_sum += r_int * count
+            if total_ratings_count > 0:
+                avg_score = round(tot_sum / total_ratings_count, 2)
+            elif book:
+                avg_score = round(float(book.average_rating or 4.5), 2)
+        except Exception:
+            pass
 
     # 2. Lấy danh sách nhận xét văn bản
-    reviews = db.query(Review).filter(Review.book_id == book_id).order_by(Review.created_at.desc()).all()
+    reviews = []
+    if db:
+        try:
+            reviews = db.query(Review).filter(Review.book_id == book_id).order_by(Review.created_at.desc()).all()
+        except Exception as rev_err:
+            print(f"[Reviews] Query reviews error: {rev_err}")
     
     # Nếu sách chưa có bài nhận xét nào, tự động khởi tạo 3 nhận xét cảm nhận văn học
-    if not reviews:
+    if not reviews and db:
         try:
             import ast
-            auth_str = book.authors or "tác giả"
+            b_authors = book.authors if book else (cached_book.get("author") if cached_book else "tác giả")
+            auth_str = b_authors or "tác giả"
             if auth_str.startswith("['") and auth_str.endswith("']"):
                 try:
                     auth_str = ", ".join(ast.literal_eval(auth_str))
                 except Exception:
                     pass
-            title_str = book.title or "tác phẩm"
+            title_str = (book.title if book else cached_book.get("title")) or "tác phẩm"
             
             raters = db.execute(text("""
                 SELECT user_id, rating 
@@ -1008,7 +1077,7 @@ def get_book_reviews(book_id: int, db: Session = Depends(get_db)):
         "data": {
             "average_rating": avg_score,
             "total_reviews": len(review_list),
-            "ratings_count": total_ratings_db or book.ratings_count or len(review_list),
+            "ratings_count": total_ratings_count or (book.ratings_count if book else 0) or len(review_list),
             "distribution": distribution,
             "reviews": review_list
         }

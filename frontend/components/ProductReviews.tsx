@@ -25,16 +25,30 @@ interface ReviewData {
   reviews: ReviewItem[];
 }
 
+// Hàm sinh phân bổ số sao tự nhiên theo đường cong chuẩn nếu chưa kịp tải dữ liệu chi tiết
+const getNaturalFallbackPercentage = (star: number, avg: number): number => {
+  const weights: { [key: number]: number } = {};
+  let totalWeight = 0;
+  for (let s = 1; s <= 5; s++) {
+    const w = Math.exp(-Math.pow(s - avg, 2) / (2 * 0.95 * 0.95));
+    weights[s] = w;
+    totalWeight += w;
+  }
+  return totalWeight > 0 ? Math.round((weights[star] / totalWeight) * 100) : 20;
+};
+
 export default function ProductReviews({
   bookId,
   bookTitle,
   initialAverageRating = 4.5,
   initialRatingsCount = 0,
+  initialDistribution,
 }: {
   bookId: number;
   bookTitle: string;
   initialAverageRating?: number;
   initialRatingsCount?: number;
+  initialDistribution?: { [key: number]: number };
 }) {
   const { user } = useAuth();
   const [data, setData] = useState<ReviewData | null>(null);
@@ -187,7 +201,11 @@ export default function ProductReviews({
   const reviewsList = data?.reviews || [];
   const totalReviewsCount = reviewsList.length;
   const avgRating = data?.average_rating || initialAverageRating;
-  const distribution = data?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  const distribution = (data?.distribution && Object.values(data.distribution).some((v) => v > 0))
+    ? data.distribution
+    : ((initialDistribution && Object.values(initialDistribution).some((v) => v > 0))
+      ? initialDistribution
+      : { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
 
   // Tổng số lượt rating từ cộng đồng
   const totalRatingsInDist = Object.values(distribution).reduce((a, b) => a + b, 0);
@@ -265,7 +283,9 @@ export default function ProductReviews({
           <div className="lg:col-span-5 flex flex-col justify-center space-y-2.5 sm:px-4">
             {[5, 4, 3, 2, 1].map((star) => {
               const count = distribution[star] || 0;
-              const percentage = totalRatingsInDist > 0 ? Math.round((count / totalRatingsInDist) * 100) : (star === 5 ? 70 : star === 4 ? 20 : 5);
+              const percentage = totalRatingsInDist > 0 
+                ? Math.round((count / totalRatingsInDist) * 100) 
+                : getNaturalFallbackPercentage(star, Number(avgRating) || 4.5);
               const isSelected = selectedStarFilter === star;
 
               return (
@@ -275,7 +295,7 @@ export default function ProductReviews({
                   className={`flex items-center gap-3 text-xs font-medium cursor-pointer p-1.5 rounded-[4px] transition-colors ${
                     isSelected ? "bg-stone-200/70 text-stone-900 font-bold" : "hover:bg-white text-stone-700"
                   }`}
-                  title={`Lọc nhận xét ${star} sao (${count} lượt đánh giá)`}
+                  title={count > 0 ? `Lọc nhận xét ${star} sao (${count.toLocaleString("vi-VN")} lượt đánh giá)` : `Lọc nhận xét ${star} sao (${percentage}%)`}
                 >
                   <span className="w-10 flex items-center gap-1 shrink-0 font-sans text-xs">
                     <span>{star} sao</span>

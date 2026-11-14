@@ -945,6 +945,7 @@ export default function BookDetailPage() {
         bookTitle={cleanTitle(book.title)} 
         initialAverageRating={book.score || 4.5}
         initialRatingsCount={book.ratings_count || 0}
+        initialDistribution={book.ratings_distribution}
       />
 
       {/* 1. Phần Sách tương tự bạn có thể thích (You may also like) */}
