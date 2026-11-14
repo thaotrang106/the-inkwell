@@ -600,6 +600,18 @@ export default function Home() {
                                 onClick={() => {
                                   saveRecentSearch(cleanName);
                                   setShowDropdown(false);
+                                  if (typeof window !== "undefined") {
+                                    try {
+                                      sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify(book));
+                                    } catch {}
+                                  }
+                                }}
+                                onMouseEnter={() => {
+                                  if (typeof window !== "undefined") {
+                                    try {
+                                      sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify(book));
+                                    } catch {}
+                                  }
                                 }}
                                 className="flex items-center gap-3.5 flex-1 min-w-0 cursor-pointer"
                               >

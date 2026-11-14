@@ -366,6 +366,20 @@ export default function RecommendedReadsCarousel({
                   {/* Bìa sách định dạng 3D */}
                   <Link
                     href={`/books/${book.book_id}`}
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        try {
+                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: salePrice }));
+                        } catch {}
+                      }
+                    }}
+                    onMouseEnter={() => {
+                      if (typeof window !== "undefined") {
+                        try {
+                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: salePrice }));
+                        } catch {}
+                      }
+                    }}
                     className="w-full flex flex-col items-center group/card cursor-pointer"
                   >
                     <Book3DCover book={book} />

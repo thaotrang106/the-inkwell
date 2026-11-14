@@ -88,8 +88,22 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
   };
 
+  const handleSaveToSession = () => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify(book));
+      } catch {}
+    }
+  };
+
   return (
-    <Link href={`/books/${book.book_id}`} className="group cursor-pointer flex flex-col gap-4 relative w-full h-full block">
+    <Link 
+      href={`/books/${book.book_id}`} 
+      onClick={handleSaveToSession}
+      onMouseEnter={handleSaveToSession}
+      onMouseDown={handleSaveToSession}
+      className="group cursor-pointer flex flex-col gap-4 relative w-full h-full block"
+    >
       
       {rank && !isHybrid && (
         <div className="absolute top-2 left-2 z-10 bg-rose-500 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded shadow-md">

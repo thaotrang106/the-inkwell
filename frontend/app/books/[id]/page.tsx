@@ -46,11 +46,38 @@ export default function BookDetailPage() {
   const { addToCart } = useCart();
   const { user } = useAuth();
   
-  const [book, setBook] = useState<any>(() => CLIENT_BOOK_CACHE.get(id) || null);
-  const [loading, setLoading] = useState(() => !CLIENT_BOOK_CACHE.has(id));
+  // Khởi tạo state sách ngay từ RAM hoặc sessionStorage để hiển thị tức thì trong 0.00 giây
+  const [book, setBook] = useState<any>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem(`inkwell_book_${id}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && (parsed.title || parsed.book_id)) return parsed;
+        }
+      } catch {}
+    }
+    return CLIENT_BOOK_CACHE.get(id) || null;
+  });
+
+  const [loading, setLoading] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem(`inkwell_book_${id}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && (parsed.title || parsed.book_id)) return false;
+        }
+      } catch {}
+    }
+    return !CLIENT_BOOK_CACHE.has(id);
+  });
   
   // Trạng thái ảnh bìa sách với cơ chế 2 tầng tải ảnh và bìa dự phòng
-  const [detailImgSrc, setDetailImgSrc] = useState<string>("");
+  const [detailImgSrc, setDetailImgSrc] = useState<string>(() => {
+    if (book?.image_url) return formatImageUrl(book.image_url);
+    return "";
+  });
   const [useDetailProxy, setUseDetailProxy] = useState(false);
   const [detailImgFailed, setDetailImgFailed] = useState(false);
 
@@ -63,9 +90,20 @@ export default function BookDetailPage() {
   const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
 
   useEffect(() => {
-    if (CLIENT_BOOK_CACHE.has(id)) {
-      setBook(CLIENT_BOOK_CACHE.get(id));
+    let currentBook = CLIENT_BOOK_CACHE.get(id);
+    if (!currentBook && typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem(`inkwell_book_${id}`);
+        if (stored) currentBook = JSON.parse(stored);
+      } catch {}
+    }
+
+    if (currentBook && (currentBook.title || currentBook.book_id)) {
+      setBook(currentBook);
       setLoading(false);
+      if (currentBook.image_url) {
+        setDetailImgSrc(formatImageUrl(currentBook.image_url));
+      }
     } else {
       setLoading(true);
     }
@@ -79,11 +117,19 @@ export default function BookDetailPage() {
         const demoBook = json.data;
         
         if (demoBook) {
-          if (!demoBook.price) {
-            demoBook.price = Math.floor(Math.random() * (260 - 80) + 80) * 1000;
+          const mergedBook = {
+            ...currentBook,
+            ...demoBook,
+            price: currentBook?.price || demoBook.price || Math.floor(Math.random() * (260 - 80) + 80) * 1000
+          };
+          CLIENT_BOOK_CACHE.set(id, mergedBook);
+          setBook(mergedBook);
+          if (mergedBook.image_url) {
+            setDetailImgSrc(formatImageUrl(mergedBook.image_url));
           }
-          CLIENT_BOOK_CACHE.set(id, demoBook);
-          setBook(demoBook);
+          try {
+            sessionStorage.setItem(`inkwell_book_${id}`, JSON.stringify(mergedBook));
+          } catch {}
         }
         setRelatedBooks(json.data?.slice(1, 5) || []);
 
@@ -139,7 +185,15 @@ export default function BookDetailPage() {
       });
   }, [id]);
 
-  if (loading) {
+  useEffect(() => {
+    if (book?.image_url) {
+      setDetailImgSrc(formatImageUrl(book.image_url));
+      setUseDetailProxy(false);
+      setDetailImgFailed(false);
+    }
+  }, [book?.image_url]);
+
+  if (loading && !book) {
     return (
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white min-h-screen">
         {/* Breadcrumb Skeleton */}
@@ -189,14 +243,6 @@ export default function BookDetailPage() {
   if (!book) {
     return <div className="min-h-screen flex items-center justify-center">Không tìm thấy sách</div>;
   }
-
-  useEffect(() => {
-    if (book?.image_url) {
-      setDetailImgSrc(formatImageUrl(book.image_url));
-      setUseDetailProxy(false);
-      setDetailImgFailed(false);
-    }
-  }, [book?.image_url]);
 
   const handleDetailImageError = () => {
     if (!useDetailProxy && detailImgSrc) {
@@ -403,18 +449,23 @@ export default function BookDetailPage() {
           </div>
           
           {/* Description */}
-                    {/* Description */}
           <div className="prose prose-sm max-w-none text-ink/90 leading-relaxed font-sans mb-8">
             <p className="font-bold mb-4 uppercase text-xs tracking-wider text-terracotta">
               TÓM TẮT NỘI DUNG SÁCH
             </p>
 
-            
-            {/* Hiển thị nội dung thật từ Database */}
-            <p className="whitespace-pre-line text-base">
-              {book.description || "Chưa có thông tin giới thiệu cho cuốn sách này."}
-            </p>
-
+            {/* Hiển thị nội dung thật từ Database hoặc shimmer nhẹ khi đang hoàn tất tải */}
+            {book.description ? (
+              <p className="whitespace-pre-line text-base">
+                {book.description}
+              </p>
+            ) : (
+              <div className="space-y-2.5 animate-pulse py-1">
+                <div className="h-4 bg-ink/10 rounded-sm w-full"></div>
+                <div className="h-4 bg-ink/10 rounded-sm w-11/12"></div>
+                <div className="h-4 bg-ink/10 rounded-sm w-4/5"></div>
+              </div>
+            )}
           </div>
 
           {/* Góc nhìn Cố vấn Mercy AI */}
