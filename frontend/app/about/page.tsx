@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Sparkles, BookOpen, Package, Heart } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, BookOpen, Package, Heart, Compass, ShieldCheck, Quote, BookMarked } from "lucide-react";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#B12704] selection:text-white">
       
-      {/* Top Breadcrumb Bar */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-2">
+      {/* 1. THANH ĐIỀU HƯỚNG BREADCRUMB */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <Link 
           href="/" 
           className="inline-flex items-center gap-2 text-xs sm:text-sm text-ink/60 hover:text-[#B12704] transition-colors font-medium group"
@@ -18,181 +18,332 @@ export default function AboutPage() {
         </Link>
       </div>
 
-      {/* BROADSHEET NEWSPAPER CONTAINER (Phong cách Báo / Tạp chí Văn học cổ điển) */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6">
 
-        {/* 2. THE EDITORIAL CENTERPIECE (Desktop: 3-column broadsheet | Mobile: fluid editorial stack) */}
-        <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-start">
+        {/* 2. THE EDITORIAL CENTERPIECE (Bố cục Báo chí Tạp chí Văn học 3 Cột) */}
+        <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-start pb-12 border-b border-ink/15">
 
-          {/* CỘT TRÁI (Desktop: 4 cols) - Typography thơ mộng & Trích dẫn Ink Blot */}
-          <div className="lg:col-span-4 flex flex-col justify-between order-2 lg:order-1 space-y-8">
+          {/* CỘT TRÁI (Desktop: 4 cols) - Tiêu đề thơ mộng & Triết lý cốt lõi */}
+          <div className="lg:col-span-4 flex flex-col justify-between order-2 lg:order-1 space-y-7">
             
-            {/* Editorial Headline: Kết hợp Serif đậm, nghiêng, thanh thoát đúng chất nghệ thuật */}
-            <div className="space-y-1">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-ink leading-[1.08] tracking-tight">
-                Good Books
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B12704]/10 text-[#B12704] text-[11px] uppercase font-bold tracking-widest">
+                <Sparkles size={12} />
+                <span>Bản Sắc & Sứ Mệnh The Inkwell</span>
+              </div>
+
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.65rem] font-bold text-ink leading-[1.12] tracking-tight">
+                Sách Hay Vẹn Nguyên Nơi Tâm Thức
               </h1>
-              <p className="font-serif italic text-3xl sm:text-4xl lg:text-[2.6rem] text-ink/80 font-normal leading-tight">
-                Is Well and Truly
+              
+              <p className="font-serif italic text-xl sm:text-2xl text-ink/75 font-normal leading-snug">
+                “Good Books Are Truly in the Heart”
               </p>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-medium text-ink leading-tight">
-                in the Heart
-              </h2>
-              <p className="font-serif text-lg sm:text-xl text-ink/60 pt-3">
-                Will It Ever Fade?
+
+              <p className="text-xs sm:text-sm text-ink/50 uppercase tracking-widest font-mono">
+                Thư viện số & Cố vấn văn học AI
               </p>
             </div>
 
-            {/* Ink Blot Quote Badge (Vệt mực đen loang nghệ thuật chứa trích dẫn) */}
-            <div className="relative pt-6">
-              <div className="bg-[#1C1917] text-[#FAF7F2] rounded-3xl p-6 sm:p-7 shadow-lg relative overflow-hidden max-w-sm">
-                {/* Viền mộc & hạt bụi sao */}
-                <div className="absolute -top-12 -right-12 w-28 h-28 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+            {/* Khối trích dẫn phong cách giấy da đen tuyền sang trọng */}
+            <div className="relative">
+              <div className="bg-[#1C1917] text-[#FAF7F2] rounded-2xl p-6 sm:p-7 shadow-xl border border-amber-900/20 relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
                 
-                <div className="w-10 h-0.5 bg-amber-200/60 mb-3" />
-                <p className="font-serif italic text-sm sm:text-base leading-relaxed text-cream/90">
-                  "Đọc chậm giữa một thế giới luôn vội vã — đó không phải là sự thụt lùi, mà là khởi nguồn của mọi sự sâu sắc."
+                <div className="flex items-center gap-2 text-amber-300/80 mb-3">
+                  <Quote size={20} className="fill-amber-300/20 text-amber-300" />
+                  <div className="w-8 h-[1px] bg-amber-300/40" />
+                </div>
+
+                <p className="font-serif italic text-sm sm:text-[15px] leading-relaxed text-cream/90">
+                  "Đọc chậm giữa một thế giới luôn vội vã — đó không phải là sự thụt lùi, mà là sự trở về với những chiều sâu vĩnh cửu của tâm hồn."
                 </p>
-                <p className="text-[11px] uppercase tracking-wider text-amber-300/80 font-semibold mt-3">
+
+                <p className="text-[11px] uppercase tracking-wider text-amber-300/90 font-semibold mt-4">
                   — Triết lý The Inkwell
                 </p>
               </div>
-
-              {/* Đốm mực trang trí nhỏ */}
-              <div className="hidden sm:block absolute -bottom-3 right-6 w-3 h-3 rounded-full bg-ink/80" />
-              <div className="hidden sm:block absolute -bottom-6 right-12 w-2 h-2 rounded-full bg-ink/60" />
             </div>
 
             {/* Nút hành động */}
-            <div className="pt-2">
+            <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link 
-                href="/" 
-                className="inline-flex items-center gap-2 bg-[#B12704] hover:bg-[#8e1f03] text-white px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+                href="/trending" 
+                className="inline-flex items-center gap-2 bg-[#B12704] hover:bg-[#8e1f03] text-white px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow-md cursor-pointer"
               >
                 <span>Khám phá các ấn phẩm</span>
                 <ArrowRight size={14} />
+              </Link>
+              <Link 
+                href="/lab" 
+                className="inline-flex items-center gap-1.5 border border-ink/20 hover:border-ink/50 text-ink/80 hover:text-ink px-4 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors bg-white/60"
+              >
+                <Sparkles size={13} className="text-[#B12704]" />
+                <span>Trải nghiệm AI</span>
               </Link>
             </div>
 
           </div>
 
-          {/* CỘT GIỮA (Desktop: 4 cols) - Tác phẩm điêu khắc Ngòi bút & Vũ trụ Sách nở rộ */}
+          {/* CỘT GIỮA (Desktop: 4 cols) - Ngòi bút biểu tượng & Vòm nghệ thuật cổ điển */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center order-1 lg:order-2 py-4 lg:py-0">
-            <div className="relative w-full max-w-[340px] sm:max-w-[380px] lg:max-w-full flex justify-center">
+            <div className="relative w-full max-w-[320px] sm:max-w-[360px] lg:max-w-full flex justify-center">
               
-              {/* Ảnh ngòi bút & bàn tay mở sách siêu thực đã được bóc tách trong suốt 100% */}
+              {/* Khung vòm nghệ thuật mờ ảo làm nổi bật ngòi bút */}
+              <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-stone-200/20 to-transparent rounded-t-[140px] pointer-events-none" />
+
+              {/* Ảnh ngòi bút The Inkwell bóc tách trong suốt sắc nét */}
               <img 
                 src="/inkwell_editorial_totem_clean.png" 
                 alt="Ngòi bút The Inkwell và Vũ trụ Sách mở" 
-                className="w-auto h-auto max-h-[520px] sm:max-h-[600px] lg:max-h-[680px] object-contain drop-shadow-xl hover:scale-102 transition-transform duration-700 select-none pointer-events-none"
+                className="relative z-10 w-auto h-auto max-h-[500px] sm:max-h-[560px] lg:max-h-[620px] object-contain drop-shadow-xl select-none transition-transform duration-700 hover:scale-[1.02]"
               />
-
-              {/* Các đốm mực đen trang trí bay tự do bên cạnh ngòi bút */}
-              <div className="absolute top-1/4 -right-2 sm:right-2 w-4 h-4 rounded-full bg-[#1C1917]" />
-              <div className="absolute top-1/3 -right-5 sm:-right-2 w-2.5 h-2.5 rounded-full bg-[#1C1917]" />
-              <div className="absolute bottom-1/3 -left-3 sm:left-0 w-3 h-3 rounded-full bg-[#1C1917]" />
             </div>
           </div>
 
-          {/* CỘT PHẢI (Desktop: 4 cols) - Bài viết xã luận với Drop Cap (Chữ T thụt dòng cổ điển) */}
-          <div className="lg:col-span-4 flex flex-col justify-start order-3 space-y-6 pt-2">
+          {/* CỘT PHẢI (Desktop: 4 cols) - Bài viết xã luận với Drop Cap T */}
+          <div className="lg:col-span-4 flex flex-col justify-start order-3 space-y-5 pt-1">
             
-            {/* Tác giả & Đường kẻ mỏng */}
             <div>
               <p className="text-xs uppercase tracking-[0.2em] font-bold text-ink/50">
                 Lời ngỏ từ The Inkwell
               </p>
-              <div className="w-12 h-0.5 bg-ink/30 mt-2 mb-4" />
+              <div className="w-12 h-0.5 bg-[#B12704] mt-2 mb-3" />
             </div>
 
-            {/* Bài luận xã luận chuẩn Magazine với DROP CAP T */}
-            <div className="space-y-4 text-ink/80 text-sm leading-[1.75] font-serif text-justify">
+            {/* Bài luận xã luận chuẩn Magazine: Căn lề trái tự nhiên tránh dãn chữ xấu */}
+            <div className="space-y-4 text-ink/85 text-sm sm:text-[14.5px] leading-[1.8] font-serif text-left">
               <p>
-                <span className="float-left text-5xl sm:text-6xl font-serif font-bold text-ink mr-3 mt-1 leading-none select-none">
+                <span className="float-left text-5xl font-serif font-bold text-[#B12704] mr-3 mt-1 leading-none select-none">
                   T
                 </span>
                 rong một chuyến tàu chiều ngập nắng, một người bạn từng ngập ngừng hỏi chúng tôi: 
-                <em> "Giữa thời đại của những đoạn video vài giây và tin tức lướt vội, liệu còn ai đủ kiên nhẫn để lật giở từng trang của một cuốn tiểu thuyết dày?"</em>
+                <em className="text-ink font-normal"> "Giữa thời đại của những đoạn video vài giây và tin tức lướt vội, liệu còn ai đủ kiên nhẫn để lật giở từng trang của một cuốn tiểu thuyết dày?"</em>
               </p>
+              
               <p>
-                Câu hỏi ấy chính là lý do <strong>The Inkwell</strong> ra đời. Chúng tôi không xem sách như những món hàng hóa tiêu thụ nhanh, mà là những chiếc cầu nối kỳ diệu giữa các thế hệ, nơi tư tưởng của những bậc hiền triết và thi hào vĩ đại vẫn âm thầm soi sáng tâm hồn con người.
+                Câu hỏi ấy chính là lý do <strong>The Inkwell</strong> ra đời. Chúng tôi không xem sách như những món hàng tiêu thụ nhanh, mà là những chiếc cầu nối kỳ diệu giữa các thế hệ — nơi tư tưởng của những bậc hiền triết và đại thi hào vẫn âm thầm soi sáng tâm hồn con người.
               </p>
+              
               <p>
                 Từ giọt mực đầu tiên rơi trên đầu ngòi bút đến khi trang sách được mở ra, mỗi tác phẩm tại The Inkwell đều được chọn lọc bằng tất cả sự kính trọng. Bạn sẽ tìm thấy ở đây không chỉ là sách kinh điển, mà còn là người bạn đồng hành <strong>Mercy AI</strong> — thủ thư số tận tâm lắng nghe cảm xúc để dẫn lối bạn đến đúng cuốn sách bạn cần trong đời.
               </p>
             </div>
 
-            {/* Khối trích dẫn nhỏ phong cách cột báo chí */}
-            <div className="border-t border-b border-ink/15 py-3 my-4">
+            {/* Lời trích mộc mạc & Chữ ký */}
+            <div className="border-t border-b border-ink/10 py-3.5 my-2">
               <p className="text-xs italic text-ink/70 leading-relaxed font-serif">
                 "Mỗi cuốn sách bạn cầm trên tay là một cuộc hội ngộ đã được định sẵn qua nhiều thế kỷ."
               </p>
             </div>
 
-
+            <div className="text-right pt-1">
+              <p className="font-serif italic text-xs text-ink/60">
+                — Đội ngũ Giám tuyển The Inkwell
+              </p>
+            </div>
 
           </div>
 
         </section>
 
-        {/* 3. PHẦN BỐN CỘT BÁO CHÍ (4 Editorial Features — Chuẩn phong cách Tạp chí) */}
-        <section className="border-t border-ink/20 pt-12 mt-16 sm:mt-24">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* 3. THƯỚC ĐO TINH HOA (Key Milestones & Numbers) */}
+        <section className="py-12 border-b border-ink/15">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-ink tracking-tight">
+              Những Con Số Nói Lên Tâm Huyết
+            </h2>
+            <p className="text-xs sm:text-sm text-ink/60 font-sans mt-2">
+              Chúng tôi cam kết gìn giữ chất lượng học thuật và trải nghiệm đọc chuẩn mực nhất.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#B12704] font-bold text-xs uppercase tracking-wider">
-                <BookOpen size={16} />
-                <span>01. Tuyển Chọn Tinh Hoa</span>
+            <div className="bg-white/70 border border-ink/10 rounded-2xl p-5 text-center shadow-xs">
+              <div className="font-serif font-bold text-3xl sm:text-4xl text-[#B12704] mb-1">
+                10.000+
               </div>
-              <h3 className="font-serif font-bold text-base text-ink">Bản Quyền Chính Ngạch</h3>
-              <p className="text-xs text-ink/70 leading-relaxed">
-                Từng tác phẩm đều qua thẩm định nghiêm ngặt về chất lượng dịch thuật, giá trị nhân văn và độ hoàn thiện của ấn bản.
+              <div className="font-semibold text-xs sm:text-sm text-ink mb-1">
+                Tác Phẩm Kinh Điển
+              </div>
+              <p className="text-[11px] text-ink/60 leading-snug">
+                Tuyển chọn toàn diện từ văn học phương Tây, phương Đông đến hiện đại.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#B12704] font-bold text-xs uppercase tracking-wider">
-                <Sparkles size={16} />
-                <span>02. Trợ Lý Mercy AI</span>
+            <div className="bg-white/70 border border-ink/10 rounded-2xl p-5 text-center shadow-xs">
+              <div className="font-serif font-bold text-3xl sm:text-4xl text-[#B12704] mb-1">
+                26+
               </div>
-              <h3 className="font-serif font-bold text-base text-ink">Thấu Hiểu Gu Đọc</h3>
-              <p className="text-xs text-ink/70 leading-relaxed">
-                Công nghệ AI phân tích cảm xúc giúp kết nối bạn với những cuốn sách đồng điệu nhất với tâm trạng hiện tại.
+              <div className="font-semibold text-xs sm:text-sm text-ink mb-1">
+                Chuyên Mục Thể Loại
+              </div>
+              <p className="text-[11px] text-ink/60 leading-snug">
+                Phân loại bài bản từ Triết học, Thi ca, Tâm lý học đến Tiểu thuyết lịch sử.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#B12704] font-bold text-xs uppercase tracking-wider">
-                <Package size={16} />
-                <span>03. Đóng Gói Thủ Công</span>
+            <div className="bg-white/70 border border-ink/10 rounded-2xl p-5 text-center shadow-xs">
+              <div className="font-serif font-bold text-3xl sm:text-4xl text-[#B12704] mb-1">
+                100%
               </div>
-              <h3 className="font-serif font-bold text-base text-ink">Như Một Món Quà</h3>
-              <p className="text-xs text-ink/70 leading-relaxed">
-                Bọc giấy kraft mộc mạc, chống sốc đa tầng và gửi kèm chiếc bookmark độc quyền mang biểu tượng The Inkwell.
+              <div className="font-semibold text-xs sm:text-sm text-ink mb-1">
+                Ấn Bản Chuẩn Mực
+              </div>
+              <p className="text-[11px] text-ink/60 leading-snug">
+                Bìa nguyên bản độ nét cao HD, dịch thuật chính xác và giữ trọn nguyên tác.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#B12704] font-bold text-xs uppercase tracking-wider">
-                <Heart size={16} />
-                <span>04. Văn Hóa Đọc Sâu</span>
+            <div className="bg-white/70 border border-ink/10 rounded-2xl p-5 text-center shadow-xs">
+              <div className="font-serif font-bold text-3xl sm:text-4xl text-[#B12704] mb-1">
+                0.00s
               </div>
-              <h3 className="font-serif font-bold text-base text-ink">Lối Sống Chậm Rãi</h3>
-              <p className="text-xs text-ink/70 leading-relaxed">
-                Tạo dựng không gian tĩnh lặng, nuôi dưỡng sự tập trung và lan tỏa tình yêu sách đích thực giữa đời thường.
+              <div className="font-semibold text-xs sm:text-sm text-ink mb-1">
+                Gợi Ý AI Tức Thì
+              </div>
+              <p className="text-[11px] text-ink/60 leading-snug">
+                Mô hình Lai (Hybrid AI) phản hồi siêu tốc qua bộ nhớ đệm RAM thông minh.
               </p>
             </div>
 
           </div>
         </section>
 
-        {/* 4. CHÂN TRANG BÁO CHÍ (Newspaper Footer Rule) */}
-        <div className="border-t-2 border-ink/40 pt-6 mt-12 flex flex-col sm:flex-row items-center justify-between text-xs text-ink/60 gap-4">
-          <p>© 2026 The Inkwell Bookstore. Tất cả các tác phẩm được tuyển chọn và bảo lưu quyền phát hành.</p>
+        {/* 4. BA TRỤ CỘT TRIẾT LÝ CỦA THE INKWELL */}
+        <section className="py-14 border-b border-ink/15">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-[#B12704] text-xs font-bold uppercase tracking-widest font-mono">
+              Giá Trị Cốt Lõi
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-ink tracking-tight mt-1">
+              Ba Trụ Cột Định Hình The Inkwell
+            </h2>
+            <p className="text-xs sm:text-sm text-ink/60 font-sans mt-2">
+              Chúng tôi không chỉ bán sách, chúng tôi kiến tạo một ốc đảo tri thức tĩnh lặng cho độc giả hiện đại.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            
+            {/* Trụ cột 1 */}
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-ink/10 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#B12704]/10 text-[#B12704] flex items-center justify-center mb-5">
+                  <BookOpen size={22} />
+                </div>
+                <div className="text-xs uppercase tracking-wider font-bold text-[#B12704] mb-1">
+                  Trụ Cột I
+                </div>
+                <h3 className="font-serif font-bold text-lg text-ink mb-3">
+                  Giám Tuyển Khắt Khe
+                </h3>
+                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
+                  Không chạy theo thị hiếu nhất thời. Mỗi tác phẩm nằm trên kệ của The Inkwell đều trải qua quy trình thẩm định nghiêm ngặt về giá trị tư tưởng, phẩm giá nghệ thuật và chất lượng dịch thuật.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-ink/50 font-mono">
+                ✓ Thẩm định dịch thuật • Bảo tồn nguyên tác
+              </div>
+            </div>
+
+            {/* Trụ cột 2 */}
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#B12704]/30 shadow-sm flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-[#B12704] text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                Đột Phá
+              </div>
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center mb-5">
+                  <Sparkles size={22} />
+                </div>
+                <div className="text-xs uppercase tracking-wider font-bold text-[#B12704] mb-1">
+                  Trụ Cột II
+                </div>
+                <h3 className="font-serif font-bold text-lg text-ink mb-3">
+                  Thủ Thư Số Mercy AI
+                </h3>
+                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
+                  Không chỉ là công cụ tìm kiếm từ khóa khô cứng. Mercy AI là vị cố vấn văn học có khả năng thấu cảm tâm trạng, phong cách đọc và chiều sâu tư tưởng để dẫn lối bạn đến đúng cuốn sách bạn cần.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-[#B12704] font-semibold font-mono">
+                ✓ Thấu cảm cảm xúc • Giải thích lý do gợi ý
+              </div>
+            </div>
+
+            {/* Trụ cột 3 */}
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-ink/10 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center mb-5">
+                  <Package size={22} />
+                </div>
+                <div className="text-xs uppercase tracking-wider font-bold text-emerald-800 mb-1">
+                  Trụ Cột III
+                </div>
+                <h3 className="font-serif font-bold text-lg text-ink mb-3">
+                  Mỹ Học Xúc Giác & Đóng Gói
+                </h3>
+                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
+                  Chúng tôi tin rằng lật giở một trang sách là một nghi thức thiêng liêng. Từng ấn bản đều được đóng gói tỉ mỉ bằng giấy mộc, chống sốc đa tầng và gửi kèm chiếc bookmark độc quyền của The Inkwell.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-ink/50 font-mono">
+                ✓ Bookmark lụa • Hộp bảo vệ quà tặng
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 5. GÓC NHÌN ĐẠI THI HÀO (Literary Echoes) */}
+        <section className="py-12 border-b border-ink/15">
+          <div className="bg-[#1C1917] rounded-3xl p-8 sm:p-12 text-[#FAF7F2] text-center relative overflow-hidden shadow-2xl">
+            <div className="max-w-2xl mx-auto space-y-4 relative z-10">
+              <Quote size={32} className="mx-auto text-amber-400/40 fill-amber-400/10" />
+              <p className="font-serif italic text-lg sm:text-2xl leading-relaxed text-cream/95">
+                “Tôi luôn tưởng tượng rằng Thiên đường sẽ là một dạng của Thư viện.”
+              </p>
+              <div className="w-12 h-[1px] bg-amber-400/40 mx-auto my-3" />
+              <p className="text-xs uppercase tracking-widest text-amber-300/80 font-mono font-medium">
+                — Jorge Luis Borges (1899 – 1986)
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. CALL TO ACTION (Lời Mời Gọi Bước Vào Thế Giới Tri Thức) */}
+        <section className="pt-14 pb-8 text-center max-w-xl mx-auto space-y-4">
+          <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink">
+            Bắt Đầu Chuyến Du Hành Cùng The Inkwell
+          </h3>
+          <p className="text-xs sm:text-sm text-ink/70 leading-relaxed">
+            Dù bạn đang tìm kiếm một cuốn sách để lắng đọng tâm tư hay muốn lắng nghe sự tư vấn từ Thủ thư số Mercy AI, cánh cửa The Inkwell luôn rộng mở chào đón bạn.
+          </p>
+          <div className="pt-2 flex flex-wrap justify-center gap-3">
+            <Link 
+              href="/" 
+              className="bg-[#B12704] hover:bg-[#8e1f03] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow-md cursor-pointer"
+            >
+              Về Trang Chủ Khám Phá
+            </Link>
+            <Link 
+              href="/trending" 
+              className="bg-white border border-ink/20 hover:border-ink/50 text-ink px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-colors shadow-2xs"
+            >
+              Xem Bảng Xếp Hạng Thịnh Hành
+            </Link>
+          </div>
+        </section>
+
+        {/* 7. CHÂN TRANG BÁO CHÍ (Editorial Colophon) */}
+        <div className="border-t border-ink/20 pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-ink/60 gap-4">
+          <p>© 2026 The Inkwell Bookstore. Tuyển tập tinh hoa tri thức & văn học nhân loại.</p>
           <div className="flex gap-6">
             <Link href="/" className="hover:text-[#B12704] transition-colors">Trang chủ</Link>
             <Link href="/trending" className="hover:text-[#B12704] transition-colors">Sách Thịnh hành</Link>
-            <Link href="/profile" className="hover:text-[#B12704] transition-colors">Tủ sách của tôi</Link>
+            <Link href="/lab" className="hover:text-[#B12704] transition-colors">Algorithm Lab</Link>
+            <Link href="/profile" className="hover:text-[#B12704] transition-colors">Tủ sách</Link>
           </div>
         </div>
 
