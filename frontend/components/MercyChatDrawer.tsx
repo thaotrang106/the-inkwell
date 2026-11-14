@@ -136,7 +136,7 @@ function MercyBookItem({
       {summary && (
         <p className="text-stone-700 text-xs sm:text-sm leading-relaxed mt-1.5 font-sans">
           <strong className="font-semibold text-[#881337]">Tóm tắt: </strong>
-          {summary}
+          {renderFormattedInline(summary, book ? [book] : undefined, onClose)}
         </p>
       )}
 
@@ -183,6 +183,87 @@ function MercyBookItem({
         </div>
       </Link>
     </div>
+  );
+}
+
+// Helper phân tích các thẻ Markdown nội dòng (**in đậm**, *in nghiêng*, `code`) và tự động gắn link sách nếu có
+function renderFormattedInline(
+  rawText: string,
+  books?: BookRecommendation[],
+  onClose?: () => void
+) {
+  if (!rawText) return null;
+
+  // Tách text theo các phần in đậm (**...**) hoặc in nghiêng (*...* hoặc _..._) hoặc mã (`...`)
+  const tokens = rawText.split(/(\*\*[^*]+?\*\*|\*[^*]+?\*|_[^_]+?_|`[^`]+?`)/g);
+
+  return (
+    <span>
+      {tokens.map((token, idx) => {
+        if (!token) return null;
+
+        // Xử lý in đậm **...**
+        if (token.startsWith("**") && token.endsWith("**") && token.length > 4) {
+          const inner = token.slice(2, -2).trim();
+
+          // Kiểm tra xem cụm in đậm có trùng với tên cuốn sách nào trong danh sách books không
+          const cleanKey = inner.toLowerCase().replace(/\(.*?\)/g, "").replace(/[-—].*$/, "").trim();
+          const matched = books?.find((b) => {
+            const bTitle = b.title.toLowerCase();
+            return bTitle.includes(cleanKey) || cleanKey.includes(bTitle);
+          });
+
+          if (matched && onClose) {
+            return (
+              <Link
+                key={idx}
+                href={`/books/${matched.book_id}`}
+                onClick={onClose}
+                className="inline-flex items-center gap-0.5 font-semibold text-stone-900 underline decoration-stone-300 hover:text-[#881337] hover:decoration-[#881337] transition-colors"
+                title={`Xem tác phẩm: ${matched.title}`}
+              >
+                <span>{inner}</span>
+                <ArrowUpRight size={11} className="inline text-stone-400 -mt-0.5" />
+              </Link>
+            );
+          }
+
+          return (
+            <strong key={idx} className="font-semibold text-stone-900">
+              {inner}
+            </strong>
+          );
+        }
+
+        // Xử lý in nghiêng *...* hoặc _..._
+        if (
+          ((token.startsWith("*") && token.endsWith("*")) ||
+            (token.startsWith("_") && token.endsWith("_"))) &&
+          token.length > 2
+        ) {
+          const inner = token.slice(1, -1).trim();
+          return (
+            <em key={idx} className="font-serif italic text-stone-800">
+              “{inner}”
+            </em>
+          );
+        }
+
+        // Xử lý inline code `...`
+        if (token.startsWith("`") && token.endsWith("`") && token.length > 2) {
+          const inner = token.slice(1, -1).trim();
+          return (
+            <code key={idx} className="bg-stone-100 text-stone-800 px-1 py-0.5 rounded text-xs font-mono">
+              {inner}
+            </code>
+          );
+        }
+
+        // Dòng thường: loại bỏ các ký tự markdown thừa lẻ loi
+        const cleaned = token.replace(/[*_]/g, "");
+        return <span key={idx}>{cleaned}</span>;
+      })}
+    </span>
   );
 }
 
@@ -260,10 +341,49 @@ function FormattedMessage({
           );
         }
 
-        // Dòng văn bản bình thường (mở đầu hoặc kết luận)
+        // Dòng văn bản bình thường (mở đầu, đoạn văn phân tích hoặc kết luận)
+        // 1. Nếu là tiêu đề markdown ### hoặc ##
+        if (item.text.startsWith("#")) {
+          const headingText = item.text.replace(/^#{1,6}\s*/, "");
+          return (
+            <h5 key={idx} className="font-serif font-bold text-stone-900 text-sm sm:text-base mt-2 mb-1">
+              {renderFormattedInline(headingText, books, onClose)}
+            </h5>
+          );
+        }
+
+        // 2. Nếu là danh sách gạch đầu dòng (- hoặc • hoặc *)
+        if (/^[-*•]\s+/.test(item.text)) {
+          const bulletText = item.text.replace(/^[-*•]\s+/, "");
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-1.5 my-1 text-stone-700">
+              <span className="text-[#881337] font-bold select-none">•</span>
+              <span className="flex-1 leading-relaxed">
+                {renderFormattedInline(bulletText, books, onClose)}
+              </span>
+            </div>
+          );
+        }
+
+        // 3. Nếu là danh sách đánh số 1. 2. 3.
+        const numMatch = item.text.match(/^(\d+)\.\s+(.*)$/);
+        if (numMatch) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-1.5 my-1 text-stone-700">
+              <span className="font-mono text-xs font-bold text-[#881337] select-none min-w-[14px]">
+                {numMatch[1]}.
+              </span>
+              <span className="flex-1 leading-relaxed">
+                {renderFormattedInline(numMatch[2], books, onClose)}
+              </span>
+            </div>
+          );
+        }
+
+        // 4. Đoạn văn xuôi bình thường
         return (
           <p key={idx} className="text-stone-700 font-sans leading-relaxed">
-            {item.text}
+            {renderFormattedInline(item.text, books, onClose)}
           </p>
         );
       })}
