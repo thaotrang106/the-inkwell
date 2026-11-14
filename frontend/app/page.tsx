@@ -135,6 +135,18 @@ export default function Home() {
   const heroSlides = [
     {
       id: 1,
+      tag: "Đồng hành tri thức • Mercy AI",
+      titleLine1: "Thủ Thư Số",
+      titleLine2: "Thấu Cảm Độc Giả",
+      description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
+      desktopImg: "/vintage_classics_flatlay_botanical_shadows.png",
+      mobileImg: "/vintage_classics_flatlay_botanical_shadows.png",
+      objectPosition: "object-center",
+      badge: "Trợ lý Văn học AI",
+      layout: "center" as const,
+    },
+    {
+      id: 2,
       tag: "Khơi nguồn cảm hứng",
       titleLine1: "Good Books",
       titleLine2: "Better Days",
@@ -143,9 +155,10 @@ export default function Home() {
       mobileImg: "/hero banner_mobile.jpg",
       objectPosition: "object-bottom md:object-[right_bottom]",
       badge: "Không gian Văn chương",
+      layout: "left" as const,
     },
     {
-      id: 2,
+      id: 3,
       tag: "Tuyển tập tinh hoa • Book Tome",
       titleLine1: "Mỗi Cuốn Sách",
       titleLine2: "Là Một Thế Giới",
@@ -154,17 +167,7 @@ export default function Home() {
       mobileImg: "/banner_tome_bg_mobile.png",
       objectPosition: "object-center",
       badge: "Ấn bản Sách Khảo Cứu Cổ Điển",
-    },
-    {
-      id: 3,
-      tag: "Đồng hành tri thức • Mercy AI",
-      titleLine1: "Thủ Thư Số",
-      titleLine2: "Thấu Cảm Độc Giả",
-      description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng cuốn sách bạn cần.",
-      desktopImg: "/banner-mercy-ai.jpg",
-      mobileImg: "/banner_community_mobile_1080p.jpg",
-      objectPosition: "object-center md:object-[right_center]",
-      badge: "Trợ lý Văn học AI",
+      layout: "left" as const,
     },
     {
       id: 4,
@@ -176,6 +179,7 @@ export default function Home() {
       mobileImg: "/vintage_book_cover_carousel.png",
       objectPosition: "object-center",
       badge: "Bộ Sưu Tập Bìa Sách Cổ Điển",
+      layout: "left" as const,
     },
   ];
 
@@ -397,6 +401,8 @@ export default function Home() {
     setError("Vui lòng nhập tên cuốn sách bạn muốn tìm kiếm!");
   };
 
+  const isCentered = heroSlides[currentSlide]?.layout === "center";
+
   return (
     <div className="flex flex-col pb-20">
       
@@ -428,11 +434,28 @@ export default function Home() {
         </AnimatePresence>
 
         {/* Lớp phủ mờ nhẹ tinh tế để chữ luôn sắc nét và tương thích tối đa với nền tường */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/92 via-[#FAF8F5]/60 to-transparent pointer-events-none hidden md:block max-w-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/65 to-transparent pointer-events-none md:hidden h-2/3" />
+        {isCentered ? (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(250,248,245,0.85)_0%,_rgba(250,248,245,0.45)_50%,_transparent_80%)] pointer-events-none hidden md:block" />
+            <div className="absolute inset-0 bg-[#FAF8F5]/85 pointer-events-none md:hidden" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/92 via-[#FAF8F5]/60 to-transparent pointer-events-none hidden md:block max-w-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/65 to-transparent pointer-events-none md:hidden h-2/3" />
+          </>
+        )}
 
-        <div className="w-full z-10 py-10 sm:py-14 md:py-16 lg:py-20 pl-5 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 pr-4">
-          <div className="w-full max-w-lg lg:max-w-xl text-left">
+        <div className={`w-full z-10 py-10 sm:py-14 md:py-16 lg:py-20 px-4 sm:px-6 transition-all duration-300 ${
+          isCentered 
+            ? "flex flex-col items-center justify-center text-center max-w-4xl mx-auto" 
+            : "pl-5 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 pr-4"
+        }`}>
+          <div className={`w-full transition-all duration-300 ${
+            isCentered 
+              ? "max-w-2xl mx-auto flex flex-col items-center text-center" 
+              : "max-w-lg lg:max-w-xl text-left"
+          }`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={heroSlides[currentSlide].id}
@@ -440,24 +463,31 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
+                className={isCentered ? "flex flex-col items-center text-center w-full" : "text-left w-full"}
               >
-                <span className="uppercase tracking-[0.3em] text-xs font-bold text-terracotta mb-3 block">
+                <span className={`uppercase tracking-[0.3em] text-xs font-bold text-terracotta mb-3 block ${
+                  isCentered ? "text-center mx-auto" : ""
+                }`}>
                   {heroSlides[currentSlide].tag}
                 </span>
-                <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink mb-4 leading-[1.08] tracking-tight">
+                <h1 className={`font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink mb-4 leading-[1.08] tracking-tight ${
+                  isCentered ? "text-center" : ""
+                }`}>
                   {heroSlides[currentSlide].titleLine1}<br />
                   <span className="italic font-normal text-terracotta">
                     {heroSlides[currentSlide].titleLine2}
                   </span>
                 </h1>
-                <p className="text-ink/75 text-sm sm:text-base lg:text-lg mb-7 max-w-lg leading-relaxed">
+                <p className={`text-ink/75 text-sm sm:text-base lg:text-lg mb-7 leading-relaxed ${
+                  isCentered ? "text-center max-w-xl mx-auto" : "max-w-lg text-left"
+                }`}>
                   {heroSlides[currentSlide].description}
                 </p>
               </motion.div>
             </AnimatePresence>
             
             {/* Search Bar phong cách Book Outlet: Ô tìm kiếm + Icon Kính lúp + Nút Ask Mercy */}
-            <form onSubmit={handleSearchSubmit} className="max-w-lg relative w-full" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-lg"}`} ref={searchRef}>
               <div className="flex items-center w-full bg-white/95 backdrop-blur-sm border border-ink/20 rounded-2xl shadow-md hover:border-ink/40 focus-within:border-[#B12704] focus-within:ring-2 focus-within:ring-[#B12704]/20 px-3.5 py-2.5 transition-all">
               <input 
                 type="text" 
@@ -672,10 +702,18 @@ export default function Home() {
             </AnimatePresence>
           </form>
 
-          {error && <p className="text-terracotta mt-4 text-sm font-medium bg-red-50 inline-block px-4 py-2 rounded-full">{error}</p>}
+          {error && (
+            <p className={`text-terracotta mt-4 text-sm font-medium bg-red-50 inline-block px-4 py-2 rounded-full ${
+              isCentered ? "mx-auto text-center" : ""
+            }`}>
+              {error}
+            </p>
+          )}
 
           {!isLoggedIn && (
-            <div className="mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border border-ink/10 text-xs text-ink/80 shadow-xs">
+            <div className={`mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border border-ink/10 text-xs text-ink/80 shadow-xs ${
+              isCentered ? "mx-auto" : ""
+            }`}>
               <Sparkles size={14} className="text-[#B12704]" />
               <span>Muốn nhận gợi ý theo gu đọc cá nhân?</span>
               <Link href="/login" className="font-bold text-[#B12704] hover:underline inline-flex items-center gap-0.5">
