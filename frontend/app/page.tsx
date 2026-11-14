@@ -154,7 +154,7 @@ export default function Home() {
       description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
       desktopImg: "/cozy_sunlit_reading_nook_banner.png",
       mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
-      objectPosition: "object-[center_center] md:object-[60%_center]",
+      objectPosition: "object-[left_center] md:object-[left_center]",
       badge: "Trợ lý Văn học AI",
       layout: "left",
     },
@@ -453,7 +453,7 @@ export default function Home() {
           <div className={`w-full transition-all duration-300 ${
             isCentered 
               ? "max-w-2xl mx-auto flex flex-col items-center text-center" 
-              : "max-w-xl lg:max-w-2xl text-left"
+              : "max-w-lg lg:max-w-xl text-left"
           }`}>
             {/* Chuyển đổi nội dung chữ mượt mà dạng Grid xếp chồng (Giữ nguyên chiều cao, tuyệt đối không bị giựt thanh tìm kiếm) */}
             <div className="grid grid-cols-1 grid-rows-1 w-full mb-7">
@@ -492,7 +492,7 @@ export default function Home() {
             </div>
             
             {/* Search Bar phong cách Editorial: Khung viền mỏng tinh tế, bo góc 5px, nút Hỏi Mercy AI thanh lịch */}
-            <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-xl lg:max-w-2xl"}`} ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-lg lg:max-w-xl"}`} ref={searchRef}>
               <div 
                 onClick={() => {
                   setShowDropdown(true);
