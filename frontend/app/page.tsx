@@ -131,19 +131,32 @@ export default function Home() {
   // Quản lý Lịch sử tìm kiếm gần đây (Cách 2)
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
+  interface HeroSlide {
+    id: number;
+    tag: string;
+    titleLine1: string;
+    titleLine2: string;
+    description: string;
+    desktopImg: string;
+    mobileImg: string;
+    objectPosition: string;
+    badge: string;
+    layout: "left" | "center";
+  }
+
   // Danh sách các banner trang chủ (Tự động chuyển slide sau mỗi 5 giây)
-  const heroSlides = [
+  const heroSlides: HeroSlide[] = [
     {
       id: 1,
       tag: "Đồng hành tri thức • Mercy AI",
       titleLine1: "Thủ Thư Số",
       titleLine2: "Thấu Cảm Độc Giả",
       description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
-      desktopImg: "/vintage_classics_flatlay_botanical_shadows.png",
-      mobileImg: "/vintage_classics_flatlay_botanical_shadows.png",
-      objectPosition: "object-center",
+      desktopImg: "/banner_mercy_editorial_right.jpg",
+      mobileImg: "/banner_mercy_editorial_right.jpg",
+      objectPosition: "object-right md:object-right",
       badge: "Trợ lý Văn học AI",
-      layout: "center" as const,
+      layout: "left",
     },
     {
       id: 2,
@@ -155,7 +168,7 @@ export default function Home() {
       mobileImg: "/hero banner_mobile.jpg",
       objectPosition: "object-bottom md:object-[right_bottom]",
       badge: "Không gian Văn chương",
-      layout: "left" as const,
+      layout: "left",
     },
     {
       id: 3,
@@ -167,7 +180,7 @@ export default function Home() {
       mobileImg: "/vintage_book_cover_carousel.png",
       objectPosition: "object-center",
       badge: "Bộ Sưu Tập Bìa Sách Cổ Điển",
-      layout: "left" as const,
+      layout: "left",
     },
   ];
 
@@ -436,20 +449,20 @@ export default function Home() {
           </>
         ) : (
           <>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/92 via-[#FAF8F5]/60 to-transparent pointer-events-none hidden md:block max-w-3xl" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/65 to-transparent pointer-events-none md:hidden h-2/3" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 via-45% to-transparent pointer-events-none hidden md:block" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden" />
           </>
         )}
 
-        <div className={`w-full z-10 py-10 sm:py-14 md:py-16 lg:py-20 px-4 sm:px-6 transition-all duration-300 ${
+        <div className={`w-full z-10 py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center transition-all duration-300 ${
           isCentered 
-            ? "flex flex-col items-center justify-center text-center max-w-4xl mx-auto" 
-            : "pl-5 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 pr-4"
+            ? "justify-center text-center" 
+            : "justify-start text-left"
         }`}>
           <div className={`w-full transition-all duration-300 ${
             isCentered 
               ? "max-w-2xl mx-auto flex flex-col items-center text-center" 
-              : "max-w-lg lg:max-w-xl text-left"
+              : "max-w-xl lg:max-w-2xl text-left"
           }`}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -482,7 +495,7 @@ export default function Home() {
             </AnimatePresence>
             
             {/* Search Bar phong cách Editorial: Khung viền mỏng tinh tế, bo góc 5px, nút Hỏi Mercy AI thanh lịch */}
-            <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-lg"}`} ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-xl lg:max-w-2xl"}`} ref={searchRef}>
               <div 
                 onClick={() => {
                   setShowDropdown(true);
