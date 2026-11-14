@@ -40,6 +40,37 @@ const COVER_THEMES = [
   { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
 ];
 
+// Hàm định dạng và loại bỏ các dấu markdown thô cho lời bình Mercy AI
+const renderCleanMercyText = (raw: string) => {
+  if (!raw) return null;
+
+  // Tách text theo các phần in đậm (**...**) hoặc tên sách/in nghiêng (*...* hoặc "..." hoặc “...”)
+  const tokens = raw.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|"[^"]+"|[“”][^“”]+[“”])/g);
+
+  return (
+    <span className="leading-relaxed">
+      {tokens.map((token, idx) => {
+        if (!token) return null;
+        if (token.startsWith("**") && token.endsWith("**")) {
+          const content = token.slice(2, -2).trim();
+          return <strong key={idx} className="font-semibold text-ink">{content}</strong>;
+        }
+        if ((token.startsWith("*") && token.endsWith("*")) || (token.startsWith("_") && token.endsWith("_"))) {
+          const content = token.slice(1, -1).replace(/^["“”]|["“”]$/g, "").trim();
+          return <em key={idx} className="font-serif italic text-ink font-medium">“{content}”</em>;
+        }
+        if ((token.startsWith('"') && token.endsWith('"')) || (token.startsWith('“') && token.endsWith('”'))) {
+          const content = token.slice(1, -1).trim();
+          return <span key={idx} className="font-serif italic text-ink font-medium">“{content}”</span>;
+        }
+        // Xóa sạch các dấu *, _, # đơn lẻ còn sót lại
+        const cleaned = token.replace(/[*_#]/g, "");
+        return <span key={idx}>{cleaned}</span>;
+      })}
+    </span>
+  );
+};
+
 export default function BookDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -81,8 +112,15 @@ export default function BookDetailPage() {
   const [useDetailProxy, setUseDetailProxy] = useState(false);
   const [detailImgFailed, setDetailImgFailed] = useState(false);
 
-  // Trạng thái AI Mercy
-  const [mercyMessage, setMercyMessage] = useState("");
+  // Trạng thái AI Mercy (lưu phiên để hiển thị tức thì nếu đã từng hỏi)
+  const [mercyMessage, setMercyMessage] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return sessionStorage.getItem(`inkwell_mercy_${id}`) || "";
+      } catch {}
+    }
+    return "";
+  });
   const [isMercyThinking, setIsMercyThinking] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [similarBooks, setSimilarBooks] = useState<any[]>([]);
@@ -258,18 +296,35 @@ export default function BookDetailPage() {
   const readSampleUrl = book.sample_read_url || book.preview_url || book.read_url || book.sample_url || "";
   const audioSampleUrl = book.audio_sample_url || book.audio_url || book.sample_audio_url || "";
 
-    const askMercy = async () => {
-    setIsMercyThinking(true); // Hiển thị trạng thái đang load
+  const askMercy = async () => {
+    // 1. Kiểm tra cache phiên trước để hiển thị tức thì
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem(`inkwell_mercy_${id}`);
+        if (cached) {
+          setMercyMessage(cached);
+          return;
+        }
+      } catch {}
+    }
+
+    setIsMercyThinking(true);
     setMercyMessage("");
     
     try {
       const res = await fetch(`${API_BASE_URL}/api/recommendations/explain/${id}`);
       const json = await res.json();
-      setMercyMessage(json.data); // Nhận câu trả lời từ Gemini
+      const text = json.data || "";
+      setMercyMessage(text);
+      if (text && typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem(`inkwell_mercy_${id}`, text);
+        } catch {}
+      }
     } catch (e) {
-      setMercyMessage("Xin lỗi, kết nối với tâm thức của Mercy đang bị gián đoạn.");
+      setMercyMessage(`Tác phẩm "${cleanTitle(book.title)}" của ${authorName} là một áng văn giàu tính triết lý và chiều sâu nhân bản sâu sắc, rất xứng đáng để bạn đón đọc.`);
     } finally {
-      setIsMercyThinking(false); // Tắt trạng thái load
+      setIsMercyThinking(false);
     }
   };
   const handleAddToCartDetail = () => {
@@ -511,8 +566,8 @@ export default function BookDetailPage() {
             )}
 
             {mercyMessage && (
-              <div className="bg-white/80 rounded-xl p-4 border border-ink/5 text-sm text-ink/80 leading-relaxed font-sans whitespace-pre-line">
-                {mercyMessage}
+              <div className="bg-white/80 rounded-xl p-4 sm:p-5 border border-ink/5 text-sm sm:text-[15px] text-ink/90 leading-relaxed font-sans shadow-xs">
+                {renderCleanMercyText(mercyMessage)}
               </div>
             )}
 

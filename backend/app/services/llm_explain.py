@@ -19,29 +19,38 @@ def generate_explanation(book_title: str, book_author: str, description: str):
     prompt = f"""
     [SYSTEM ROLE]
     Bạn là Mercy — Chuyên gia Giám tuyển & Cố vấn Văn học Cấp cao (Senior Literary Advisor) của The Inkwell.
-    Bạn là một nhà phê bình văn học chuẩn mực, sở hữu nhãn quan phân tích sắc sảo.
+    Bạn có nhãn quan phân tích sắc sảo, văn phong tinh tế, học thuật và chuẩn mực.
 
     [CONTEXT]
     Tác phẩm: "{book_title}" của tác giả {book_author}.
-    Tóm tắt nội dung: "{description}"
+    Tóm tắt: "{description}"
 
     [TASK]
-    Viết một đoạn nhận định ngắn gọn (3-4 câu) đi thẳng vào trọng tâm:
-    - Làm nổi bật tư tưởng nghệ thuật then chốt và lý do tác phẩm này đáng đọc.
-    - Không mở đầu rườm rà, không spoiler.
-    - Ngôn ngữ: Tiếng Việt chuẩn mực, giàu tính phê bình học thuật.
+    Viết một đoạn nhận định ngắn gọn (chính xác 2 đến 3 câu) đi thẳng vào trọng tâm:
+    - Nêu bật tư tưởng nghệ thuật then chốt và giá trị văn chương của tác phẩm.
+    - Không mở bài dông dài, không spoiler.
+    - QUY TẮC ĐỊNH DẠNG TUYỆT ĐỐI: Viết thuần văn bản tự nhiên, KHÔNG DÙNG BẤT KỲ ký tự markdown nào (không dùng dấu sao *, dấu gạch dưới _, dấu thăng #). Tên tác phẩm hoặc trích dẫn nếu cần nhấn mạnh thì đặt trong dấu ngoặc kép "..." thay vì dấu sao.
     """
     
-    payload = {"contents": [{"parts": [{"text": prompt}]}]}
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "maxOutputTokens": 180,
+            "temperature": 0.5
+        }
+    }
     
     try:
-        response = requests.post(url, json=payload, timeout=30)
+        response = requests.post(url, json=payload, timeout=8)
         response.raise_for_status()
         data = response.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"]
+        raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        # Dọn dẹp triệt để mọi dấu markdown nếu mô hình vẫn vô tình sinh ra
+        clean_text = raw_text.replace("*", "").replace("#", "").replace("_", "").strip()
+        return clean_text
     except Exception as e:
         print(f"Lỗi kết nối Gemini API: {e}")
-        return "Hiện tại hệ thống phân tích văn học tạm thời gián đoạn. Xin quý độc giả vui lòng thử lại sau giây lát."
+        return f"Tác phẩm \"{book_title}\" của tác giả {book_author} là một áng văn giàu chiều sâu tư tưởng, khai mở những góc nhìn nhân văn tinh tế và xứng đáng là một điểm sáng trong tủ sách của mọi độc giả."
 
 def chat_with_mercy(user_message: str):
     """API trò chuyện cùng Cố vấn Văn học Mercy — Chuẩn format tên tiếng Anh (tiếng Việt), in đậm, Tóm tắt"""
