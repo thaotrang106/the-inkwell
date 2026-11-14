@@ -209,15 +209,15 @@ export default function ProductReviews({
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Tiêu đề Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-ink/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-stone-200">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 tracking-tight flex items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1C1917] tracking-tight flex items-center gap-3">
               <span>Đánh giá từ độc giả</span>
-              <span className="text-xs sm:text-sm font-sans font-semibold bg-[#FAF7F2] text-[#B12704] border border-[#B12704]/20 px-3 py-1 rounded-full">
+              <span className="text-xs font-sans font-medium bg-stone-100 text-stone-800 border border-stone-200/90 px-2.5 py-0.5 rounded-[4px]">
                 {totalReviewsCount} nhận xét
               </span>
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+            <p className="text-xs sm:text-sm text-stone-500 mt-1 font-serif italic">
               Cảm nhận và góc nhìn văn học thực tế từ cộng đồng người đọc The Inkwell
             </p>
           </div>
@@ -225,39 +225,39 @@ export default function ProductReviews({
           <button
             type="button"
             onClick={() => setIsFormOpen(!isFormOpen)}
-            className="self-start sm:self-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gray-900 text-white hover:bg-black font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
+            className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-[5px] bg-[#1C1917] text-white hover:bg-[#2B2725] font-medium text-xs sm:text-sm transition-all shadow-xs active:scale-95 cursor-pointer font-sans"
           >
-            {isFormOpen ? <X size={16} /> : <PenLine size={16} />}
+            {isFormOpen ? <X size={15} /> : <PenLine size={15} />}
             <span>{isFormOpen ? "Đóng biểu mẫu" : "Viết nhận xét của bạn"}</span>
           </button>
         </div>
 
         {/* Khung tổng quan điểm số & Phân bổ số sao */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 bg-[#FAF9F6] border border-gray-200/80 rounded-2xl p-6 sm:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 bg-[#FAF9F6] border border-stone-200/90 rounded-[8px] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
           
           {/* Cột 1: Điểm trung bình tổng quát */}
-          <div className="lg:col-span-4 flex flex-col justify-center items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-200/80 pb-6 lg:pb-0 lg:pr-8">
-            <span className="text-5xl sm:text-6xl font-serif font-bold text-gray-900 tracking-tight">
+          <div className="lg:col-span-4 flex flex-col justify-center items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-stone-200/80 pb-6 lg:pb-0 lg:pr-8">
+            <span className="text-5xl sm:text-6xl font-serif font-bold text-[#1C1917] tracking-tight">
               {avgRating}
             </span>
-            <span className="text-xs text-gray-500 font-medium mt-1">trên thang điểm 5.0</span>
+            <span className="text-xs text-stone-500 font-sans mt-1 uppercase tracking-wider font-medium">trên thang điểm 5.0</span>
 
             <div className="flex items-center gap-1 my-3">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  size={20}
+                  size={19}
                   className={
                     star <= Math.round(avgRating)
-                      ? "text-amber-400 fill-amber-400"
-                      : "text-gray-300"
+                      ? "text-amber-500 fill-amber-500"
+                      : "text-stone-300"
                   }
                 />
               ))}
             </div>
 
-            <p className="text-xs text-gray-600 font-medium">
-              Dựa trên {totalRatingsCount.toLocaleString("vi-VN")} lượt đánh giá thực tế
+            <p className="text-xs text-stone-500 font-serif italic">
+              Dựa trên {totalRatingsCount.toLocaleString("vi-VN")} lượt đánh giá độc giả
             </p>
           </div>
 
@@ -272,25 +272,25 @@ export default function ProductReviews({
                 <div
                   key={star}
                   onClick={() => setSelectedStarFilter(isSelected ? null : star)}
-                  className={`flex items-center gap-3 text-xs font-medium cursor-pointer p-1.5 rounded-lg transition-colors ${
-                    isSelected ? "bg-amber-50 text-amber-900 font-bold" : "hover:bg-white text-gray-700"
+                  className={`flex items-center gap-3 text-xs font-medium cursor-pointer p-1.5 rounded-[4px] transition-colors ${
+                    isSelected ? "bg-stone-200/70 text-stone-900 font-bold" : "hover:bg-white text-stone-700"
                   }`}
                   title={`Lọc nhận xét ${star} sao (${count} lượt đánh giá)`}
                 >
-                  <span className="w-10 flex items-center gap-1 shrink-0">
+                  <span className="w-10 flex items-center gap-1 shrink-0 font-sans text-xs">
                     <span>{star} sao</span>
                   </span>
 
-                  <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-stone-200/80 rounded-[2px] overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        isSelected ? "bg-amber-500" : "bg-amber-400"
+                      className={`h-full rounded-[2px] transition-all duration-500 ${
+                        isSelected ? "bg-[#1C1917]" : "bg-stone-800"
                       }`}
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
 
-                  <span className="w-10 text-right text-gray-500 font-mono text-[11px] shrink-0">
+                  <span className="w-10 text-right text-stone-500 font-mono text-[11px] shrink-0">
                     {percentage}%
                   </span>
                 </div>
@@ -298,21 +298,21 @@ export default function ProductReviews({
             })}
           </div>
 
-          {/* Cột 3: Lời kêu gọi đóng góp góc nhìn */}
-          <div className="lg:col-span-3 flex flex-col justify-center items-center lg:items-start text-center lg:text-left bg-white/80 p-5 rounded-xl border border-gray-200/60 shadow-xs">
-            <div className="w-10 h-10 rounded-full bg-[#FFF5F2] text-[#B12704] flex items-center justify-center mb-3">
-              <Sparkles size={20} />
+          {/* Cột 3: Lời kêu gọi đóng góp góc nhìn biên tập */}
+          <div className="lg:col-span-3 flex flex-col justify-center items-center lg:items-start text-center lg:text-left bg-white p-5 rounded-[6px] border border-stone-200/90 shadow-2xs">
+            <div className="w-9 h-9 rounded-[5px] bg-[#1C1917] text-white flex items-center justify-center mb-3">
+              <PenLine size={16} />
             </div>
-            <h4 className="font-serif font-bold text-gray-900 text-sm">
+            <h4 className="font-serif font-bold text-stone-900 text-sm">
               Bạn đã đọc tác phẩm này?
             </h4>
-            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-              Những cảm nhận chân thật của bạn sẽ là kim chỉ nam quý giá giúp các độc giả khác chọn lựa.
+            <p className="text-xs text-stone-600 mt-1 font-serif italic leading-relaxed">
+              Những cảm nhận chân thật của bạn sẽ là kim chỉ nam quý giá giúp các độc giả khác chọn lựa ấn bản phù hợp.
             </p>
             <button
               type="button"
               onClick={() => setIsFormOpen(true)}
-              className="mt-4 text-xs font-bold text-[#B12704] hover:underline flex items-center gap-1 cursor-pointer"
+              className="mt-3.5 text-xs font-sans font-semibold text-[#1C1917] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>Viết nhận xét ngay</span>
               <span>→</span>
@@ -324,19 +324,19 @@ export default function ProductReviews({
         {isFormOpen && (
           <form
             onSubmit={handleSubmitReview}
-            className="mb-12 bg-white border-2 border-gray-900 rounded-2xl p-6 sm:p-8 shadow-xl transition-all animate-in fade-in slide-in-from-top-4 duration-300"
+            className="mb-12 bg-white border border-stone-300 rounded-[6px] p-6 sm:p-8 shadow-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300"
           >
-            <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-stone-200">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-[4px] bg-[#1C1917] text-white flex items-center justify-center">
                   <PenLine size={16} />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-gray-900 text-base sm:text-lg">
+                  <h3 className="font-serif font-bold text-stone-900 text-base sm:text-lg">
                     Viết nhận xét cho "{bookTitle}"
                   </h3>
-                  <p className="text-xs text-gray-500">
-                    Đăng dưới tên: <span className="font-semibold text-gray-800">{user?.name || `Độc giả #${user?.user_id || 1}`}</span>
+                  <p className="text-xs text-stone-500 font-sans">
+                    Đăng dưới tên: <span className="font-semibold text-stone-800">{user?.name || `Độc giả #${user?.user_id || 1}`}</span>
                   </p>
                 </div>
               </div>
@@ -344,7 +344,7 @@ export default function ProductReviews({
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-1.5 text-stone-400 hover:text-stone-700 rounded-[4px] hover:bg-stone-100 transition-colors"
               >
                 <X size={18} />
               </button>
@@ -352,7 +352,7 @@ export default function ProductReviews({
 
             {/* Thông báo thành công */}
             {formSuccess && (
-              <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 text-sm font-medium animate-in zoom-in-95">
+              <div className="mb-6 p-4 rounded-[5px] bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 text-sm font-medium animate-in zoom-in-95">
                 <CheckCircle2 size={20} className="text-emerald-600 shrink-0" />
                 <span>Cảm ơn bạn! Đánh giá của bạn đã được đăng thành công và ghi nhận vào hệ thống.</span>
               </div>
@@ -360,14 +360,14 @@ export default function ProductReviews({
 
             {/* Thông báo lỗi nếu có */}
             {formError && (
-              <div className="mb-6 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+              <div className="mb-6 p-3 rounded-[5px] bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
                 {formError}
               </div>
             )}
 
             {/* Chọn số sao tương tác */}
             <div className="mb-6">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 mb-2 font-sans">
                 Đánh giá tổng quan <span className="text-rose-500">*</span>
               </label>
 
@@ -385,11 +385,11 @@ export default function ProductReviews({
                         title={`${star} sao`}
                       >
                         <Star
-                          size={28}
+                          size={26}
                           className={
                             isFilled
-                              ? "text-amber-400 fill-amber-400 transition-colors"
-                              : "text-gray-300 transition-colors"
+                              ? "text-amber-500 fill-amber-500 transition-colors"
+                              : "text-stone-300 transition-colors"
                           }
                         />
                       </button>
@@ -397,7 +397,7 @@ export default function ProductReviews({
                   })}
                 </div>
 
-                <span className="text-xs font-semibold text-gray-700 ml-2">
+                <span className="text-xs font-medium text-stone-700 ml-2 font-serif italic">
                   {RATING_LABELS[hoverRating || formRating]}
                 </span>
               </div>
@@ -405,15 +405,15 @@ export default function ProductReviews({
 
             {/* Tiêu đề nhận xét */}
             <div className="mb-5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 mb-2 font-sans">
                 Tiêu đề nhận xét <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="VD: Một tuyệt phẩm văn học giàu cảm xúc, cốt truyện xuất sắc..."
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 text-sm font-medium text-gray-900 placeholder:text-gray-400"
+                placeholder="VD: Một tuyệt phẩm văn học giàu cảm xúc, cốt truyện sâu sắc..."
+                className="w-full px-4 py-2.5 rounded-[4px] border border-stone-300 focus:outline-none focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917] text-sm font-medium text-stone-900 placeholder:text-stone-400 font-sans"
                 maxLength={200}
                 required
               />
@@ -421,34 +421,34 @@ export default function ProductReviews({
 
             {/* Nội dung nhận xét chi tiết */}
             <div className="mb-6">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 mb-2 font-sans">
                 Nội dung cảm nhận chi tiết <span className="text-rose-500">*</span>
               </label>
               <textarea
                 value={formContent}
                 onChange={(e) => setFormContent(e.target.value)}
-                placeholder="Chia sẻ về chiều sâu nhân vật, văn phong của tác giả, bài học đọng lại hoặc điều khiến bạn ấn tượng nhất..."
+                placeholder="Chia sẻ về chiều sâu nhân vật, văn phong của tác giả, thông điệp đọng lại hoặc điều khiến bạn ấn tượng nhất..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 text-sm text-gray-900 placeholder:text-gray-400 leading-relaxed font-sans"
+                className="w-full px-4 py-3 rounded-[4px] border border-stone-300 focus:outline-none focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917] text-sm text-stone-900 placeholder:text-stone-400 leading-relaxed font-sans"
                 required
               />
             </div>
 
             {/* Nút gửi */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100 font-sans">
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-5 py-2.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold text-xs transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-[5px] border border-stone-300 text-stone-700 hover:bg-stone-50 font-medium text-xs transition-colors cursor-pointer"
               >
                 Hủy bỏ
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-2.5 rounded-full bg-gray-900 hover:bg-black text-white font-semibold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+                className="px-5 py-2 rounded-[5px] bg-[#1C1917] hover:bg-[#2B2725] text-white font-medium text-xs transition-all flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
               >
-                {submitting && <Loader2 size={14} className="animate-spin" />}
+                {submitting && <Loader2 size={13} className="animate-spin" />}
                 <span>{submitting ? "Đang gửi..." : "Gửi nhận xét ngay"}</span>
               </button>
             </div>
@@ -456,19 +456,19 @@ export default function ProductReviews({
         )}
 
         {/* Thanh lọc nhận xét theo số sao */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 font-sans">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mr-2 flex items-center gap-1.5">
-              <Filter size={13} /> Lọc theo:
+            <span className="text-xs font-mono uppercase tracking-[0.18em] text-stone-500 mr-2 flex items-center gap-1.5 font-semibold">
+              <Filter size={12} /> Lọc theo:
             </span>
 
             <button
               type="button"
               onClick={() => setSelectedStarFilter(null)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-[5px] text-xs font-medium transition-all cursor-pointer ${
                 selectedStarFilter === null
-                  ? "bg-gray-900 text-white shadow-xs"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-[#1C1917] text-white border border-[#1C1917] shadow-2xs"
+                  : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
               }`}
             >
               Tất cả ({totalReviewsCount})
@@ -479,14 +479,14 @@ export default function ProductReviews({
                 key={s}
                 type="button"
                 onClick={() => setSelectedStarFilter(s === selectedStarFilter ? null : s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-[5px] text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
                   selectedStarFilter === s
-                    ? "bg-amber-500 text-white shadow-xs"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-[#1C1917] text-white border border-[#1C1917] shadow-2xs"
+                    : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
                 }`}
               >
                 <span>{s} sao</span>
-                <span className="text-[10px] opacity-80">({reviewCountsByStar[s] || 0})</span>
+                <span className="text-[10px] opacity-70">({reviewCountsByStar[s] || 0})</span>
               </button>
             ))}
           </div>
@@ -495,7 +495,7 @@ export default function ProductReviews({
             <button
               type="button"
               onClick={() => setSelectedStarFilter(null)}
-              className="text-xs text-[#B12704] hover:underline font-semibold cursor-pointer"
+              className="text-xs text-[#1C1917] hover:underline font-medium cursor-pointer"
             >
               Xóa bộ lọc
             </button>
@@ -504,27 +504,27 @@ export default function ProductReviews({
 
         {/* Danh sách các bài nhận xét */}
         {loading ? (
-          <div className="py-16 text-center text-gray-400">
-            <Loader2 size={28} className="animate-spin mx-auto mb-3 text-gray-600" />
-            <p className="text-sm font-medium">Đang tải nhận xét từ độc giả...</p>
+          <div className="py-16 text-center text-stone-400">
+            <Loader2 size={26} className="animate-spin mx-auto mb-3 text-stone-600" />
+            <p className="text-sm font-serif italic text-stone-500">Đang tải nhận xét từ độc giả...</p>
           </div>
         ) : filteredReviews.length === 0 ? (
-          <div className="py-16 text-center bg-[#FAF9F6] border border-dashed border-gray-300 rounded-2xl">
-            <MessageSquarePlus size={36} className="mx-auto text-gray-400 mb-3" />
-            <h4 className="font-serif font-bold text-gray-800 text-base mb-1">
+          <div className="py-14 px-6 text-center bg-[#FAF9F6] border border-stone-200/90 rounded-[8px]">
+            <PenLine size={32} className="mx-auto text-stone-400 mb-3" />
+            <h4 className="font-serif font-bold text-stone-900 text-base mb-1.5">
               {selectedStarFilter
                 ? `Chưa có bài nhận xét nào đạt ${selectedStarFilter} sao.`
                 : "Chưa có nhận xét nào cho cuốn sách này."}
             </h4>
-            <p className="text-xs text-gray-500 max-w-md mx-auto mb-5 leading-relaxed">
+            <p className="text-xs text-stone-600 font-serif italic max-w-md mx-auto mb-6 leading-relaxed">
               Hãy là người đầu tiên chia sẻ cảm nhận văn học của bạn để giúp các độc giả khác có thêm góc nhìn!
             </p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 font-sans">
               {selectedStarFilter && (
                 <button
                   type="button"
                   onClick={() => setSelectedStarFilter(null)}
-                  className="px-5 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-semibold transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-[5px] border border-stone-300 text-stone-700 hover:bg-stone-50 text-xs font-medium transition-all cursor-pointer"
                 >
                   Xem tất cả nhận xét
                 </button>
@@ -535,7 +535,7 @@ export default function ProductReviews({
                   if (selectedStarFilter) setFormRating(selectedStarFilter);
                   setIsFormOpen(true);
                 }}
-                className="px-5 py-2 rounded-full bg-gray-900 hover:bg-black text-white text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                className="px-5 py-2.5 rounded-[5px] bg-[#1C1917] hover:bg-[#2B2725] text-white text-xs font-medium transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 {selectedStarFilter ? `Viết nhận xét ${selectedStarFilter} sao` : "Viết nhận xét đầu tiên"}
               </button>
@@ -549,27 +549,27 @@ export default function ProductReviews({
               return (
                 <div
                   key={rev.review_id}
-                  className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-7 shadow-xs hover:border-gray-300 transition-all"
+                  className="bg-white border border-stone-200/90 rounded-[6px] p-6 sm:p-7 shadow-xs hover:border-stone-400 transition-all"
                 >
                   {/* Header nhận xét: Người dùng, huy hiệu mua hàng, ngày đăng */}
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <div className="flex items-center gap-3">
-                      {/* Avatar đại diện */}
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#1E293B] to-[#475569] text-white flex items-center justify-center font-bold text-sm shadow-xs uppercase">
+                      {/* Avatar đại diện dạng Monogram hình vuông bo góc nhẹ */}
+                      <div className="w-9 h-9 rounded-[4px] bg-[#1C1917] text-stone-100 flex items-center justify-center font-bold text-xs shadow-xs uppercase tracking-wider">
                         {rev.username ? rev.username[0] : "Đ"}
                       </div>
 
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-gray-900 text-sm">
+                          <h4 className="font-bold text-stone-900 text-sm font-sans">
                             {rev.username}
                           </h4>
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
-                            <CheckCircle2 size={11} className="text-emerald-600" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-stone-700 bg-stone-100 px-2 py-0.5 rounded-[3px] border border-stone-200">
+                            <CheckCircle2 size={11} className="text-stone-800" />
                             Đã mua tại The Inkwell
                           </span>
                         </div>
-                        <span className="text-[11px] text-gray-400">
+                        <span className="text-[11px] text-stone-400 font-sans">
                           Đăng ngày {rev.created_at}
                         </span>
                       </div>
@@ -583,8 +583,8 @@ export default function ProductReviews({
                           size={14}
                           className={
                             s <= rev.rating
-                              ? "text-amber-400 fill-amber-400"
-                              : "text-gray-200"
+                              ? "text-amber-500 fill-amber-500"
+                              : "text-stone-200"
                           }
                         />
                       ))}
@@ -592,35 +592,35 @@ export default function ProductReviews({
                   </div>
 
                   {/* Tiêu đề nhận xét */}
-                  <h5 className="font-serif font-bold text-gray-900 text-base mb-2 leading-snug">
+                  <h5 className="font-serif font-bold text-[#1C1917] text-base mb-2 leading-snug">
                     {rev.title}
                   </h5>
 
                   {/* Nội dung nhận xét */}
-                  <p className="text-sm text-gray-700 leading-relaxed font-sans whitespace-pre-line mb-5">
+                  <p className="text-sm text-stone-700 leading-relaxed font-sans whitespace-pre-line mb-5">
                     {rev.content}
                   </p>
 
-                  {/* Footer nhận xét: Nút Hữu ích (Helpful) */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-xs">
+                  {/* Footer nhận xét: Nút Hữu ích (Helpful) bo góc 4px */}
+                  <div className="flex items-center justify-between pt-3 border-t border-stone-100 text-xs font-sans">
                     <button
                       type="button"
                       onClick={() => handleHelpfulClick(rev.review_id)}
                       disabled={isVoted}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border transition-all cursor-pointer ${
                         isVoted
-                          ? "bg-emerald-50 border-emerald-300 text-emerald-700 font-semibold cursor-default"
-                          : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                          ? "bg-stone-100 border-stone-300 text-stone-900 font-semibold cursor-default"
+                          : "border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-900 hover:bg-stone-50"
                       }`}
                     >
-                      <ThumbsUp size={13} className={isVoted ? "text-emerald-600" : ""} />
+                      <ThumbsUp size={13} className={isVoted ? "text-stone-800" : ""} />
                       <span>{isVoted ? "Đã cảm ơn" : "Hữu ích"}</span>
                       {rev.helpful_count > 0 && (
                         <span className="font-bold ml-0.5">({rev.helpful_count})</span>
                       )}
                     </button>
 
-                    <span className="text-[11px] text-gray-400">
+                    <span className="text-[11px] text-stone-400 italic">
                       Đã được kiểm duyệt cộng đồng
                     </span>
                   </div>

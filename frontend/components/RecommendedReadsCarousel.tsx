@@ -320,11 +320,14 @@ export default function RecommendedReadsCarousel({
         
         {/* Tiêu đề phần (Recommended Reads / You may also like / Also By This Author) */}
         <div className="text-center mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 tracking-tight">
+          <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-stone-500 mb-2">
+            THE INKWELL CURATIONS
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1C1917] tracking-tight">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+            <p className="text-xs sm:text-sm text-stone-500 mt-1.5 font-serif italic max-w-xl mx-auto">
               {subtitle}
             </p>
           )}
@@ -338,13 +341,13 @@ export default function RecommendedReadsCarousel({
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
             aria-label="Cuộn sang trái"
-            className={`hidden md:flex absolute -left-4 lg:-left-6 z-20 items-center justify-center w-10 h-10 transition-all cursor-pointer ${
+            className={`hidden md:flex absolute -left-4 lg:-left-5 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
               canScrollLeft
-                ? "text-gray-800 hover:text-black hover:scale-110 active:scale-95"
-                : "text-gray-300 cursor-not-allowed opacity-40"
+                ? "text-stone-800 hover:text-black hover:border-stone-400 hover:scale-105 active:scale-95"
+                : "text-stone-300 border-stone-100 cursor-not-allowed opacity-30"
             }`}
           >
-            <ChevronLeft size={36} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={2} />
           </button>
 
           {/* Dãy các thẻ sách cuộn ngang */}
@@ -361,7 +364,7 @@ export default function RecommendedReadsCarousel({
                 <div
                   key={book.book_id}
                   style={{ scrollSnapAlign: "start" }}
-                  className="flex-shrink-0 w-[200px] sm:w-[220px] lg:w-[235px] bg-[#FAF9F6] border border-gray-200/80 rounded-md p-4 sm:p-5 flex flex-col justify-between items-center text-center transition-all duration-300 hover:border-gray-300 hover:shadow-md hover:bg-white"
+                  className="flex-shrink-0 w-[200px] sm:w-[220px] lg:w-[235px] bg-[#FAF9F6] border border-stone-200/90 rounded-[6px] p-4 sm:p-5 flex flex-col justify-between items-center text-center transition-all duration-300 hover:border-stone-400 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)] hover:bg-white"
                 >
                   {/* Bìa sách định dạng 3D */}
                   <Link
@@ -385,29 +388,29 @@ export default function RecommendedReadsCarousel({
                     <Book3DCover book={book} />
 
                     {/* Tên sách */}
-                    <h3 className="font-serif font-bold text-gray-900 text-sm mt-3 line-clamp-1 group-hover/card:text-[#B12704] transition-colors">
+                    <h3 className="font-serif font-bold text-[#1C1917] text-sm mt-3 line-clamp-1 group-hover/card:text-stone-600 transition-colors">
                       {cleanTitle(book.title)}
                     </h3>
                   </Link>
 
                   {/* Phần giá tiền */}
                   <div className="mt-3 w-full">
-                    <p className="font-bold text-gray-900 text-base sm:text-lg tracking-tight">
+                    <p className="font-serif font-bold text-[#1C1917] text-base sm:text-lg tracking-tight">
                       {formatVND(salePrice)}
                     </p>
-                    <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 line-through decoration-gray-400">
+                    <p className="text-[11px] sm:text-xs text-stone-400 mt-0.5 line-through decoration-stone-300 font-sans">
                       Giá niêm yết: {formatVND(listPrice)}
                     </p>
                   </div>
 
-                  {/* Nút Add to Cart / Thêm vào giỏ viền đen */}
+                  {/* Nút Add to Cart / Thêm vào giỏ viền mảnh tinh tế, bo góc 5px */}
                   <button
                     type="button"
                     onClick={(e) => handleAddToCart(book, salePrice, e)}
-                    className={`w-full mt-4 py-2 px-3 text-xs sm:text-sm font-semibold rounded border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 ${
+                    className={`w-full mt-4 py-2 px-3 text-xs font-medium rounded-[5px] border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-xs font-sans ${
                       isAdded
-                        ? "bg-emerald-600 border-emerald-600 text-white shadow-xs"
-                        : "bg-white border-black text-black hover:bg-black hover:text-white"
+                        ? "bg-[#1C1917] border-[#1C1917] text-white"
+                        : "bg-white border-stone-300 text-stone-800 hover:border-[#1C1917] hover:bg-[#1C1917] hover:text-white"
                     }`}
                   >
                     {isAdded ? (
@@ -429,21 +432,21 @@ export default function RecommendedReadsCarousel({
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
             aria-label="Cuộn sang phải"
-            className={`hidden md:flex absolute -right-4 lg:-right-6 z-20 items-center justify-center w-10 h-10 transition-all cursor-pointer ${
+            className={`hidden md:flex absolute -right-4 lg:-right-5 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
               canScrollRight
-                ? "text-gray-800 hover:text-black hover:scale-110 active:scale-95"
-                : "text-gray-300 cursor-not-allowed opacity-40"
+                ? "text-stone-800 hover:text-black hover:border-stone-400 hover:scale-105 active:scale-95"
+                : "text-stone-300 border-stone-100 cursor-not-allowed opacity-30"
             }`}
           >
-            <ChevronRight size={36} strokeWidth={1.8} />
+            <ChevronRight size={20} strokeWidth={2} />
           </button>
         </div>
 
         {/* Thanh chỉ báo cuộn (Progress Slider Bar) */}
         <div className="mt-8 flex justify-center">
-          <div className="w-28 sm:w-36 h-1 bg-gray-200 rounded-full relative overflow-hidden">
+          <div className="w-24 sm:w-32 h-[3px] bg-stone-200 rounded-full relative overflow-hidden">
             <div
-              className="h-full bg-gray-500 rounded-full transition-all duration-150"
+              className="h-full bg-stone-800 rounded-full transition-all duration-150"
               style={{
                 width: "40%",
                 transform: `translateX(${scrollProgress * 150}%)`,

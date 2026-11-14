@@ -941,7 +941,7 @@ export default function BookDetailPage() {
               </button>
             </div>
 
-            <div className="space-y-4 my-6">
+            <div className="space-y-3.5 my-6 font-sans">
               {formatsList.map((f) => {
                 const isSelected = selectedFormat === f.id;
                 return (
@@ -951,32 +951,32 @@ export default function BookDetailPage() {
                       setSelectedFormat(f.id);
                       setShowFormatsModal(false);
                     }}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                    className={`p-4 rounded-[6px] border transition-all cursor-pointer flex items-center justify-between gap-4 ${
                       isSelected 
-                        ? "border-[#E77600] bg-[#FFF8F0] shadow-xs" 
-                        : "border-ink/10 hover:border-ink/30 hover:bg-ink/[0.02]"
+                        ? "border-2 border-[#1C1917] bg-stone-50 shadow-xs" 
+                        : "border border-stone-200 hover:border-stone-400 hover:bg-stone-50/50 bg-white"
                     }`}
                   >
                     <div className="flex items-start gap-3.5">
                       <div className="text-2xl mt-0.5">{f.icon}</div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-ink text-sm sm:text-base">{f.name}</h4>
+                          <h4 className="font-bold text-stone-900 text-sm sm:text-base">{f.name}</h4>
                           {isSelected && (
-                            <span className="bg-[#E77600] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="bg-[#1C1917] text-white text-[9px] font-medium px-2 py-0.5 rounded-[3px] uppercase tracking-wider">
                               Đang chọn
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-ink/60 mt-1 leading-relaxed">{f.desc}</p>
-                        <p className="text-[11px] text-emerald-700 font-medium mt-1">
-                          {f.id === "kindle" ? "⚡ Giao ngay lập tức qua ứng dụng/email" : "📦 Đóng gói cẩn thận, miễn phí đổi trả"}
+                        <p className="text-xs text-stone-600 mt-1 leading-relaxed">{f.desc}</p>
+                        <p className="text-[11px] text-stone-700 font-medium mt-1">
+                          {f.id === "kindle" ? "⚡ Giao nhận tức thì qua thư viện số" : "📦 Đóng gói cẩn thận, miễn phí đổi trả"}
                         </p>
                       </div>
                     </div>
 
                     <div className="text-right flex-shrink-0">
-                      <div className="text-base sm:text-lg font-bold text-[#B12704]">{formatPrice(f.price)}</div>
+                      <div className="text-base sm:text-lg font-serif font-bold text-[#1C1917]">{formatPrice(f.price)}</div>
                       <button
                         type="button"
                         onClick={(e) => {
@@ -984,10 +984,10 @@ export default function BookDetailPage() {
                           setSelectedFormat(f.id);
                           setShowFormatsModal(false);
                         }}
-                        className={`mt-2 text-xs font-semibold px-3.5 py-1.5 rounded-full transition-colors cursor-pointer ${
+                        className={`mt-2 text-xs font-medium px-3.5 py-1.5 rounded-[5px] transition-colors cursor-pointer ${
                           isSelected
-                            ? "bg-[#E77600] text-white"
-                            : "bg-ink/5 text-ink hover:bg-ink/10"
+                            ? "bg-[#1C1917] text-white shadow-xs"
+                            : "border border-stone-300 text-stone-800 hover:bg-stone-100"
                         }`}
                       >
                         {isSelected ? "Đã chọn" : "Chọn bản này"}
@@ -998,11 +998,11 @@ export default function BookDetailPage() {
               })}
             </div>
 
-            <div className="text-right pt-2 border-t border-ink/10">
+            <div className="text-right pt-3 border-t border-stone-200">
               <button
                 type="button"
                 onClick={() => setShowFormatsModal(false)}
-                className="px-5 py-2 text-sm font-medium text-ink/70 hover:text-ink hover:bg-ink/5 rounded-full transition-colors cursor-pointer"
+                className="px-4 py-2 text-xs font-medium text-stone-700 hover:text-stone-950 border border-stone-200 hover:bg-stone-50 rounded-[5px] transition-colors cursor-pointer"
               >
                 Đóng
               </button>
