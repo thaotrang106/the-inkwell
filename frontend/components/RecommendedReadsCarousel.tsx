@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -298,7 +298,7 @@ export default function RecommendedReadsCarousel({
                 <div
                   key={book.book_id}
                   style={{ scrollSnapAlign: "start" }}
-                  className="flex-shrink-0 w-[205px] sm:w-[225px] lg:w-[240px] bg-white border border-stone-200/90 rounded-[6px] p-4 sm:p-5 flex flex-col justify-between items-center text-center transition-all duration-300 hover:border-stone-400 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)]"
+                  className="flex-shrink-0 w-[190px] sm:w-[210px] lg:w-[225px] bg-white rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_14px_30px_-6px_rgba(28,25,23,0.12)] border border-stone-200/70 hover:border-stone-300 group/card"
                 >
                   {/* Bìa sách định dạng 3D */}
                   <Link
@@ -317,62 +317,64 @@ export default function RecommendedReadsCarousel({
                         } catch {}
                       }
                     }}
-                    className="w-full flex flex-col items-center group/card cursor-pointer"
+                    className="w-full flex flex-col items-center cursor-pointer select-none"
                   >
-                    {/* Huy hiệu biên tập (Badge) */}
-                    {book.badge && (
-                      <span className="mb-2 font-mono text-[9px] font-semibold uppercase tracking-wider text-[#881337] bg-rose-50 px-2 py-0.5 rounded-[3px] border border-[#881337]/15">
-                        {book.badge}
-                      </span>
-                    )}
+                    <div className="w-full flex items-center justify-center py-1 relative">
+                      {pricing.discountPercent > 0 && (
+                        <span className="absolute top-0 right-1 z-20 text-[10px] font-bold font-sans bg-[#881337] text-white px-2 py-0.5 rounded-full shadow-xs">
+                          -{pricing.discountPercent}%
+                        </span>
+                      )}
+                      <Book3DCover book={book} />
+                    </div>
 
-                    <Book3DCover book={book} />
+                    {/* Tên sách (Font Serif - Căn trái biên tập chuẩn nhà sách) */}
+                    <div className="w-full mt-3 text-left">
+                      <h3 className="font-serif font-bold text-[#1C1917] text-sm sm:text-[15px] leading-snug line-clamp-2 h-[2.6rem] group-hover/card:text-[#881337] transition-colors">
+                        {cleanTitle(book.title)}
+                      </h3>
 
-                    {/* Tên sách (Font Serif) */}
-                    <h3 className="font-serif font-bold text-[#1C1917] text-sm mt-3 line-clamp-2 min-h-[2.5rem] group-hover/card:text-stone-600 transition-colors">
-                      {cleanTitle(book.title)}
-                    </h3>
-
-                    {/* Tên tác giả */}
-                    <p className="text-[11px] text-stone-500 font-sans line-clamp-1 mt-0.5">
-                      {authorName}
-                    </p>
+                      {/* Tên tác giả */}
+                      <p className="text-xs text-stone-500 font-sans line-clamp-1 mt-1">
+                        {authorName}
+                      </p>
+                    </div>
                   </Link>
 
-                  {/* Phần giá tiền đồng bộ 100% với BookCard */}
-                  <div className="mt-3 w-full">
-                    <div className="flex items-baseline justify-center gap-1.5 flex-wrap">
+                  {/* Phần giá tiền trên 1 dòng trang nhã, không còn badge hồng vụn vặt */}
+                  <div className="mt-2.5 w-full text-left">
+                    <div className="flex items-baseline gap-2 flex-wrap">
                       <span className="font-serif font-bold text-[#1C1917] text-base sm:text-lg tracking-tight">
                         {formatPriceVND(pricing.price)}
                       </span>
-                      <span className="text-[11px] text-stone-400 line-through decoration-stone-300 font-sans">
-                        {formatPriceVND(pricing.originalPrice)}
-                      </span>
-                    </div>
-                    <div className="mt-1">
-                      <span className="text-[10px] font-bold font-mono text-[#881337] bg-rose-50/80 px-1.5 py-0.5 rounded-[3px]">
-                        Tiết kiệm {pricing.discountPercent}%
-                      </span>
+                      {pricing.originalPrice > pricing.price && (
+                        <span className="text-xs text-stone-400 line-through decoration-stone-300 font-sans">
+                          {formatPriceVND(pricing.originalPrice)}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Nút Add to Cart / Thêm vào giỏ viền mảnh tinh tế, bo góc 5px */}
+                  {/* Nút Thêm vào giỏ dạng Pill sang trọng */}
                   <button
                     type="button"
                     onClick={(e) => handleAddToCart(book, pricing.price, e)}
-                    className={`w-full mt-4 py-2 px-3 text-xs font-medium rounded-[5px] border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-xs font-sans ${
+                    className={`w-full mt-3.5 py-2 px-3 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-2xs font-sans ${
                       isAdded
-                        ? "bg-[#1C1917] border-[#1C1917] text-white"
-                        : "bg-white border-stone-300 text-stone-800 hover:border-[#1C1917] hover:bg-[#1C1917] hover:text-white"
+                        ? "bg-[#881337] text-white"
+                        : "bg-[#1C1917] hover:bg-[#881337] text-white"
                     }`}
                   >
                     {isAdded ? (
                       <>
-                        <Check size={14} className="stroke-[2.5]" />
+                        <Check size={13} className="stroke-[2.5]" />
                         <span>Đã thêm vào giỏ</span>
                       </>
                     ) : (
-                      <span>Thêm vào giỏ</span>
+                      <>
+                        <ShoppingBag size={13} strokeWidth={2} />
+                        <span>Thêm vào giỏ</span>
+                      </>
                     )}
                   </button>
                 </div>
