@@ -102,22 +102,24 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
       onClick={handleSaveToSession}
       onMouseEnter={handleSaveToSession}
       onMouseDown={handleSaveToSession}
-      className="group cursor-pointer flex flex-col gap-4 relative w-full h-full block"
+      className="group cursor-pointer flex flex-col h-full w-full relative"
     >
-      
-      {rank && !isHybrid && (
-        <div className="absolute top-2 left-2 z-10 bg-rose-500 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded shadow-md">
-          #{rank} Thịnh hành
-        </div>
-      )}
-      {isHybrid && book.hybrid_score && (
-        <div className="absolute top-2 right-2 z-10 bg-purple-600 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded shadow-md flex items-center gap-1">
-          <span>✨</span> Phù hợp {book.hybrid_score}%
-        </div>
-      )}
+      {/* 1. Phần Bìa sách: Aspect ratio 2:3, bo góc nhẹ 4px */}
+      <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden rounded-[4px] border border-stone-200/70 bg-stone-100 shadow-2xs transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md flex items-center justify-center p-0">
+        
+        {/* Badge Rank: Không nền, text in hoa nhỏ, đặt ở góc trên cùng bên trái của ảnh bìa */}
+        {rank && !isHybrid && (
+          <div className="absolute top-2 left-2 z-20 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.16em] text-[#881337] drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] select-none">
+            #{rank} THỊNH HÀNH
+          </div>
+        )}
+        {isHybrid && book.hybrid_score && (
+          <div className="absolute top-2 right-2 z-20 font-mono text-[9px] font-bold uppercase tracking-wider text-stone-700 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+            GỢI Ý {book.hybrid_score}%
+          </div>
+        )}
 
-      <div className="relative aspect-[2/3] overflow-hidden rounded-xl shadow-md transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl bg-[#1A1A1A] flex items-center justify-center p-0">
-        <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/20 transition-colors z-10 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors z-10 pointer-events-none"></div>
         
         {!imgFailed && imgSrc ? (
           <img 
@@ -125,14 +127,14 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
             alt={cleanTitle(book.title)} 
             referrerPolicy="no-referrer"
             onError={handleImageError}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103 rounded-[4px]"
           />
         ) : (
           /* Bìa sách bìa cứng mạ vàng kim cổ điển thay thế nếu sách không có ảnh thật */
           <div
-            className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none`}
+            className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none rounded-[4px]`}
           >
-            <div className={`absolute inset-2 border ${theme.border} rounded pointer-events-none`}></div>
+            <div className={`absolute inset-2 border ${theme.border} rounded-[2px] pointer-events-none`}></div>
             <div className="w-full text-[9px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-1">
               THE INKWELL
             </div>
@@ -142,7 +144,7 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
                 {cleanTitle(book.title)}
               </p>
               <div className="w-8 h-[1px] bg-amber-400/40 mx-auto my-2"></div>
-              <p className="text-[11px] text-stone-300 line-clamp-1 italic">
+              <p className="text-[11px] text-stone-300 line-clamp-1 italic font-sans">
                 {book.author || book.authors || "Special Edition"}
               </p>
             </div>
@@ -153,35 +155,46 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
           </div>
         )}
         
-        {/* Nút Thêm vào giỏ hiện ra khi hover */}
+        {/* Nút Thêm vào giỏ thanh lịch hiện ra khi hover */}
         <button 
           onClick={handleAddToCart}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 z-20 bg-white/90 backdrop-blur text-ink px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-ink hover:text-white transition-all duration-300 flex items-center gap-2 text-sm whitespace-nowrap"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 z-20 bg-[#1C1917] text-white px-3.5 py-1.5 rounded-[4px] font-sans font-medium text-xs shadow-md hover:bg-stone-800 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
         >
-          <ShoppingBag size={16} /> Thêm vào giỏ
+          <ShoppingBag size={13} /> <span>Thêm vào giỏ</span>
         </button>
       </div>
 
-      <div className="flex flex-col gap-1.5 px-1">
-        <h3 className="font-serif font-bold text-ink text-[15px] leading-snug line-clamp-2 group-hover:text-[#4B6584] transition-colors">
+      {/* 2. Phần Thông tin sách: Cấu trúc CSS Grid/Flexbox đảm bảo thẳng hàng tuyệt đối */}
+      <div className="flex flex-col flex-1 pt-3 pb-1">
+        
+        {/* Hàng 1: Tiêu đề sách (Font Serif, cố định h-[2.6rem] để luôn thẳng hàng) */}
+        <h3 className="font-serif font-bold text-[#1C1917] text-sm sm:text-[15px] leading-snug line-clamp-2 h-[2.6rem] group-hover:text-stone-600 transition-colors">
           {cleanTitle(book.title)}
         </h3>
-        <p className="text-xs text-ink/50 line-clamp-1">{book.author || book.authors || "Nhiều tác giả"}</p>
+
+        {/* Hàng 2: Tên tác giả (Font Sans-serif nhỏ, màu xám, cố định h-4) */}
+        <p className="text-xs font-sans text-stone-500 line-clamp-1 h-4 mt-1">
+          {book.author || book.authors || "Nhiều tác giả"}
+        </p>
         
-        <div className="flex items-center gap-1.5 mt-1">
+        {/* Hàng 3: Đánh giá sao (Màu vàng đất Gold #C5A059, kích thước nhỏ 10px, cố định h-4) */}
+        <div className="flex items-center gap-1.5 mt-2 h-4">
           <div className="flex gap-0.5">
             {[1,2,3,4,5].map((s) => (
-              <Star key={s} className="fill-amber-400 text-amber-400" size={12} />
+              <Star key={s} className="fill-[#C5A059] text-[#C5A059]" size={10} />
             ))}
           </div>
-          <span className="text-[10px] font-medium text-ink/40">
-            ({book.rating || (Math.random() * (5.0 - 4.0) + 4.0).toFixed(1)})
+          <span className="text-[10px] font-mono text-stone-400 font-medium">
+            ({book.rating ? Number(book.rating).toFixed(1) : "4.5"})
           </span>
         </div>
         
-        <p className="text-[15px] font-bold text-[#4B6584] mt-1">
-          {formatPrice(randomPrice)}
-        </p>
+        {/* Hàng 4: Giá tiền in đậm, màu đen than #1C1917 (đẩy sát đáy bằng mt-auto) */}
+        <div className="mt-auto pt-2.5">
+          <p className="text-sm sm:text-[15px] font-bold text-[#1C1917] font-sans tracking-tight">
+            {formatPrice(randomPrice)}
+          </p>
+        </div>
       </div>
     </Link>
   );

@@ -854,36 +854,44 @@ export default function Home() {
       {/* Mục Đề Xuất Tuyển Chọn (Recommended Reads Carousel) - Lấy dữ liệu sách từ Database */}
       <RecommendedReadsCarousel title="Gợi ý tuyển chọn" initialBooks={popularBooks} />
 
-      {/* Sách Thịnh Hành (Popular) */}
+      {/* Sách Thịnh Hành (Popular) - Phong cách Editorial cao cấp */}
       <section id="trending" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-20 scroll-mt-24">
-        <div className="flex items-end justify-between mb-10 border-b border-ink/5 pb-6">
+        <div className="flex items-end justify-between mb-10 border-b border-stone-200/80 pb-6">
           <div>
-            <h2 className="font-serif text-3xl font-bold text-ink mb-2">Sách Thịnh Hành</h2>
-            <p className="text-ink/60 text-sm">Top 10 tác phẩm được yêu thích nhất mọi thời đại</p>
+            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-stone-500 font-medium mb-1.5 block">
+              THE INKWELL CANON • TUYỂN CHỌN
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight mb-2">
+              Sách Thịnh Hành
+            </h2>
+            <p className="text-stone-500 text-xs sm:text-sm font-sans">
+              Top 10 tác phẩm được yêu thích nhất mọi thời đại
+            </p>
           </div>
           <Link 
             href="/trending" 
-            className="text-sm font-bold text-terracotta hover:text-ink transition-colors uppercase tracking-wider hidden sm:flex items-center gap-1 group cursor-pointer"
+            className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-stone-600 transition-colors uppercase tracking-[0.15em] flex items-center gap-1.5 group cursor-pointer"
           >
             <span>Xem tất cả</span>
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform stroke-[2]" />
           </Link>
         </div>
         
         {popularBooks.length === 0 ? (
-          <div className="text-center py-20 text-ink/40">
-            <Loader2 className="animate-spin mx-auto mb-4" size={32} />
-            <p>Đang tải dữ liệu từ máy chủ...</p>
+          <div className="text-center py-20 text-stone-400 font-sans">
+            <Loader2 className="animate-spin mx-auto mb-4 text-stone-700" size={32} />
+            <p className="text-sm font-serif italic text-stone-500">Đang tải dữ liệu từ máy chủ...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-x-8 lg:gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-x-8 lg:gap-y-12 items-stretch">
             {popularBooks.slice(0, 10).map((book, i) => (
               <motion.div
                 key={book.book_id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: (i % 5) * 0.1, duration: 0.5 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: (i % 5) * 0.08, duration: 0.4 }}
+                className="h-full flex flex-col"
               >
                 <BookCard book={book} rank={book.rank || i + 1} />
               </motion.div>
