@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
-import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2, X, Check } from "lucide-react";
+import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2, X, Check, Heart, Truck, ShieldCheck, RotateCcw, MapPin, Zap, Plus, Minus, Clock } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import BookCard from "@/components/BookCard";
@@ -125,6 +125,8 @@ export default function BookDetailPage() {
   const [selectedFormat, setSelectedFormat] = useState<"kindle" | "paperback" | "hardcover">("paperback");
   const [showFormatsModal, setShowFormatsModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [similarBooks, setSimilarBooks] = useState<any[]>([]);
   const [authorBooks, setAuthorBooks] = useState<any[]>([]);
   const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
@@ -380,6 +382,9 @@ export default function BookDetailPage() {
       title: `${cleanTitle(book.title)} [${selectedFormat === "kindle" ? "Kindle" : selectedFormat === "hardcover" ? "Bìa cứng" : "Bìa mềm"}]`
     };
     addToCart(bookToCart, quantity);
+    setIsAddedToCart(true);
+    setTimeout(() => setIsAddedToCart(false), 2400);
+
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
@@ -414,6 +419,8 @@ export default function BookDetailPage() {
   };
 
   const handleWishlistDetail = () => {
+    const nextState = !isWishlisted;
+    setIsWishlisted(nextState);
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
@@ -421,10 +428,9 @@ export default function BookDetailPage() {
       body: JSON.stringify({
         user_id: currentUserId,
         book_id: book.book_id,
-        interaction_type: "wishlist",
+        interaction_type: nextState ? "wishlist" : "remove_wishlist",
       }),
     }).catch(() => {});
-    alert("Đã thêm vào danh sách yêu thích! Hệ thống đã ghi nhận để cập nhật gu đọc của bạn.");
   };
 
   return (
@@ -660,74 +666,163 @@ export default function BookDetailPage() {
         
         {/* RIGHT COLUMN: Buy Box (col-span-3) */}
         <div className="lg:col-span-3">
-          <div className="border border-ink/20 rounded-lg p-5 sticky top-24 shadow-sm">
+          <div className="bg-white border border-ink/10 rounded-2xl p-5 sm:p-6 sticky top-24 shadow-[0_12px_36px_-12px_rgba(0,0,0,0.08)] transition-all">
             
-            <div className="text-3xl font-bold text-[#B12704] mb-1">
-              {formatPrice(currentPrice)}
+            {/* Giá & Ưu đãi */}
+            <div className="mb-4">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="font-serif text-3xl sm:text-[32px] font-bold text-[#B12704] tracking-tight">
+                  {formatPrice(currentPrice)}
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                  Tiết kiệm 20%
+                </span>
+              </div>
+              <div className="text-[11px] text-ink/45 line-through mt-0.5">
+                Giá gốc: {formatPrice(Math.round(currentPrice * 1.25))}
+              </div>
             </div>
 
-            <div className="text-xs text-ink/75 font-medium mb-4 pb-3 border-b border-ink/10 flex items-center justify-between">
+            {/* Phiên bản đang chọn */}
+            <div className="text-xs text-ink/70 font-medium mb-4 pb-3 border-b border-ink/10 flex items-center justify-between">
               <span>Định dạng:</span>
-              <span className="font-semibold text-[#007185]">{selectedFormatLabel}</span>
-            </div>
-            
-            <div className="text-sm text-ink/70 mb-4">
-              <span className="text-[#007185] hover:underline cursor-pointer">Miễn phí đổi trả</span>
-              <br/>
-              {selectedFormat === "kindle" ? (
-                <>Giao hàng: <strong>Ngay lập tức</strong> qua thư viện số</>
-              ) : (
-                <>Giao hàng miễn phí vào <strong>Ngày mai</strong>. Đặt trước trong 5 giờ 30 phút</>
-              )}
-              <br/>
-              <span className="flex items-center gap-1 mt-1 text-[#007185] hover:underline cursor-pointer">
-                Giao tới Việt Nam
-              </span>
-            </div>
-            
-            <h4 className="text-xl font-bold text-[#007600] mb-4">Còn hàng</h4>
-            
-            {/* Quantity Selector */}
-            <div className="mb-4">
-              <select 
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                className="border border-ink/30 rounded-md py-1.5 px-3 bg-[#F0F2F2] shadow-sm hover:bg-[#E3E6E6] w-full max-w-[100px] cursor-pointer"
-              >
-                {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                  <option key={n} value={n}>Số lượng: {n}</option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Add to Cart Button */}
-            <button 
-              onClick={handleAddToCartDetail}
-              className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-ink py-2.5 rounded-full font-medium shadow-sm border border-[#FCD200] flex items-center justify-center gap-2 mb-3 transition-colors"
-            >
-              <ShoppingCart size={18} /> Thêm vào giỏ hàng
-            </button>
-            
-            {/* Buy Now Button */}
-            <button 
-              onClick={handlePurchaseDetail}
-              className="w-full bg-[#FFA41C] hover:bg-[#FA8900] text-ink py-2.5 rounded-full font-medium shadow-sm border border-[#FF8F00] transition-colors mb-4"
-            >
-              Mua ngay
-            </button>
-            
-            <div className="text-xs text-ink/60 space-y-1">
-              <div className="flex justify-between"><span className="w-24">Giao hàng từ</span> <span>The Inkwell</span></div>
-              <div className="flex justify-between"><span className="w-24">Bán bởi</span> <span>The Inkwell</span></div>
-              <div className="flex justify-between"><span className="w-24">Đổi trả</span> <span className="text-[#007185] hover:underline cursor-pointer">Hỗ trợ đổi trả trong 30 ngày</span></div>
-            </div>
-            
-            <div className="mt-6 pt-4 border-t border-ink/10">
               <button 
-                onClick={handleWishlistDetail}
-                className="w-full py-1.5 border border-ink/30 rounded shadow-sm text-sm font-medium hover:bg-ink/5"
+                type="button"
+                onClick={() => setShowFormatsModal(true)}
+                className="font-semibold text-[#007185] hover:text-[#C7511F] hover:underline flex items-center gap-1 cursor-pointer"
+                title="Bấm để đổi ấn bản"
               >
-                Thêm vào danh sách yêu thích
+                {selectedFormatLabel}
+                <ChevronDown size={13} />
+              </button>
+            </div>
+            
+            {/* Trạng thái kho hàng */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Còn hàng sẵn sàng giao
+              </span>
+              <span className="text-[11px] text-ink/50 ml-auto">Kho The Inkwell</span>
+            </div>
+
+            {/* Thông tin vận chuyển & Địa chỉ */}
+            <div className="bg-[#FAF8F5] rounded-xl p-3.5 border border-ink/8 mb-5 space-y-2.5 text-xs">
+              <div className="flex items-start gap-2.5 text-ink/80">
+                <Truck size={15} className="text-[#B12704] shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  {selectedFormat === "kindle" ? (
+                    <span>Giao nhận: <strong className="text-ink font-semibold">Tức thì</strong> qua thư viện số</span>
+                  ) : (
+                    <span>Giao tiêu chuẩn: <strong className="text-ink font-semibold">Miễn phí vào Ngày mai</strong></span>
+                  )}
+                </div>
+              </div>
+              {selectedFormat !== "kindle" && (
+                <div className="flex items-center gap-2.5 text-ink/70">
+                  <Clock size={14} className="text-amber-700 shrink-0" />
+                  <span>Đặt trước trong <strong className="text-ink font-semibold">5 giờ 30 phút</strong></span>
+                </div>
+              )}
+              <div className="flex items-center justify-between pt-2 border-t border-ink/5 text-[11px]">
+                <span className="flex items-center gap-1 text-ink/65">
+                  <MapPin size={13} className="text-[#007185]" /> Giao tới: <strong className="text-ink font-medium">Việt Nam</strong>
+                </span>
+                <span className="text-[#007185] font-semibold hover:underline cursor-pointer">Miễn phí đổi trả</span>
+              </div>
+            </div>
+            
+            {/* Bộ chọn số lượng tinh gọn (Stepper - +) */}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold text-ink">Số lượng:</span>
+              <div className="flex items-center border border-ink/20 rounded-xl bg-white shadow-xs overflow-hidden">
+                <button 
+                  type="button"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                  className="w-8 h-8 flex items-center justify-center text-ink/70 hover:bg-ink/5 hover:text-ink disabled:opacity-30 transition-colors cursor-pointer"
+                  title="Giảm số lượng"
+                >
+                  <Minus size={13} />
+                </button>
+                <span className="w-9 text-center text-xs font-bold text-ink select-none">
+                  {quantity}
+                </span>
+                <button 
+                  type="button"
+                  onClick={() => setQuantity(Math.min(10, quantity + 1))}
+                  disabled={quantity >= 10}
+                  className="w-8 h-8 flex items-center justify-center text-ink/70 hover:bg-ink/5 hover:text-ink disabled:opacity-30 transition-colors cursor-pointer"
+                  title="Tăng số lượng"
+                >
+                  <Plus size={13} />
+                </button>
+              </div>
+            </div>
+            
+            {/* Nút Thêm vào giỏ hàng & Mua ngay */}
+            <div className="space-y-2.5 mb-5">
+              <button 
+                type="button"
+                onClick={handleAddToCartDetail}
+                className={`w-full py-3 px-4 rounded-xl font-semibold text-sm shadow-xs border flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] ${
+                  isAddedToCart 
+                    ? "bg-emerald-600 border-emerald-600 text-white shadow-md" 
+                    : "bg-[#FFD814] hover:bg-[#F7CA00] text-[#111827] border-[#FCD200] hover:shadow-sm"
+                }`}
+              >
+                {isAddedToCart ? (
+                  <>
+                    <Check size={18} className="animate-bounce" />
+                    <span>Đã thêm vào giỏ hàng!</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={18} />
+                    <span>Thêm vào giỏ hàng</span>
+                  </>
+                )}
+              </button>
+              
+              <button 
+                type="button"
+                onClick={handlePurchaseDetail}
+                className="w-full bg-[#FFA41C] hover:bg-[#FA8900] text-[#111827] py-3 px-4 rounded-xl font-semibold text-sm shadow-xs border border-[#FF8F00] hover:shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]"
+              >
+                <Zap size={16} className="fill-[#111827]" />
+                <span>Mua ngay</span>
+              </button>
+            </div>
+            
+            {/* Bảng cam kết & Đơn vị bán */}
+            <div className="space-y-2 pt-4 border-t border-ink/10 text-xs">
+              <div className="flex items-center justify-between text-ink/70">
+                <span className="flex items-center gap-1.5 text-ink/50">
+                  <ShieldCheck size={13} className="text-emerald-600" /> Cung cấp bởi
+                </span>
+                <span className="font-semibold text-ink">The Inkwell Official</span>
+              </div>
+              <div className="flex items-center justify-between text-ink/70">
+                <span className="flex items-center gap-1.5 text-ink/50">
+                  <RotateCcw size={13} className="text-[#007185]" /> Đổi trả an tâm
+                </span>
+                <span className="text-[#007185] hover:underline cursor-pointer font-medium">30 ngày miễn phí</span>
+              </div>
+            </div>
+            
+            {/* Nút Thêm vào danh sách yêu thích */}
+            <div className="mt-4 pt-4 border-t border-ink/10">
+              <button 
+                type="button"
+                onClick={handleWishlistDetail}
+                className={`w-full py-2.5 px-4 rounded-xl border text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  isWishlisted 
+                    ? "bg-rose-50 border-rose-200 text-rose-600 shadow-xs" 
+                    : "bg-white hover:bg-[#FAF8F5] border-ink/20 text-ink/75 hover:text-ink hover:border-ink/40 shadow-xs"
+                }`}
+              >
+                <Heart size={16} className={isWishlisted ? "fill-rose-500 text-rose-500" : "text-ink/40"} />
+                <span>{isWishlisted ? "Đã lưu vào Yêu thích" : "Thêm vào danh sách yêu thích"}</span>
               </button>
             </div>
             
