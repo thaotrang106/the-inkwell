@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
-import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2, X, Check, Heart, Truck, ShieldCheck, RotateCcw, MapPin, Zap, Plus, Minus, Clock } from "lucide-react";
+import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2, X, Check, Heart, Truck, ShieldCheck, RotateCcw, MapPin, Zap, Plus, Minus, Clock, Tablet, BookMarked } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import BookCard from "@/components/BookCard";
@@ -320,22 +320,22 @@ export default function BookDetailPage() {
       id: "kindle",
       name: "Bản điện tử (Kindle)",
       price: kindlePrice,
-      desc: "Đọc tức thì trên thiết bị Kindle hoặc ứng dụng di động",
-      icon: "📱"
+      desc: "Đọc tức thì trên thiết bị Kindle hoặc ứng dụng đọc số The Inkwell",
+      icon: "kindle"
     },
     {
       id: "paperback",
       name: "Bìa mềm (Paperback)",
       price: paperbackPrice,
-      desc: "Bản in tiêu chuẩn, giấy xốp chống lóa 70gsm",
-      icon: "📖"
+      desc: "Bản in tiêu chuẩn chất lượng cao, giấy xốp Phần Lan chống lóa 75gsm",
+      icon: "paperback"
     },
     {
       id: "hardcover",
       name: "Bìa cứng (Hardcover)",
       price: hardcoverPrice,
-      desc: "Bản kỷ niệm mạ vàng sang trọng, áo ôm kèm bookmark lụa",
-      icon: "✨"
+      desc: "Ấn bản kỷ niệm bìa cứng mạ vàng kim cổ điển, áo ôm kèm bookmark lụa",
+      icon: "hardcover"
     }
   ];
 
@@ -926,21 +926,31 @@ export default function BookDetailPage() {
 
       {/* Modal Chi tiết & So sánh tất cả phiên bản sách */}
       {showFormatsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-ink/10 relative max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-ink/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-[#FCFBF9] rounded-[8px] max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 relative max-h-[90vh] overflow-y-auto">
+            {/* Header Modal */}
+            <div className="flex items-start justify-between pb-4 border-b border-stone-200">
               <div>
-                <h3 className="font-serif font-bold text-xl text-ink">Các phiên bản của tác phẩm</h3>
-                <p className="text-xs text-ink/60 mt-0.5">{cleanTitle(book.title)} — {authorName}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-500 mb-1">
+                  THE INKWELL EDITIONS • SO SÁNH ẤN BẢN
+                </p>
+                <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1C1917] tracking-tight">
+                  Các phiên bản của tác phẩm
+                </h3>
+                <p className="text-xs text-stone-600 font-serif italic mt-1">
+                  {cleanTitle(book.title)} — {authorName}
+                </p>
               </div>
               <button 
                 onClick={() => setShowFormatsModal(false)}
-                className="p-1.5 rounded-full hover:bg-ink/5 text-ink/60 hover:text-ink transition-colors cursor-pointer"
+                className="p-1.5 rounded-[4px] border border-transparent hover:border-stone-300 hover:bg-stone-100 text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
+                aria-label="Đóng cửa sổ"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
+            {/* Danh sách các phiên bản */}
             <div className="space-y-3.5 my-6 font-sans">
               {formatsList.map((f) => {
                 const isSelected = selectedFormat === f.id;
@@ -951,32 +961,67 @@ export default function BookDetailPage() {
                       setSelectedFormat(f.id);
                       setShowFormatsModal(false);
                     }}
-                    className={`p-4 rounded-[6px] border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                    className={`p-4 sm:p-5 rounded-[6px] border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                       isSelected 
-                        ? "border-2 border-[#1C1917] bg-stone-50 shadow-xs" 
-                        : "border border-stone-200 hover:border-stone-400 hover:bg-stone-50/50 bg-white"
+                        ? "border-2 border-[#1C1917] bg-white shadow-sm ring-1 ring-[#1C1917]/10" 
+                        : "border border-stone-200/90 hover:border-stone-400 bg-white/70 hover:bg-white"
                     }`}
                   >
-                    <div className="flex items-start gap-3.5">
-                      <div className="text-2xl mt-0.5">{f.icon}</div>
+                    <div className="flex items-start gap-4">
+                      {/* Icon đại diện bản in */}
+                      <div className={`w-11 h-11 rounded-[5px] flex items-center justify-center shrink-0 border ${
+                        isSelected 
+                          ? "bg-[#1C1917] text-white border-[#1C1917]" 
+                          : "bg-stone-100 text-stone-700 border-stone-200/80"
+                      }`}>
+                        {f.id === "kindle" ? (
+                          <Tablet size={20} />
+                        ) : f.id === "hardcover" ? (
+                          <BookMarked size={20} />
+                        ) : (
+                          <BookOpen size={20} />
+                        )}
+                      </div>
+
                       <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-stone-900 text-sm sm:text-base">{f.name}</h4>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-serif font-bold text-stone-900 text-base">
+                            {f.name}
+                          </h4>
                           {isSelected && (
-                            <span className="bg-[#1C1917] text-white text-[9px] font-medium px-2 py-0.5 rounded-[3px] uppercase tracking-wider">
+                            <span className="bg-[#1C1917] text-white text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[3px]">
                               Đang chọn
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-stone-600 mt-1 leading-relaxed">{f.desc}</p>
-                        <p className="text-[11px] text-stone-700 font-medium mt-1">
-                          {f.id === "kindle" ? "⚡ Giao nhận tức thì qua thư viện số" : "📦 Đóng gói cẩn thận, miễn phí đổi trả"}
+                        <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                          {f.desc}
                         </p>
+                        <div className="text-[11px] text-stone-500 font-medium mt-1.5 flex items-center gap-1.5 flex-wrap">
+                          {f.id === "kindle" ? (
+                            <>
+                              <Zap size={12} className="text-stone-700 shrink-0" />
+                              <span>Giao nhận tức thì vào Thư viện số The Inkwell</span>
+                            </>
+                          ) : f.id === "hardcover" ? (
+                            <>
+                              <ShieldCheck size={12} className="text-stone-700 shrink-0" />
+                              <span>Ấn bản giới hạn, áo ôm mạ vàng kim & bookmark lụa</span>
+                            </>
+                          ) : (
+                            <>
+                              <Truck size={12} className="text-stone-700 shrink-0" />
+                              <span>Đóng gói cẩn thận 3 lớp, miễn phí đổi trả trong 30 ngày</span>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-base sm:text-lg font-serif font-bold text-[#1C1917]">{formatPrice(f.price)}</div>
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100">
+                      <div className="text-base sm:text-lg font-serif font-bold text-[#1C1917]">
+                        {formatPrice(f.price)}
+                      </div>
                       <button
                         type="button"
                         onClick={(e) => {
@@ -984,13 +1029,20 @@ export default function BookDetailPage() {
                           setSelectedFormat(f.id);
                           setShowFormatsModal(false);
                         }}
-                        className={`mt-2 text-xs font-medium px-3.5 py-1.5 rounded-[5px] transition-colors cursor-pointer ${
+                        className={`text-xs font-medium px-4 py-1.5 rounded-[5px] transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSelected
                             ? "bg-[#1C1917] text-white shadow-xs"
-                            : "border border-stone-300 text-stone-800 hover:bg-stone-100"
+                            : "border border-stone-300 text-stone-800 hover:border-stone-900 hover:bg-stone-50"
                         }`}
                       >
-                        {isSelected ? "Đã chọn" : "Chọn bản này"}
+                        {isSelected ? (
+                          <>
+                            <Check size={13} className="stroke-[2.5]" />
+                            <span>Đã chọn</span>
+                          </>
+                        ) : (
+                          <span>Chọn bản này</span>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -998,11 +1050,15 @@ export default function BookDetailPage() {
               })}
             </div>
 
-            <div className="text-right pt-3 border-t border-stone-200">
+            {/* Footer Modal */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-stone-200 text-xs font-sans">
+              <span className="text-stone-500 font-serif italic text-[11px] sm:text-xs text-center sm:text-left">
+                Tất cả ấn bản The Inkwell đều được cam kết tiêu chuẩn giấy và chất lượng đóng quyển cao cấp.
+              </span>
               <button
                 type="button"
                 onClick={() => setShowFormatsModal(false)}
-                className="px-4 py-2 text-xs font-medium text-stone-700 hover:text-stone-950 border border-stone-200 hover:bg-stone-50 rounded-[5px] transition-colors cursor-pointer"
+                className="px-5 py-2 text-xs font-medium text-stone-700 hover:text-stone-950 border border-stone-300 hover:bg-stone-100 rounded-[5px] transition-colors cursor-pointer shrink-0"
               >
                 Đóng
               </button>
