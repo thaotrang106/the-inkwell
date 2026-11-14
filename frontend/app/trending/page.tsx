@@ -311,62 +311,64 @@ function TrendingPageContent() {
           </div>
         </div>
 
-        {/* 2. HEADER BANNER THÔNG TIN DANH MỤC */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 shadow-sm border border-ink/10 mb-8 relative overflow-hidden">
-          {/* Họa tiết trang trí nền nhẹ nhàng */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-[#FFF5F2] to-transparent rounded-bl-full pointer-events-none opacity-70" />
-
-          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-3xl">
-              
-              {/* Huy hiệu danh mục */}
+        {/* 2. HEADER BANNER THÔNG TIN DANH MỤC (Phong cách Editorial / New York Times) */}
+        <div className="bg-[#FAFAFA] rounded-[6px] p-6 sm:p-9 lg:p-10 border border-stone-200/90 mb-8 relative">
+          
+          <div className="flex flex-col">
+            {/* Huy hiệu phân mục tối giản */}
+            <div className="flex items-center gap-2 mb-3 text-stone-500 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] font-medium">
               {genreParam ? (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF5F2] border border-[#B12704]/20 text-[#B12704] text-xs font-bold uppercase tracking-wider mb-3">
-                  <BookOpen size={14} /> Thể Loại Sách
-                </div>
+                <>
+                  <BookOpen size={13} className="text-stone-700" />
+                  <span>THE INKWELL ARCHIVE • THỂ LOẠI SÁCH</span>
+                </>
               ) : (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF5F2] border border-[#B12704]/20 text-[#B12704] text-xs font-bold uppercase tracking-wider mb-3">
-                  <TrendingUp size={14} /> Bảng Xếp Hạng The Inkwell
-                </div>
+                <>
+                  <TrendingUp size={13} className="text-stone-700" />
+                  <span>THE INKWELL ARCHIVE • BẢNG XẾP HẠNG</span>
+                </>
               )}
+            </div>
 
-              {/* Tựa đề trang */}
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-                {activeGenreMeta ? activeGenreMeta.title : "Sách Thịnh Hành Nhất"}
-              </h1>
+            {/* Tựa đề trang: Font Serif (Lora) sang trọng, to rõ, thanh mảnh */}
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1C1917] tracking-tight leading-[1.12]">
+              {activeGenreMeta ? activeGenreMeta.title : "Sách Thịnh Hành Nhất"}
+            </h1>
 
-              {/* Mô tả danh mục */}
-              <p className="text-ink/65 text-sm sm:text-base mt-3 leading-relaxed">
+            {/* Dòng mô tả & Căn lề số lượng tác phẩm cùng hàng (Căn phải) */}
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 mt-3 pt-1">
+              <p className="text-stone-600 text-sm sm:text-base leading-relaxed max-w-3xl font-sans font-normal">
                 {activeGenreMeta 
                   ? activeGenreMeta.desc 
                   : "Tuyển tập những tác phẩm văn học được hàng triệu độc giả yêu thích và đánh giá cao nhất trên hệ thống. Dữ liệu xếp hạng được tổng hợp liên tục theo thời gian thực."}
               </p>
-            </div>
-
-            {/* Thống kê số lượng tác phẩm */}
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs bg-[#FAF7F2] border border-ink/10 px-3.5 py-2 rounded-full font-mono text-ink/80 shadow-2xs font-semibold">
-                {loading ? "Đang tải..." : `${filteredBooks.length} tác phẩm`}
-              </span>
+              
+              {/* Tag số lượng tác phẩm căn phải cùng hàng với mô tả */}
+              <div className="shrink-0 text-xs font-mono text-stone-500 uppercase tracking-wider whitespace-nowrap self-start sm:self-auto pt-1 sm:pt-0">
+                <span className="font-semibold text-stone-900">
+                  {loading ? "Đang tải..." : `${filteredBooks.length} tác phẩm`}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* 3. THANH DANH MỤC NHANH (QUICK PILLS) */}
-          <div className="mt-8 pt-6 border-t border-ink/8">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-ink/40 mb-3 flex items-center gap-1.5">
-              <Compass size={13} /> Khám phá các thể loại khác trong Dataset:
+          {/* 3. THANH DANH MỤC NHANH (QUICK TAGS) - Bỏ chữ dataset, bỏ bo tròn pill, nút Active viền mỏng chữ đậm */}
+          <div className="mt-8 pt-6 border-t border-stone-200/80">
+            <p className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-stone-500 mb-3.5 flex items-center gap-1.5">
+              <Compass size={13} className="text-stone-600" />
+              <span>KHÁM PHÁ CÁC THỂ LOẠI KHÁC</span>
             </p>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-sans">
               {QUICK_GENRE_PILLS.map((pill) => {
                 const isActive = (pill.slug === "all" && !genreParam) || (genreParam === pill.slug);
                 return (
                   <button
                     key={pill.slug}
                     onClick={() => handleSelectGenrePill(pill.slug)}
-                    className={`px-3.5 py-1.5 rounded-full font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-[4px] border transition-all whitespace-nowrap cursor-pointer text-xs ${
                       isActive 
-                        ? "bg-[#B12704] text-white shadow-xs font-bold" 
-                        : "bg-[#FAF7F2] text-ink/70 hover:bg-ink/5 hover:text-ink border border-ink/8"
+                        ? "border-[#1C1917] bg-white text-[#1C1917] font-bold shadow-2xs ring-1 ring-[#1C1917]" 
+                        : "border-stone-200/90 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900"
                     }`}
                   >
                     {pill.label}
@@ -376,12 +378,12 @@ function TrendingPageContent() {
             </div>
           </div>
 
-          {/* 4. THANH TÌM KIẾM VÀ BỘ LỌC THỨ HẠNG */}
-          <div className="mt-4 pt-4 border-t border-ink/8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* 4. THANH TÌM KIẾM MỞ RỘNG & BỘ LỌC THỨ HẠNG */}
+          <div className="mt-5 pt-4 border-t border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 font-sans">
             
-            {/* Ô tìm kiếm tựa sách hoặc tác giả */}
-            <div className="relative w-full sm:w-88">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            {/* Ô tìm kiếm mở rộng, bỏ bo tròn (4px), nền xám nhạt viền mỏng */}
+            <div className="relative w-full sm:flex-1 max-w-2xl">
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
               <input
                 type="text"
                 placeholder={
@@ -391,48 +393,48 @@ function TrendingPageContent() {
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-2.5 bg-[#FAF7F2] border border-ink/10 rounded-xl text-xs sm:text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-[#B12704] transition-colors"
+                className="w-full pl-9 pr-9 py-2.5 bg-[#F5F5F4] border border-stone-200/90 rounded-[4px] text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:bg-white focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917] transition-all font-sans"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink p-0.5 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-900 p-0.5 cursor-pointer"
                   title="Xóa tìm kiếm"
                 >
-                  <X size={15} />
+                  <X size={14} />
                 </button>
               )}
             </div>
 
             {/* Các nút lọc thứ hạng (chỉ hiển thị khi đang ở bảng xếp hạng chung) */}
             {!genreParam && (
-              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 shrink-0">
                 <button
                   onClick={() => setRankFilter("all")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3.5 py-2 rounded-[4px] text-xs transition-all cursor-pointer whitespace-nowrap border ${
                     rankFilter === "all" 
-                      ? "bg-[#4B6584] text-white shadow-xs" 
-                      : "bg-[#FAF7F2] text-ink/70 hover:bg-ink/5 border border-ink/10"
+                      ? "border-[#1C1917] bg-[#1C1917] text-white font-semibold shadow-2xs" 
+                      : "border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900"
                   }`}
                 >
                   Tất cả ({books.length})
                 </button>
                 <button
                   onClick={() => setRankFilter("top10")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3.5 py-2 rounded-[4px] text-xs transition-all cursor-pointer whitespace-nowrap border ${
                     rankFilter === "top10" 
-                      ? "bg-[#B12704] text-white shadow-xs" 
-                      : "bg-[#FAF7F2] text-ink/70 hover:bg-ink/5 border border-ink/10"
+                      ? "border-[#7F1D1D] bg-white text-[#7F1D1D] font-bold shadow-2xs" 
+                      : "border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900"
                   }`}
                 >
                   Top 10 Xuất sắc
                 </button>
                 <button
                   onClick={() => setRankFilter("top25")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3.5 py-2 rounded-[4px] text-xs transition-all cursor-pointer whitespace-nowrap border ${
                     rankFilter === "top25" 
-                      ? "bg-[#B12704] text-white shadow-xs" 
-                      : "bg-[#FAF7F2] text-ink/70 hover:bg-ink/5 border border-ink/10"
+                      ? "border-[#7F1D1D] bg-white text-[#7F1D1D] font-bold shadow-2xs" 
+                      : "border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900"
                   }`}
                 >
                   Top 25
@@ -461,28 +463,28 @@ function TrendingPageContent() {
             ))}
           </div>
         ) : filteredBooks.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 sm:p-16 text-center border border-ink/10 max-w-lg mx-auto shadow-sm">
-            <div className="w-14 h-14 rounded-full bg-[#FFF5F2] text-[#B12704] flex items-center justify-center mx-auto mb-4">
-              <Search size={24} />
+          <div className="bg-[#FAFAFA] rounded-[6px] p-10 sm:p-14 text-center border border-stone-200/90 max-w-lg mx-auto shadow-2xs">
+            <div className="w-12 h-12 rounded-[4px] bg-stone-100 text-stone-800 flex items-center justify-center mx-auto mb-3.5 border border-stone-200">
+              <Search size={20} />
             </div>
-            <h3 className="font-serif font-bold text-lg text-ink mb-2">Không tìm thấy tác phẩm phù hợp</h3>
-            <p className="text-ink/60 text-xs sm:text-sm mb-6 leading-relaxed">
+            <h3 className="font-serif font-bold text-lg text-stone-900 mb-2">Không tìm thấy tác phẩm phù hợp</h3>
+            <p className="text-stone-500 text-xs sm:text-sm mb-6 leading-relaxed font-sans">
               {searchQuery 
                 ? `Không có cuốn sách nào khớp với từ khóa "${searchQuery}" trong danh mục hiện tại.` 
                 : "Danh mục này hiện đang được cập nhật thêm tác phẩm mới."}
             </p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 font-sans">
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="px-5 py-2.5 bg-ink text-white rounded-full text-xs font-bold hover:bg-ink/80 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-[#1C1917] text-white rounded-[4px] text-xs font-medium hover:bg-stone-800 transition-colors cursor-pointer"
                 >
                   Xóa bộ lọc tìm kiếm
                 </button>
               )}
               <Link
                 href="/trending"
-                className="px-5 py-2.5 bg-[#FAF7F2] border border-ink/15 text-ink rounded-full text-xs font-bold hover:bg-ink/5 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-white border border-stone-300 text-stone-700 rounded-[4px] text-xs font-medium hover:border-stone-900 hover:text-stone-900 transition-colors cursor-pointer"
               >
                 Xem tất cả sách thịnh hành
               </Link>
