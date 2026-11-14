@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
-import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2 } from "lucide-react";
+import { Star, ShoppingCart, Play, BookOpen, ChevronRight, Share, ChevronDown, MessageCircle, Sparkles, Loader2, X, Check } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import BookCard from "@/components/BookCard";
@@ -122,6 +122,8 @@ export default function BookDetailPage() {
     return "";
   });
   const [isMercyThinking, setIsMercyThinking] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState<"kindle" | "paperback" | "hardcover">("paperback");
+  const [showFormatsModal, setShowFormatsModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [similarBooks, setSimilarBooks] = useState<any[]>([]);
   const [authorBooks, setAuthorBooks] = useState<any[]>([]);
@@ -293,6 +295,48 @@ export default function BookDetailPage() {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
   };
 
+  // Tính toán giá tiền theo từng định dạng ấn bản
+  const basePrice = book.price || 150000;
+  const kindlePrice = Math.round((basePrice * 0.6) / 1000) * 1000;
+  const paperbackPrice = basePrice;
+  const hardcoverPrice = Math.round((basePrice * 1.5) / 1000) * 1000;
+
+  const currentPrice = selectedFormat === "kindle" 
+    ? kindlePrice 
+    : selectedFormat === "hardcover" 
+      ? hardcoverPrice 
+      : paperbackPrice;
+
+  const selectedFormatLabel = selectedFormat === "kindle" 
+    ? "Bản điện tử (Kindle)" 
+    : selectedFormat === "hardcover" 
+      ? "Bìa cứng (Hardcover)" 
+      : "Bìa mềm (Paperback)";
+
+  const formatsList: { id: "kindle" | "paperback" | "hardcover"; name: string; price: number; desc: string; icon: string }[] = [
+    {
+      id: "kindle",
+      name: "Bản điện tử (Kindle)",
+      price: kindlePrice,
+      desc: "Đọc tức thì trên thiết bị Kindle hoặc ứng dụng di động",
+      icon: "📱"
+    },
+    {
+      id: "paperback",
+      name: "Bìa mềm (Paperback)",
+      price: paperbackPrice,
+      desc: "Bản in tiêu chuẩn, giấy xốp chống lóa 70gsm",
+      icon: "📖"
+    },
+    {
+      id: "hardcover",
+      name: "Bìa cứng (Hardcover)",
+      price: hardcoverPrice,
+      desc: "Bản kỷ niệm mạ vàng sang trọng, áo ôm kèm bookmark lụa",
+      icon: "✨"
+    }
+  ];
+
   const readSampleUrl = book.sample_read_url || book.preview_url || book.read_url || book.sample_url || "";
   const audioSampleUrl = book.audio_sample_url || book.audio_url || book.sample_audio_url || "";
 
@@ -327,8 +371,15 @@ export default function BookDetailPage() {
       setIsMercyThinking(false);
     }
   };
+
   const handleAddToCartDetail = () => {
-    addToCart(book, quantity);
+    const bookToCart = {
+      ...book,
+      price: currentPrice,
+      selected_format: selectedFormatLabel,
+      title: `${cleanTitle(book.title)} [${selectedFormat === "kindle" ? "Kindle" : selectedFormat === "hardcover" ? "Bìa cứng" : "Bìa mềm"}]`
+    };
+    addToCart(bookToCart, quantity);
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
@@ -342,7 +393,13 @@ export default function BookDetailPage() {
   };
 
   const handlePurchaseDetail = () => {
-    addToCart(book, quantity);
+    const bookToBuy = {
+      ...book,
+      price: currentPrice,
+      selected_format: selectedFormatLabel,
+      title: `${cleanTitle(book.title)} [${selectedFormat === "kindle" ? "Kindle" : selectedFormat === "hardcover" ? "Bìa cứng" : "Bìa mềm"}]`
+    };
+    addToCart(bookToBuy, quantity);
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
@@ -353,7 +410,7 @@ export default function BookDetailPage() {
         interaction_type: "purchase",
       }),
     }).catch(() => {});
-    alert("Cảm ơn bạn đã mua sách! Hệ thống đã ghi nhận hành vi mua hàng để cá nhân hóa gợi ý cho bạn.");
+    alert(`Cảm ơn bạn đã đặt mua ấn bản ${selectedFormatLabel}! Hệ thống đã ghi nhận đơn hàng.`);
   };
 
   const handleWishlistDetail = () => {
@@ -469,7 +526,7 @@ export default function BookDetailPage() {
           <div className="text-sm text-ink mb-2">
             Tác giả: <Link href="#" className="text-[#007185] hover:text-[#C7511F] hover:underline font-medium">{authorName}</Link> 
             <span className="mx-2 text-ink/30">|</span> 
-            Định dạng: <span className="font-medium">Bìa mềm</span>
+            Định dạng: <span className="font-semibold text-terracotta">{selectedFormatLabel}</span>
           </div>
           
           <div className="flex items-center gap-4 mb-4">
@@ -486,7 +543,7 @@ export default function BookDetailPage() {
             </div>
           </div>
           
-          {/* Badge */}
+          {/* Badge & Nút Xem tất cả phiên bản */}
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-ink/10">
             {book.rank && (
               <>
@@ -498,24 +555,44 @@ export default function BookDetailPage() {
                 </span>
               </>
             )}
-            <span className="ml-auto text-[#007185] text-sm hover:underline cursor-pointer">Xem tất cả phiên bản</span>
+            <button
+              type="button"
+              onClick={() => setShowFormatsModal(true)}
+              className="ml-auto text-[#007185] hover:text-[#C7511F] text-sm hover:underline cursor-pointer font-medium transition-colors"
+            >
+              Xem tất cả phiên bản
+            </button>
           </div>
           
-          {/* Formats Grid */}
-          <div className="grid grid-cols-3 gap-2 mb-8">
-            <div className="border border-ink/20 p-2 rounded cursor-pointer hover:bg-ink/5 text-center">
-              <div className="font-bold text-sm text-ink">Bản điện tử (Kindle)</div>
-              <div className="text-[#B12704] text-sm font-medium">{formatPrice(book.price * 0.6)}</div>
-            </div>
-            <div className="border-2 border-[#E77600] bg-[#FFF8F0] p-2 rounded cursor-pointer text-center relative">
-              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#E77600] text-white text-[10px] font-bold px-2 rounded-sm whitespace-nowrap">Đã chọn</div>
-              <div className="font-bold text-sm text-ink mt-1">Bìa mềm (Paperback)</div>
-              <div className="text-[#B12704] text-sm font-medium">{formatPrice(book.price)}</div>
-            </div>
-            <div className="border border-ink/20 p-2 rounded cursor-pointer hover:bg-ink/5 text-center">
-              <div className="font-bold text-sm text-ink">Bìa cứng (Hardcover)</div>
-              <div className="text-[#B12704] text-sm font-medium">{formatPrice(book.price * 1.5)}</div>
-            </div>
+          {/* Formats Grid (Có thể bấm chọn từng bản và đổi giá tức thì) */}
+          <div className="grid grid-cols-3 gap-2.5 mb-8">
+            {formatsList.map((f) => {
+              const isSelected = selectedFormat === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setSelectedFormat(f.id)}
+                  className={`p-3 rounded-lg text-center relative transition-all duration-200 cursor-pointer flex flex-col justify-between items-center ${
+                    isSelected
+                      ? "border-2 border-[#E77600] bg-[#FFF8F0] shadow-xs"
+                      : "border border-ink/20 hover:border-ink/40 hover:bg-ink/[0.03] bg-white"
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#E77600] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm whitespace-nowrap shadow-xs">
+                      Đã chọn
+                    </div>
+                  )}
+                  <div className="font-bold text-xs sm:text-sm text-ink leading-snug mt-0.5">
+                    {f.name}
+                  </div>
+                  <div className="text-[#B12704] text-xs sm:text-sm font-semibold mt-1.5">
+                    {formatPrice(f.price)}
+                  </div>
+                </button>
+              );
+            })}
           </div>
           
           {/* Description */}
@@ -585,14 +662,23 @@ export default function BookDetailPage() {
         <div className="lg:col-span-3">
           <div className="border border-ink/20 rounded-lg p-5 sticky top-24 shadow-sm">
             
-            <div className="text-3xl font-bold text-[#B12704] mb-4">
-              {formatPrice(book.price)}
+            <div className="text-3xl font-bold text-[#B12704] mb-1">
+              {formatPrice(currentPrice)}
+            </div>
+
+            <div className="text-xs text-ink/75 font-medium mb-4 pb-3 border-b border-ink/10 flex items-center justify-between">
+              <span>Định dạng:</span>
+              <span className="font-semibold text-[#007185]">{selectedFormatLabel}</span>
             </div>
             
             <div className="text-sm text-ink/70 mb-4">
               <span className="text-[#007185] hover:underline cursor-pointer">Miễn phí đổi trả</span>
               <br/>
-              Giao hàng miễn phí vào <strong>Ngày mai</strong>. Đặt trước trong 5 giờ 30 phút
+              {selectedFormat === "kindle" ? (
+                <>Giao hàng: <strong>Ngay lập tức</strong> qua thư viện số</>
+              ) : (
+                <>Giao hàng miễn phí vào <strong>Ngày mai</strong>. Đặt trước trong 5 giờ 30 phút</>
+              )}
               <br/>
               <span className="flex items-center gap-1 mt-1 text-[#007185] hover:underline cursor-pointer">
                 Giao tới Việt Nam
@@ -676,6 +762,93 @@ export default function BookDetailPage() {
             initialBooks={authorBooks}
             emptyHide={true}
           />
+        </div>
+      )}
+
+      {/* Modal Chi tiết & So sánh tất cả phiên bản sách */}
+      {showFormatsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-ink/10 relative max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-ink/10">
+              <div>
+                <h3 className="font-serif font-bold text-xl text-ink">Các phiên bản của tác phẩm</h3>
+                <p className="text-xs text-ink/60 mt-0.5">{cleanTitle(book.title)} — {authorName}</p>
+              </div>
+              <button 
+                onClick={() => setShowFormatsModal(false)}
+                className="p-1.5 rounded-full hover:bg-ink/5 text-ink/60 hover:text-ink transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4 my-6">
+              {formatsList.map((f) => {
+                const isSelected = selectedFormat === f.id;
+                return (
+                  <div 
+                    key={f.id}
+                    onClick={() => {
+                      setSelectedFormat(f.id);
+                      setShowFormatsModal(false);
+                    }}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                      isSelected 
+                        ? "border-[#E77600] bg-[#FFF8F0] shadow-xs" 
+                        : "border-ink/10 hover:border-ink/30 hover:bg-ink/[0.02]"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <div className="text-2xl mt-0.5">{f.icon}</div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-ink text-sm sm:text-base">{f.name}</h4>
+                          {isSelected && (
+                            <span className="bg-[#E77600] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Đang chọn
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-ink/60 mt-1 leading-relaxed">{f.desc}</p>
+                        <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                          {f.id === "kindle" ? "⚡ Giao ngay lập tức qua ứng dụng/email" : "📦 Đóng gói cẩn thận, miễn phí đổi trả"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-base sm:text-lg font-bold text-[#B12704]">{formatPrice(f.price)}</div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFormat(f.id);
+                          setShowFormatsModal(false);
+                        }}
+                        className={`mt-2 text-xs font-semibold px-3.5 py-1.5 rounded-full transition-colors cursor-pointer ${
+                          isSelected
+                            ? "bg-[#E77600] text-white"
+                            : "bg-ink/5 text-ink hover:bg-ink/10"
+                        }`}
+                      >
+                        {isSelected ? "Đã chọn" : "Chọn bản này"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="text-right pt-2 border-t border-ink/10">
+              <button
+                type="button"
+                onClick={() => setShowFormatsModal(false)}
+                className="px-5 py-2 text-sm font-medium text-ink/70 hover:text-ink hover:bg-ink/5 rounded-full transition-colors cursor-pointer"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
