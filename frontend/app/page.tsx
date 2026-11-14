@@ -152,9 +152,9 @@ export default function Home() {
       titleLine1: "Thủ Thư Số",
       titleLine2: "Thấu Cảm Độc Giả",
       description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
-      desktopImg: "/banner_mercy_flatlay_right.jpg",
-      mobileImg: "/banner_mercy_flatlay_right.jpg",
-      objectPosition: "object-right md:object-right",
+      desktopImg: "/cozy_sunlit_reading_nook_banner.png",
+      mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
+      objectPosition: "object-[center_center] md:object-[60%_center]",
       badge: "Trợ lý Văn học AI",
       layout: "left",
     },
@@ -442,8 +442,8 @@ export default function Home() {
         </div>
 
         {/* Lớp phủ mờ nhẹ tinh tế để chữ luôn sắc nét và tương thích tối đa với nền tường */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 via-45% to-transparent pointer-events-none hidden md:block z-2" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden z-2" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/80 via-[#FAF8F5]/45 via-40% to-transparent pointer-events-none hidden md:block z-2" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/90 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden z-2" />
 
         <div className={`w-full z-10 py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center transition-all duration-300 ${
           isCentered 
