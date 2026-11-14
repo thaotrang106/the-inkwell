@@ -166,6 +166,17 @@ export default function Home() {
       objectPosition: "object-center md:object-[right_center]",
       badge: "Trợ lý Văn học AI",
     },
+    {
+      id: 4,
+      tag: "Tuyển tập ấn bản cổ điển",
+      titleLine1: "Vintage Classics",
+      titleLine2: "Dấu Ấn Thời Gian",
+      description: "Chiêm ngưỡng những tuyệt tác bìa sách cổ điển được lưu giữ nguyên bản, nơi mỗi trang sách là một hiện vật của lịch sử và vẻ đẹp vượt thời gian.",
+      desktopImg: "/vintage_book_cover_carousel.png",
+      mobileImg: "/vintage_book_cover_carousel.png",
+      objectPosition: "object-center",
+      badge: "Bộ Sưu Tập Bìa Sách Cổ Điển",
+    },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -692,6 +703,23 @@ export default function Home() {
         >
           <ChevronRight size={20} />
         </button>
+
+        {/* Chỉ báo các slide (Slide Indicators) */}
+        <div className="absolute bottom-3 sm:bottom-5 right-6 sm:right-10 z-20 flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-ink/10 shadow-xs">
+          {heroSlides.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => setCurrentSlide(idx)}
+              aria-label={`Chuyển đến banner ${idx + 1}`}
+              className={`transition-all duration-300 rounded-full cursor-pointer ${
+                currentSlide === idx 
+                  ? "w-6 h-2 bg-[#B12704]" 
+                  : "w-2 h-2 bg-ink/25 hover:bg-ink/50"
+              }`}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Kết quả AI Hybrid (Tự động cuộn xuống đây khi bấm tìm kiếm) */}
