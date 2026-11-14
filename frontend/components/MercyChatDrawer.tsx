@@ -439,7 +439,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
         ...prev,
         {
           role: "mercy",
-          content: "Thủ thư Mercy tạm thời chưa thể kết nối đến máy chủ. Bạn vui lòng thử lại sau giây lát nhé.",
+          content: "Mercy AI tạm thời chưa thể kết nối đến máy chủ. Bạn vui lòng thử lại sau ít phút nhé.",
         },
       ]);
     } finally {
@@ -483,11 +483,11 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
                   <BookOpen size={16} />
                 </div>
                 <div>
-                  <p className="font-sans text-[9px] uppercase tracking-[0.2em] text-stone-400 font-medium">
-                    THE INKWELL LITERARY COMPANION
+                  <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-stone-400">
+                    THE INKWELL ASSISTANT
                   </p>
-                  <h3 className="font-serif font-medium text-sm sm:text-base tracking-tight text-white">
-                    Thủ Thư Tri Âm Mercy
+                  <h3 className="font-serif font-bold text-sm sm:text-base tracking-tight text-white">
+                    Mercy AI
                   </h3>
                 </div>
               </div>
@@ -518,8 +518,8 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
               {messages.length === 0 && (
                 <div className="space-y-4 pt-2 text-stone-700 leading-relaxed font-sans">
                   <div className="p-4 rounded-[6px] bg-white border border-stone-200/90 shadow-2xs">
-                    <p className="text-sm sm:text-base font-serif text-stone-800 leading-relaxed italic">
-                      "Chào bạn, tôi là Mercy — người bạn đồng hành cùng bạn giữa muôn ngàn trang sách tại The Inkwell. Hãy chia sẻ bất kỳ tác phẩm, tác giả hoặc tâm trạng nào bạn đang ấp ủ, tôi sẽ cùng bạn mở ra những trang sách chạm đến tâm hồn."
+                    <p className="text-sm font-sans text-stone-800 leading-relaxed">
+                      Chào bạn, tôi là <strong>Mercy AI</strong>. Bạn đang tìm cuốn sách nào hoặc muốn được gợi ý theo chủ đề/gu đọc nào?
                     </p>
                   </div>
 
@@ -559,7 +559,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
                       <div>
                         <div className="flex items-center gap-1.5 text-xs font-semibold text-[#881337] mb-2.5 pb-2 border-b border-stone-200/80">
                           <BookOpen size={13} strokeWidth={1.5} />
-                          <span className="font-sans text-[11px] font-medium uppercase tracking-[0.08em]">Góc nhìn từ Thủ Thư Mercy</span>
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider">Mercy AI</span>
                         </div>
                         <FormattedMessage content={msg.content} books={msg.books} onClose={onClose} />
                       </div>
@@ -574,7 +574,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
               {isLoading && (
                 <div className="flex items-center gap-2 text-stone-500 text-xs italic bg-white border border-stone-200/80 p-3 rounded-[6px] w-fit shadow-2xs font-serif">
                   <Loader2 size={14} className="animate-spin text-[#1C1917]" />
-                  <span>Thủ thư Mercy đang lắng nghe và ngẫm ngợi về trang sách...</span>
+                  <span>Mercy AI đang tìm kiếm và phân tích...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -593,7 +593,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Hỏi về một tác phẩm, tác giả hoặc cảm xúc bạn muốn tìm..."
+                  placeholder="Hỏi Mercy AI về cuốn sách bạn muốn tìm..."
                   className="flex-1 px-3.5 py-2.5 rounded-[5px] border border-stone-300 focus:outline-none focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917] text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 font-sans"
                   disabled={isLoading}
                 />
@@ -607,7 +607,7 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
                 </button>
               </form>
               <p className="text-[10px] text-stone-400 text-center mt-2 font-mono">
-                Tuyển chọn & Đề xuất bởi Cố vấn AI The Inkwell
+                Tuyển chọn &amp; Đề xuất bởi Mercy AI • The Inkwell
               </p>
             </div>
           </motion.div>
