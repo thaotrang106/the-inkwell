@@ -228,27 +228,32 @@ export default function Home() {
     ? popularBooks.slice(0, 6).map((b) => cleanTitle(b.title))
     : [
         "The Hunger Games",
-        "Harry Potter",
+        "Harry Potter and the Sorcerer's Stone",
+        "Twilight",
         "To Kill a Mockingbird",
         "The Great Gatsby",
-        "Dune",
-        "1984"
+        "The Fault in Our Stars"
       ];
   
   const searchRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const API_BASE_URL = `${BACKEND_URL}/api/recommendations`;
   const SEARCH_API_URL = `${BACKEND_URL}/api/books/search`;
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -394,32 +399,34 @@ export default function Home() {
   return (
     <div className="flex flex-col pb-20">
       
-      {/* Hero Section with Multi-Banner Auto Carousel (Chuyển slide mỗi 7s) */}
+      {/* Hero Section with Multi-Banner Auto Carousel */}
       <section 
-        className="relative min-h-[500px] md:min-h-[560px] lg:min-h-[620px] flex items-center overflow-hidden group/hero"
+        className="relative min-h-[500px] md:min-h-[560px] lg:min-h-[620px] flex items-center group/hero"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Background Banner Slides with Framer Motion crossfade */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={heroSlides[currentSlide].id}
-            initial={{ opacity: 0, scale: 1.01 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full pointer-events-none select-none"
-          >
-            <picture className="w-full h-full">
-              <source media="(max-width: 767px)" srcSet={heroSlides[currentSlide].mobileImg} />
-              <img 
-                src={heroSlides[currentSlide].desktopImg} 
-                alt={heroSlides[currentSlide].titleLine1} 
-                className={`w-full h-full object-cover ${heroSlides[currentSlide].objectPosition}`}
-              />
-            </picture>
-          </motion.div>
-        </AnimatePresence>
+        {/* Background Banner Slides with Framer Motion crossfade (overflow-hidden chỉ giới hạn ở nền ảnh) */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={heroSlides[currentSlide].id}
+              initial={{ opacity: 0, scale: 1.01 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="w-full h-full"
+            >
+              <picture className="w-full h-full">
+                <source media="(max-width: 767px)" srcSet={heroSlides[currentSlide].mobileImg} />
+                <img 
+                  src={heroSlides[currentSlide].desktopImg} 
+                  alt={heroSlides[currentSlide].titleLine1} 
+                  className={`w-full h-full object-cover ${heroSlides[currentSlide].objectPosition}`}
+                />
+              </picture>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Lớp phủ mờ nhẹ tinh tế để chữ luôn sắc nét và tương thích tối đa với nền tường */}
         {isCentered ? (
@@ -476,41 +483,52 @@ export default function Home() {
             
             {/* Search Bar phong cách Book Outlet: Ô tìm kiếm + Icon Kính lúp + Nút Ask Mercy */}
             <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-lg"}`} ref={searchRef}>
-              <div className="flex items-center w-full bg-white/95 backdrop-blur-sm border border-ink/20 rounded-2xl shadow-md hover:border-ink/40 focus-within:border-[#B12704] focus-within:ring-2 focus-within:ring-[#B12704]/20 px-3.5 py-2.5 transition-all">
-              <input 
-                type="text" 
-                value={searchQuery}
-                onChange={handleInputChange}
-                onFocus={() => setShowDropdown(true)}
-                placeholder="Tìm theo tên sách, tác giả (VD: Harry Potter, Dune...)" 
-                className="w-full py-1.5 px-2 bg-transparent focus:outline-none text-ink text-sm sm:text-base font-medium placeholder:text-ink/40"
-              />
-
-              {/* Icon Loading khi đang tìm */}
-              {isSearching && (
-                <Loader2 className="text-[#B12704] animate-spin shrink-0 mx-2" size={18} />
-              )}
-
-              {/* Icon Kính lúp tìm kiếm (Bấm vào để tìm gợi ý sách) */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="p-2 text-ink/50 hover:text-[#B12704] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
-                title="Tìm kiếm sách gợi ý"
+              <div 
+                onClick={() => {
+                  setShowDropdown(true);
+                  inputRef.current?.focus();
+                }}
+                className="flex items-center w-full bg-white/95 backdrop-blur-sm border border-ink/20 rounded-2xl shadow-md hover:border-ink/40 focus-within:border-[#B12704] focus-within:ring-2 focus-within:ring-[#B12704]/20 px-3.5 py-2.5 transition-all cursor-text"
               >
-                {loading ? <Loader2 size={20} className="animate-spin text-[#B12704]" /> : <Search size={20} />}
-              </button>
+                <input 
+                  ref={inputRef}
+                  type="text" 
+                  value={searchQuery}
+                  onChange={handleInputChange}
+                  onFocus={() => setShowDropdown(true)}
+                  onClick={() => setShowDropdown(true)}
+                  placeholder="Tìm theo tên sách, tác giả (VD: Harry Potter, Dune...)" 
+                  className="w-full py-1.5 px-2 bg-transparent focus:outline-none text-ink text-sm sm:text-base font-medium placeholder:text-ink/40"
+                />
 
-              {/* Nút Ask Mercy phong cách Ask Dash của Book Outlet */}
-              <button
-                type="button"
-                onClick={() => setIsMercyOpen(true)}
-                className="flex items-center gap-1.5 ml-2 px-4 py-2 rounded-full border border-[#B12704] text-[#B12704] hover:bg-[#FFF5F2] active:scale-95 text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
-              >
-                <Sparkles size={15} className="text-[#B12704] fill-[#B12704]/20" />
-                <span>Hỏi Mercy AI</span>
-              </button>
-            </div>
+                {/* Icon Loading khi đang tìm */}
+                {isSearching && (
+                  <Loader2 className="text-[#B12704] animate-spin shrink-0 mx-2" size={18} />
+                )}
+
+                {/* Icon Kính lúp tìm kiếm (Bấm vào để tìm gợi ý sách) */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="p-2 text-ink/50 hover:text-[#B12704] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                  title="Tìm kiếm sách gợi ý"
+                >
+                  {loading ? <Loader2 size={20} className="animate-spin text-[#B12704]" /> : <Search size={20} />}
+                </button>
+
+                {/* Nút Ask Mercy phong cách Ask Dash của Book Outlet */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMercyOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 ml-2 px-4 py-2 rounded-full border border-[#B12704] text-[#B12704] hover:bg-[#FFF5F2] active:scale-95 text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
+                >
+                  <Sparkles size={15} className="text-[#B12704] fill-[#B12704]/20" />
+                  <span>Hỏi Mercy AI</span>
+                </button>
+              </div>
 
             {/* Dropdown Menu: Trending Searches khi chưa gõ & Autocomplete khi đang gõ */}
             <AnimatePresence>
