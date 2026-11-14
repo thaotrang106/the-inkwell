@@ -198,85 +198,76 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* 4. BA TRỤ CỘT TRIẾT LÝ CỦA THE INKWELL */}
-        <section className="py-14 border-b border-ink/15">
+        {/* 4. BA TRỤ CỘT TRIẾT LÝ CỦA THE INKWELL (Phong cách Tạp chí Editorial tối giản) */}
+        <section className="py-16 border-b border-stone-200">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-[#B12704] text-xs font-bold uppercase tracking-widest font-mono">
-              Giá Trị Cốt Lõi
+            <span className="text-[#881337] text-xs font-semibold uppercase tracking-[0.15em] font-sans">
+              GIÁ TRỊ CỐT LÕI
             </span>
-            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-ink tracking-tight mt-1">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#1C1917] tracking-tight mt-2">
               Ba Trụ Cột Định Hình The Inkwell
             </h2>
-            <p className="text-xs sm:text-sm text-ink/60 font-sans mt-2">
+            <p className="text-xs sm:text-sm text-stone-500 font-serif italic mt-2.5 max-w-xl mx-auto leading-relaxed">
               Chúng tôi không chỉ bán sách, chúng tôi kiến tạo một ốc đảo tri thức tĩnh lặng cho độc giả hiện đại.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             
-            {/* Trụ cột 1 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-ink/10 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            {/* Trụ cột I */}
+            <div className="bg-white border border-stone-200/90 rounded-[4px] p-6 sm:p-7 shadow-none flex flex-col justify-between hover:border-stone-400 transition-colors">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-[#B12704]/10 text-[#B12704] flex items-center justify-center mb-5">
-                  <BookOpen size={22} />
-                </div>
-                <div className="text-xs uppercase tracking-wider font-bold text-[#B12704] mb-1">
-                  Trụ Cột I
-                </div>
-                <h3 className="font-serif font-bold text-lg text-ink mb-3">
+                <BookOpen size={30} strokeWidth={1.25} className="text-[#1C1917] mb-5" />
+                <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
+                  TRỤ CỘT I
+                </p>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
                   Giám Tuyển Khắt Khe
                 </h3>
-                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
+                <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
                   Không chạy theo thị hiếu nhất thời. Mỗi tác phẩm nằm trên kệ của The Inkwell đều trải qua quy trình thẩm định nghiêm ngặt về giá trị tư tưởng, phẩm giá nghệ thuật và chất lượng dịch thuật.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-ink/50 font-mono">
-                ✓ Thẩm định dịch thuật • Bảo tồn nguyên tác
+              <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
+                Thẩm định dịch thuật <span className="text-stone-300 mx-1.5">•</span> Bảo tồn nguyên tác
               </div>
             </div>
 
-            {/* Trụ cột 2 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#B12704]/30 shadow-sm flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-[#B12704] text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-                Đột Phá
-              </div>
+            {/* Trụ cột II - Thẻ giữa nền off-white nhẹ (#FAF9F6) làm nổi bật tự nhiên */}
+            <div className="bg-[#FAF9F6] border border-stone-300 rounded-[4px] p-6 sm:p-7 shadow-none flex flex-col justify-between hover:border-stone-400 transition-colors">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center mb-5">
-                  <Sparkles size={22} />
-                </div>
-                <div className="text-xs uppercase tracking-wider font-bold text-[#B12704] mb-1">
-                  Trụ Cột II
-                </div>
-                <h3 className="font-serif font-bold text-lg text-ink mb-3">
-                  Thủ Thư Số Mercy AI
+                <Sparkles size={30} strokeWidth={1.25} className="text-[#881337] mb-5" />
+                <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
+                  TRỤ CỘT II
+                </p>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
+                  Thủ Thư Tri Âm
                 </h3>
-                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
-                  Không chỉ là công cụ tìm kiếm từ khóa khô cứng. Mercy AI là vị cố vấn văn học có khả năng thấu cảm tâm trạng, phong cách đọc và chiều sâu tư tưởng để dẫn lối bạn đến đúng cuốn sách bạn cần.
+                <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
+                  Không chỉ là công cụ tìm kiếm từ khóa khô cứng. Mercy AI là vị thủ thư tri âm có khả năng thấu cảm tâm trạng, phong cách đọc và chiều sâu tư tưởng để dẫn lối bạn đến đúng cuốn sách bạn cần.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-[#B12704] font-semibold font-mono">
-                ✓ Thấu cảm cảm xúc • Giải thích lý do gợi ý
+              <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
+                Thấu cảm cảm xúc <span className="text-stone-300 mx-1.5">•</span> Dẫn lối văn chương
               </div>
             </div>
 
-            {/* Trụ cột 3 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-ink/10 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            {/* Trụ cột III */}
+            <div className="bg-white border border-stone-200/90 rounded-[4px] p-6 sm:p-7 shadow-none flex flex-col justify-between hover:border-stone-400 transition-colors">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-emerald-600/10 text-emerald-700 flex items-center justify-center mb-5">
-                  <Package size={22} />
-                </div>
-                <div className="text-xs uppercase tracking-wider font-bold text-emerald-800 mb-1">
-                  Trụ Cột III
-                </div>
-                <h3 className="font-serif font-bold text-lg text-ink mb-3">
+                <Package size={30} strokeWidth={1.25} className="text-[#1C1917] mb-5" />
+                <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
+                  TRỤ CỘT III
+                </p>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
                   Mỹ Học Xúc Giác & Đóng Gói
                 </h3>
-                <p className="text-xs sm:text-sm text-ink/70 leading-relaxed font-sans">
+                <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
                   Chúng tôi tin rằng lật giở một trang sách là một nghi thức thiêng liêng. Từng ấn bản đều được đóng gói tỉ mỉ bằng giấy mộc, chống sốc đa tầng và gửi kèm chiếc bookmark độc quyền của The Inkwell.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-ink/5 text-[11px] text-ink/50 font-mono">
-                ✓ Bookmark lụa • Hộp bảo vệ quà tặng
+              <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
+                Bookmark lụa <span className="text-stone-300 mx-1.5">•</span> Hộp bảo vệ quà tặng
               </div>
             </div>
 
