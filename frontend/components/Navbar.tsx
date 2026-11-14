@@ -46,7 +46,12 @@ const prefetchGenreData = (genre: string) => {
 export default function Navbar() {
   const { itemCount } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [activeMegaMenu, setActiveMegaMenu] = useState<"categories" | "fiction" | "nonfiction" | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -222,12 +227,12 @@ export default function Navbar() {
             {/* Giỏ hàng */}
             <Link 
               href="/cart" 
-              className="hover:text-terracotta transition-colors relative block p-2 rounded-full hover:bg-ink/5 cursor-pointer"
+              className="hover:text-[#881337] transition-colors relative block p-2 rounded-full hover:bg-ink/5 cursor-pointer"
               title="Giỏ hàng của bạn"
             >
               <ShoppingBag size={21} strokeWidth={1.5} />
-              {itemCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 bg-[#4B6584] text-[#FAF7F2] text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
+              {mounted && itemCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[#881337] text-white text-[10px] font-bold h-4.5 min-w-4.5 px-1 rounded-full flex items-center justify-center shadow-xs border-2 border-[#FAF7F2]">
                   {itemCount}
                 </span>
               )}
