@@ -7,50 +7,47 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#B12704] selection:text-white">
       
-      {/* 1. THANH ĐIỀU HƯỚNG BREADCRUMB */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+      {/* 1. NÚT QUAY LẠI CỬA HÀNG Ở GÓC TRÊN CÙNG BÊN TRÁI */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-3">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-xs sm:text-sm text-ink/60 hover:text-[#B12704] transition-colors font-medium group"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-sans text-stone-500 hover:text-[#881337] transition-colors font-medium group cursor-pointer"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
           <span>Quay lại Cửa hàng</span>
         </Link>
       </div>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 sm:mt-4">
 
         {/* 2. THE EDITORIAL CENTERPIECE (Bố cục Báo chí Tạp chí Văn học 3 Cột) */}
         <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-start pb-12 border-b border-ink/15">
 
           {/* CỘT TRÁI (Desktop: 4 cols) - Tiêu đề thơ mộng & Triết lý cốt lõi */}
-          <div className="lg:col-span-4 flex flex-col justify-between order-2 lg:order-1 space-y-7">
+          <div className="lg:col-span-4 flex flex-col justify-start order-1 lg:order-1">
             
-            <div className="space-y-3">
-              <p className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#881337] font-semibold">
-                Bản Sắc & Sứ Mệnh The Inkwell
-              </p>
+            {/* Chỉ giữ lại 1 dòng tagline BẢN SẮC & SỨ MỆNH THE INKWELL ở trên cùng */}
+            <p className="font-sans text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#881337] font-semibold mb-3.5">
+              BẢN SẮC & SỨ MỆNH THE INKWELL
+            </p>
 
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.65rem] font-normal text-[#1C1917] leading-[1.15] tracking-tight">
-                Sách Hay Vẹn Nguyên Nơi Tâm Thức
-              </h1>
-              
-              <p className="font-serif italic text-xl sm:text-2xl text-stone-700 font-normal leading-snug">
-                “Good Books Are Truly in the Heart”
-              </p>
+            {/* Tiêu đề chính font Serif, giảm độ đậm (font-light), margin-bottom 16px (mb-4) */}
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.65rem] font-light text-[#1C1917] leading-[1.2] tracking-tight mb-4">
+              Sách Hay Vẹn Nguyên Nơi Tâm Thức
+            </h1>
+            
+            {/* Phụ đề quote tiếng Anh font Serif Italic */}
+            <p className="font-serif italic text-lg sm:text-xl text-stone-600 font-normal leading-relaxed mb-7">
+              “Good Books Are Truly in the Heart”
+            </p>
 
-              <p className="font-sans text-xs sm:text-sm text-stone-500 uppercase tracking-[0.1em] font-medium">
-                THƯ VIỆN SỐ & CỐ VẤN VĂN HỌC
-              </p>
-            </div>
-
-            {/* Khối trích dẫn phong cách tạp chí biên tập (Editorial Blockquote) */}
-            <blockquote className="border-l-4 border-[#881337] pl-5 py-1.5 my-2">
-              <p className="font-serif italic text-base sm:text-[17px] text-stone-800 leading-[1.7]">
+            {/* Khối trích dẫn phong cách tạp chí biên tập (Serif Italic, padding-left 20px, border-left đỏ dày) */}
+            <blockquote className="border-l-4 border-[#881337] pl-[20px] py-1 my-7">
+              <p className="font-serif italic text-base sm:text-[17px] text-stone-800 leading-[1.8]">
                 “Đọc chậm giữa một thế giới luôn vội vã — đó không phải là sự thụt lùi, mà là sự trở về với những chiều sâu vĩnh cửu của tâm hồn.”
               </p>
-              <footer className="text-xs uppercase tracking-[0.1em] text-stone-500 font-sans font-medium mt-3 not-italic">
-                — Triết lý The Inkwell
+              <footer className="text-xs uppercase tracking-[0.12em] text-stone-400 font-sans font-medium mt-3.5 not-italic">
+                — TRIẾT LÝ THE INKWELL
               </footer>
             </blockquote>
 
@@ -75,7 +72,7 @@ export default function AboutPage() {
           </div>
 
           {/* CỘT GIỮA (Desktop: 4 cols) - Ngòi bút biểu tượng Editorial Totem */}
-          <div className="lg:col-span-4 flex flex-col items-center justify-center order-1 lg:order-2 py-4 lg:py-0">
+          <div className="lg:col-span-4 flex flex-col items-center justify-center order-2 lg:order-2 py-4 lg:py-0">
             <div className="relative w-full max-w-[320px] sm:max-w-[360px] lg:max-w-full flex justify-center">
               
               {/* Ảnh ngòi bút The Inkwell với mix-blend-mode: multiply hòa vào nền trắng */}
