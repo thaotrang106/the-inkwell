@@ -262,7 +262,9 @@ def preload_popular_and_genres():
                     "description": desc,
                     "language_code": row.get("language_code", "eng"),
                     "score": float(row.get("average_rating", 0) or 4.0),
-                    "ratings_count": int(row.get("ratings_count", 0) or 0)
+                    "ratings_count": int(row.get("ratings_count", 0) or 0),
+                    "sample_read_url": row.get("sample_read_url") or row.get("preview_url") or "",
+                    "audio_sample_url": row.get("audio_sample_url") or row.get("audio_url") or ""
                 }
 
             print(f"[The Inkwell Startup] Đã nạp sẵn RAM: 100 sách Thịnh Hành, {len(GENRE_BOOKS_CACHE)} danh mục thể loại & {len(BOOK_DETAILS_CACHE)} chi tiết sách!")
@@ -458,7 +460,9 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
                 "author": clean_author,
                 "image_url": format_hd_image_url(book.image_url),
                 "description": book.description or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
-                "language_code": book.language_code or "eng"
+                "language_code": book.language_code or "eng",
+                "sample_read_url": getattr(book, "sample_read_url", None) or getattr(book, "preview_url", "") or "",
+                "audio_sample_url": getattr(book, "audio_sample_url", None) or getattr(book, "audio_url", "") or ""
             }
             BOOK_DETAILS_CACHE[book_id] = data
             return {
@@ -485,7 +489,9 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
                             "author": clean_author,
                             "image_url": format_hd_image_url(row.get("image_url", "")),
                             "description": row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
-                            "language_code": row.get("language_code", "eng")
+                            "language_code": row.get("language_code", "eng"),
+                            "sample_read_url": row.get("sample_read_url") or row.get("preview_url") or "",
+                            "audio_sample_url": row.get("audio_sample_url") or row.get("audio_url") or ""
                         }
                         BOOK_DETAILS_CACHE[book_id] = data
                         return {

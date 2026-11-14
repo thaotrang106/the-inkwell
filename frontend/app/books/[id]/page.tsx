@@ -205,10 +205,6 @@ export default function BookDetailPage() {
             <div className="w-full max-w-[280px] aspect-[2/3] bg-gradient-to-br from-ink/10 via-ink/5 to-ink/10 rounded-2xl animate-pulse shadow-md mb-6 flex items-center justify-center border border-ink/5">
               <span className="font-serif text-ink/20 text-sm">The Inkwell</span>
             </div>
-            <div className="flex gap-2 w-full max-w-[280px]">
-              <div className="h-10 flex-1 bg-ink/5 rounded-full animate-pulse"></div>
-              <div className="h-10 flex-1 bg-ink/5 rounded-full animate-pulse"></div>
-            </div>
           </div>
 
           {/* Cột giữa: Tiêu đề, tác giả & mô tả Skeleton */}
@@ -258,6 +254,9 @@ export default function BookDetailPage() {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
   };
+
+  const readSampleUrl = book.sample_read_url || book.preview_url || book.read_url || book.sample_url || "";
+  const audioSampleUrl = book.audio_sample_url || book.audio_url || book.sample_audio_url || "";
 
     const askMercy = async () => {
     setIsMercyThinking(true); // Hiển thị trạng thái đang load
@@ -366,15 +365,31 @@ export default function BookDetailPage() {
             )}
           </div>
           
-          {/* Sample Buttons (Like Amazon's Read Sample / Audible Sample) */}
-          <div className="flex gap-2 w-full max-w-[300px]">
-            <button className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2">
-              <BookOpen size={16} /> Đọc thử
-            </button>
-            <button className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2">
-              <Play size={16} /> Nghe thử
-            </button>
-          </div>
+          {/* Nút Đọc thử & Nghe thử: Chỉ hiển thị và dẫn link khi có dữ liệu, không có thì bỏ đi */}
+          {(readSampleUrl || audioSampleUrl) && (
+            <div className="flex gap-2 w-full max-w-[300px]">
+              {readSampleUrl && (
+                <a
+                  href={readSampleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2 cursor-pointer no-underline"
+                >
+                  <BookOpen size={16} /> Đọc thử
+                </a>
+              )}
+              {audioSampleUrl && (
+                <a
+                  href={audioSampleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2 cursor-pointer no-underline"
+                >
+                  <Play size={16} /> Nghe thử
+                </a>
+              )}
+            </div>
+          )}
           
           <div className="w-full max-w-[300px] mt-8 pt-6 border-t border-ink/10 text-left">
             <h3 className="font-bold text-ink mb-3 flex items-center gap-2">Theo dõi tác giả <span className="text-ink/40 text-xs">ⓘ</span></h3>
