@@ -179,11 +179,19 @@ GENRE_BOOKS_CACHE: dict = {}
 BOOK_DETAILS_CACHE: dict = {}
 SIMILAR_BOOKS_CACHE: dict = {}
 
-def format_hd_image_url(url: str) -> str:
-    """Nâng cấp ảnh bìa từ thumbnail nhỏ (m/ hoặc s/) thành ảnh gốc HD (l/) độ nét cao từ Goodreads CDN"""
-    if not url:
+def format_hd_image_url(url: str, isbn: str = "") -> str:
+    """Nâng cấp ảnh bìa từ thumbnail nhỏ (m/ hoặc s/) thành ảnh gốc HD (l/) độ nét cao, tự động thay thế nophoto bằng Open Library cover qua ISBN"""
+    if not url or "nophoto" in url:
+        if isbn:
+            clean_isbn = str(isbn).strip()
+            if len(clean_isbn) == 9:
+                clean_isbn = "0" + clean_isbn
+            if len(clean_isbn) >= 10:
+                return f"https://covers.openlibrary.org/b/isbn/{clean_isbn}-L.jpg"
         return ""
     clean = url.strip().replace("http://", "https://")
+    if "openlibrary.org" in clean:
+        return clean
     clean = re.sub(r'://(?:imagei|s)\.gr-assets\.com', '://images.gr-assets.com', clean)
     return re.sub(r'(\d+)[ms]/', r'\g<1>l/', clean)
 
@@ -214,7 +222,8 @@ def preload_popular_and_genres():
                     "book_id": int(row["book_id"]),
                     "title": row["title"],
                     "author": clean_author,
-                    "image_url": format_hd_image_url(row.get("image_url", "")),
+                    "image_url": format_hd_image_url(row.get("image_url", ""), row.get("isbn", "")),
+                    "isbn": row.get("isbn", ""),
                     "score": float(row.get("average_rating", 0) or 4.0),
                     "rank": rank_idx
                 })
@@ -231,7 +240,8 @@ def preload_popular_and_genres():
                             "book_id": int(row["book_id"]),
                             "title": row["title"],
                             "author": clean_author,
-                            "image_url": format_hd_image_url(row.get("image_url", "")),
+                            "image_url": format_hd_image_url(row.get("image_url", ""), row.get("isbn", "")),
+                            "isbn": row.get("isbn", ""),
                             "score": float(row.get("average_rating", 0) or 4.0),
                             "ratings_count": int(row.get("ratings_count", 0) or 0),
                             "genre": genre_slug
@@ -252,13 +262,14 @@ def preload_popular_and_genres():
             for row in all_rows:
                 b_id = int(row["book_id"])
                 clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
-                clean_img = format_hd_image_url(row.get("image_url", ""))
+                clean_img = format_hd_image_url(row.get("image_url", ""), row.get("isbn", ""))
                 desc = row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao."
                 BOOK_DETAILS_CACHE[b_id] = {
                     "book_id": b_id,
                     "title": row.get("title", ""),
                     "author": clean_author,
                     "image_url": clean_img,
+                    "isbn": row.get("isbn", ""),
                     "description": desc,
                     "language_code": row.get("language_code", "eng"),
                     "score": float(row.get("average_rating", 0) or 4.0),
@@ -333,7 +344,7 @@ def get_similar_recommendations(book_id: int, limit: int = 10, response: Respons
     if books:
         for b in books:
             if "image_url" in b:
-                b["image_url"] = format_hd_image_url(b["image_url"])
+                b["image_url"] = format_hd_image_url(b["image_url"], b.get("isbn", ""))
         SIMILAR_BOOKS_CACHE[cache_key] = books
 
     if not books:
@@ -454,11 +465,13 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
         book = db.query(Book).filter(Book.book_id == book_id).first()
         if book:
             clean_author = book.authors.replace("[", "").replace("]", "").replace("'", "").strip() if book.authors else ""
+            isbn = getattr(book, "isbn", "") or ""
             data = {
                 "book_id": book.book_id,
                 "title": book.title,
                 "author": clean_author,
-                "image_url": format_hd_image_url(book.image_url),
+                "image_url": format_hd_image_url(book.image_url, isbn),
+                "isbn": isbn,
                 "description": book.description or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
                 "language_code": book.language_code or "eng",
                 "sample_read_url": getattr(book, "sample_read_url", None) or getattr(book, "preview_url", "") or "",
@@ -483,11 +496,13 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
                 for row in reader:
                     if int(row["book_id"]) == book_id:
                         clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                        isbn = row.get("isbn", "") or ""
                         data = {
                             "book_id": book_id,
                             "title": row.get("title", ""),
                             "author": clean_author,
-                            "image_url": format_hd_image_url(row.get("image_url", "")),
+                            "image_url": format_hd_image_url(row.get("image_url", ""), isbn),
+                            "isbn": isbn,
                             "description": row.get("description", "") or "Tác phẩm kinh điển được bạn đọc toàn cầu yêu thích và đánh giá cao.",
                             "language_code": row.get("language_code", "eng"),
                             "sample_read_url": row.get("sample_read_url") or row.get("preview_url") or "",
@@ -556,11 +571,13 @@ def get_books_by_genre(genre: str, limit: int = 50, response: Response = None, d
                     g_raw = row.get("genres", "").lower()
                     if f"'{genre_slug}'" in g_raw or f'"{genre_slug}"' in g_raw or genre_slug in g_raw:
                         clean_author = row.get("authors", "").replace("[", "").replace("]", "").replace("'", "").strip()
+                        isbn = row.get("isbn", "") or ""
                         books_data.append({
                             "book_id": int(row["book_id"]),
                             "title": row["title"],
                             "author": clean_author,
-                            "image_url": format_hd_image_url(row.get("image_url", "")),
+                            "image_url": format_hd_image_url(row.get("image_url", ""), isbn),
+                            "isbn": isbn,
                             "score": float(row.get("average_rating", 0) or 4.0),
                             "ratings_count": int(row.get("ratings_count", 0) or 0),
                             "genre": genre_slug
@@ -790,11 +807,13 @@ def extract_and_match_books(reply_text: str, db: Session = None):
             try:
                 b = db.query(Book).filter(Book.title.ilike(f"%{clean_title}%")).first()
                 if b and b.book_id not in seen_ids:
+                    b_isbn = getattr(b, "isbn", "") or ""
                     book_data = {
                         "book_id": b.book_id,
                         "title": b.title,
                         "author": b.authors or "",
-                        "image_url": format_hd_image_url(b.image_url) if b.image_url else "",
+                        "image_url": format_hd_image_url(b.image_url, b_isbn) if b.image_url else "",
+                        "isbn": b_isbn,
                         "matched_text": raw_clean
                     }
                     seen_ids.add(b.book_id)
@@ -816,11 +835,13 @@ def extract_and_match_books(reply_text: str, db: Session = None):
                             if clean_lower in row_title.lower():
                                 b_id = int(row.get("book_id", 0))
                                 if b_id and b_id not in seen_ids:
+                                    r_isbn = row.get("isbn", "") or ""
                                     book_data = {
                                         "book_id": b_id,
                                         "title": row_title,
                                         "author": row.get("authors", ""),
-                                        "image_url": format_hd_image_url(row.get("image_url", "")),
+                                        "image_url": format_hd_image_url(row.get("image_url", ""), r_isbn),
+                                        "isbn": r_isbn,
                                         "matched_text": raw_clean
                                     }
                                     seen_ids.add(b_id)

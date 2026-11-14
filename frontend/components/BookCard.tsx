@@ -13,11 +13,21 @@ const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
 
-// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
-const formatImageUrl = (url?: string) => {
-  if (!url) return "";
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động dự phòng sang Open Library qua ISBN
+const formatImageUrl = (url?: string, isbn?: string) => {
+  if (!url || url.includes("nophoto")) {
+    if (isbn) {
+      const cleanIsbn = String(isbn).trim().replace(/^0+/, "");
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      if (paddedIsbn.length >= 10) {
+        return `https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`;
+      }
+    }
+    return "";
+  }
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
   // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
   clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
@@ -37,27 +47,33 @@ export default function BookCard({ book, rank, isHybrid }: { book: any, rank?: n
   const { addToCart } = useCart();
   const { user } = useAuth();
   
-  const initialUrl = formatImageUrl(book.image_url);
+  const initialUrl = formatImageUrl(book.image_url, book.isbn);
   const [imgSrc, setImgSrc] = useState<string>(initialUrl);
-  const [useProxy, setUseProxy] = useState(false);
-  const [imgFailed, setImgFailed] = useState(false);
+  const [retryStep, setRetryStep] = useState(0); // 0: initial, 1: weserv proxy, 2: open library, 3: failed
+  const [imgFailed, setImgFailed] = useState(!initialUrl);
   
   const theme = COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length];
 
   useEffect(() => {
-    const formatted = formatImageUrl(book.image_url);
+    const formatted = formatImageUrl(book.image_url, book.isbn);
     setImgSrc(formatted);
-    setUseProxy(false);
-    setImgFailed(false);
-  }, [book.image_url]);
+    setRetryStep(0);
+    setImgFailed(!formatted);
+  }, [book.image_url, book.isbn]);
 
   const handleImageError = () => {
-    if (!useProxy && imgSrc) {
-      // Nếu link trực tiếp bị chặn hoặc gặp lỗi mạng, chuyển sang CDN Proxy để tải ảnh thật
-      setUseProxy(true);
+    if (retryStep === 0 && imgSrc && !imgSrc.includes("weserv.nl")) {
+      // Tầng 1: Chuyển sang weserv proxy
+      setRetryStep(1);
       setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=450&fit=cover&q=90`);
+    } else if (retryStep <= 1 && book.isbn) {
+      // Tầng 2: Tra cứu Open Library Cover qua ISBN
+      setRetryStep(2);
+      const cleanIsbn = String(book.isbn).trim();
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      setImgSrc(`https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`);
     } else {
-      // Nếu ảnh gốc thật sự không còn tồn tại trên Internet thì mới hiển thị bìa sách dự phòng
+      // Tầng 3: Nếu ảnh thật sự không tồn tại ở bất kỳ đâu, render bìa hardcover sang trọng
       setImgFailed(true);
     }
   };

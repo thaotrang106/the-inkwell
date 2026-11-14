@@ -20,11 +20,21 @@ const cleanTitle = (title: string) => {
 // Cache bộ nhớ Client-side để mở lại sách đã xem trong 0.001 giây
 const CLIENT_BOOK_CACHE = new Map<string, any>();
 
-// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
-const formatImageUrl = (url?: string) => {
-  if (!url) return "";
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động dự phòng sang Open Library qua ISBN
+const formatImageUrl = (url?: string, isbn?: string) => {
+  if (!url || url.includes("nophoto")) {
+    if (isbn) {
+      const cleanIsbn = String(isbn).trim().replace(/^0+/, "");
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      if (paddedIsbn.length >= 10) {
+        return `https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`;
+      }
+    }
+    return "";
+  }
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
   // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
   clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
@@ -104,12 +114,12 @@ export default function BookDetailPage() {
     return !CLIENT_BOOK_CACHE.has(id);
   });
   
-  // Trạng thái ảnh bìa sách với cơ chế 2 tầng tải ảnh và bìa dự phòng
+  // Trạng thái ảnh bìa sách với cơ chế 3 tầng tải ảnh và bìa dự phòng
   const [detailImgSrc, setDetailImgSrc] = useState<string>(() => {
-    if (book?.image_url) return formatImageUrl(book.image_url);
+    if (book?.image_url) return formatImageUrl(book.image_url, book.isbn);
     return "";
   });
-  const [useDetailProxy, setUseDetailProxy] = useState(false);
+  const [detailRetryStep, setDetailRetryStep] = useState(0);
   const [detailImgFailed, setDetailImgFailed] = useState(false);
 
   // Trạng thái AI Mercy (lưu phiên để hiển thị tức thì nếu đã từng hỏi)
@@ -143,8 +153,8 @@ export default function BookDetailPage() {
     if (currentBook && (currentBook.title || currentBook.book_id)) {
       setBook(currentBook);
       setLoading(false);
-      if (currentBook.image_url) {
-        setDetailImgSrc(formatImageUrl(currentBook.image_url));
+      if (currentBook.image_url || currentBook.isbn) {
+        setDetailImgSrc(formatImageUrl(currentBook.image_url, currentBook.isbn));
       }
     } else {
       setLoading(true);
@@ -166,8 +176,8 @@ export default function BookDetailPage() {
           };
           CLIENT_BOOK_CACHE.set(id, mergedBook);
           setBook(mergedBook);
-          if (mergedBook.image_url) {
-            setDetailImgSrc(formatImageUrl(mergedBook.image_url));
+          if (mergedBook.image_url || mergedBook.isbn) {
+            setDetailImgSrc(formatImageUrl(mergedBook.image_url, mergedBook.isbn));
           }
           try {
             sessionStorage.setItem(`inkwell_book_${id}`, JSON.stringify(mergedBook));
@@ -253,12 +263,13 @@ export default function BookDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    if (book?.image_url) {
-      setDetailImgSrc(formatImageUrl(book.image_url));
-      setUseDetailProxy(false);
-      setDetailImgFailed(false);
+    if (book?.image_url || book?.isbn) {
+      const formatted = formatImageUrl(book.image_url, book.isbn);
+      setDetailImgSrc(formatted);
+      setDetailRetryStep(0);
+      setDetailImgFailed(!formatted);
     }
-  }, [book?.image_url]);
+  }, [book?.image_url, book?.isbn]);
 
   if (loading && !book) {
     return (
@@ -308,10 +319,18 @@ export default function BookDetailPage() {
   }
 
   const handleDetailImageError = () => {
-    if (!useDetailProxy && detailImgSrc) {
-      setUseDetailProxy(true);
+    if (detailRetryStep === 0 && detailImgSrc && !detailImgSrc.includes("weserv.nl")) {
+      // Tầng 1: Sử dụng weserv proxy
+      setDetailRetryStep(1);
       setDetailImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(detailImgSrc)}&w=600&fit=cover&q=90`);
+    } else if (detailRetryStep <= 1 && book?.isbn) {
+      // Tầng 2: Tra cứu Open Library Cover qua ISBN
+      setDetailRetryStep(2);
+      const cleanIsbn = String(book.isbn).trim();
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      setDetailImgSrc(`https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`);
     } else {
+      // Tầng 3: Bìa sách vải mạ vàng sang trọng nếu không thể tìm thấy ảnh trên Internet
       setDetailImgFailed(true);
     }
   };

@@ -11,6 +11,7 @@ export interface BookRecommendation {
   title: string;
   author?: string;
   image_url?: string;
+  isbn?: string;
   matched_text?: string;
 }
 
@@ -31,11 +32,21 @@ const cleanTitle = (title: string) => {
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
 
-// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
-const formatImageUrl = (url?: string) => {
-  if (!url) return "";
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động dự phòng sang Open Library qua ISBN
+const formatImageUrl = (url?: string, isbn?: string) => {
+  if (!url || url.includes("nophoto")) {
+    if (isbn) {
+      const cleanIsbn = String(isbn).trim().replace(/^0+/, "");
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      if (paddedIsbn.length >= 10) {
+        return `https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`;
+      }
+    }
+    return "";
+  }
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
   clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
   return clean;
@@ -136,12 +147,20 @@ function MercyBookItem({
         className="mt-3 flex items-center justify-between p-2.5 sm:p-3 rounded-[6px] bg-[#FAF9F6] hover:bg-white border border-stone-200 hover:border-stone-400 hover:shadow-xs transition-all group cursor-pointer"
       >
         <div className="flex items-center gap-3 min-w-0">
-          {book?.image_url ? (
+          {book?.image_url || book?.isbn ? (
             <img
-              src={formatImageUrl(book.image_url)}
+              src={formatImageUrl(book.image_url, book.isbn)}
               alt={book.title || rawTitle}
               className="w-8 h-12 object-cover rounded-[3px] shadow-2xs shrink-0 bg-stone-100 border border-stone-200/80"
-              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              onError={(e) => {
+                if (book.isbn && !e.currentTarget.src.includes("openlibrary.org")) {
+                  const cleanIsbn = String(book.isbn).trim();
+                  const padded = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+                  e.currentTarget.src = `https://covers.openlibrary.org/b/isbn/${padded}-L.jpg`;
+                } else {
+                  e.currentTarget.style.display = 'none';
+                }
+              }}
             />
           ) : (
             <div className="w-8 h-12 rounded-[3px] bg-[#1C1917] text-amber-200 flex items-center justify-center font-mono text-[8px] shrink-0 border border-stone-200">

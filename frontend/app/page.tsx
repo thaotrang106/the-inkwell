@@ -663,11 +663,21 @@ export default function Home() {
                                 className="flex items-center gap-3.5 flex-1 min-w-0 cursor-pointer"
                               >
                                 <img 
-                                  src={book.image_url ? book.image_url.replace(/^http:\/\//i, "https://").replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com").replace(/(\d+)[ms]\//i, "$1l/") : ""} 
+                                  src={
+                                    book.image_url && !book.image_url.includes("nophoto")
+                                      ? book.image_url.replace(/^http:\/\//i, "https://").replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com").replace(/(\d+)[ms]\//i, "$1l/")
+                                      : (book.isbn ? `https://covers.openlibrary.org/b/isbn/${String(book.isbn).trim().padStart(10, '0')}-L.jpg` : "")
+                                  } 
                                   alt={cleanName} 
                                   referrerPolicy="no-referrer"
                                   className="w-10 h-14 object-cover rounded-[3px] shadow-2xs flex-shrink-0 bg-stone-100" 
-                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                  onError={(e) => {
+                                    if (book.isbn && !e.currentTarget.src.includes("openlibrary.org")) {
+                                      e.currentTarget.src = `https://covers.openlibrary.org/b/isbn/${String(book.isbn).trim().padStart(10, '0')}-L.jpg`;
+                                    } else {
+                                      e.currentTarget.style.display = 'none';
+                                    }
+                                  }}
                                 />
                                 <div className="truncate pr-2">
                                   <h4 className="font-serif font-bold text-stone-900 text-sm leading-tight line-clamp-1 group-hover:text-[#881337] transition-colors">

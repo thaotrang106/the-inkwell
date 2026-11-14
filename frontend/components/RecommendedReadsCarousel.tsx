@@ -26,11 +26,21 @@ const getBookPricing = (bookId: number) => {
   return { salePrice, listPrice };
 };
 
-// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover)
-const formatImageUrl = (url?: string) => {
-  if (!url) return "";
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động lấy ảnh từ Open Library nếu thiếu
+const formatImageUrl = (url?: string, isbn?: string) => {
+  if (!url || url.includes("nophoto")) {
+    if (isbn) {
+      const cleanIsbn = String(isbn).trim().replace(/^0+/, "");
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      if (paddedIsbn.length >= 10) {
+        return `https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`;
+      }
+    }
+    return "";
+  }
   let clean = url.trim();
   clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
   // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
   clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
@@ -52,6 +62,7 @@ interface BookItem {
   author?: string;
   authors?: string;
   image_url?: string;
+  isbn?: string;
   price?: number;
   list_price?: number;
 }
@@ -120,22 +131,28 @@ const DEFAULT_RECOMMENDED: BookItem[] = [
  * mạ vàng kim cổ điển (Luxury Hardcover Jacket) có tên sách và tác giả.
  */
 function Book3DCover({ book }: { book: BookItem }) {
-  const initialUrl = formatImageUrl(book.image_url);
+  const initialUrl = formatImageUrl(book.image_url, book.isbn);
   const [imgSrc, setImgSrc] = useState<string>(initialUrl);
-  const [useProxy, setUseProxy] = useState(false);
-  const [imgFailed, setImgFailed] = useState(false);
+  const [retryStep, setRetryStep] = useState(0); // 0: initial, 1: weserv proxy, 2: open library, 3: failed
+  const [imgFailed, setImgFailed] = useState(!initialUrl);
   const theme = COVER_THEMES[Math.abs(book.book_id) % COVER_THEMES.length];
 
   useEffect(() => {
-    setImgSrc(formatImageUrl(book.image_url));
-    setUseProxy(false);
-    setImgFailed(false);
-  }, [book.image_url]);
+    const url = formatImageUrl(book.image_url, book.isbn);
+    setImgSrc(url);
+    setRetryStep(0);
+    setImgFailed(!url);
+  }, [book.image_url, book.isbn]);
 
   const handleImageError = () => {
-    if (!useProxy && imgSrc) {
-      setUseProxy(true);
+    if (retryStep === 0 && imgSrc && !imgSrc.includes("weserv.nl")) {
+      setRetryStep(1);
       setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=450&fit=cover&q=90`);
+    } else if (retryStep <= 1 && book.isbn) {
+      setRetryStep(2);
+      const cleanIsbn = String(book.isbn).trim();
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      setImgSrc(`https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`);
     } else {
       setImgFailed(true);
     }
