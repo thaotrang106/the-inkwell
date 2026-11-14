@@ -195,22 +195,47 @@ export default function BookDetailPage() {
     
     fetchBook();
 
-    // 1. Tải gợi ý sách tương tự (You may also like)
+    // 1. Tải gợi ý sách tương tự (You may also like) với 3 tầng dự phòng thông minh
     fetch(`${API_BASE_URL}/api/recommendations/similar/${id}?limit=10`)
       .then((res) => res.json())
       .then((json) => {
         if (json.data && json.data.length > 0) {
           setSimilarBooks(json.data);
         } else {
+          // Tầng 2: Gợi ý Hybrid kết hợp
           fetch(`${API_BASE_URL}/api/recommendations/hybrid/${id}`)
             .then((r) => r.json())
             .then((hj) => {
-              if (hj.data && hj.data.length > 0) setSimilarBooks(hj.data);
+              if (hj.data && hj.data.length > 0) {
+                setSimilarBooks(hj.data);
+              } else {
+                // Tầng 3: Tuyển chọn thịnh hành/đề xuất phổ biến để không bao giờ bị khoảng trống
+                fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+                  .then((pr) => pr.json())
+                  .then((pj) => {
+                    if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+                  })
+                  .catch(() => {});
+              }
             })
-            .catch(() => {});
+            .catch(() => {
+              fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+                .then((pr) => pr.json())
+                .then((pj) => {
+                  if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+                })
+                .catch(() => {});
+            });
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+          .then((pr) => pr.json())
+          .then((pj) => {
+            if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+          })
+          .catch(() => {});
+      });
 
     // 2. Tải sách khác cùng tác giả (Also By This Author)
     fetch(`${API_BASE_URL}/api/books/by-author/${id}?limit=10`)
@@ -908,7 +933,7 @@ export default function BookDetailPage() {
         <RecommendedReadsCarousel 
           title="Có thể bạn cũng thích"
           subtitle="Những tác phẩm tương đồng về phong cách nghệ thuật và nội dung"
-          initialBooks={similarBooks}
+          initialBooks={similarBooks.length > 0 ? similarBooks : undefined}
         />
       </div>
 

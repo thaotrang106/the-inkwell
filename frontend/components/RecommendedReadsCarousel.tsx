@@ -210,7 +210,11 @@ export default function RecommendedReadsCarousel({
 }: RecommendedReadsCarouselProps) {
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const [books, setBooks] = useState<BookItem[]>(initialBooks || DEFAULT_RECOMMENDED);
+  const [books, setBooks] = useState<BookItem[]>(() => {
+    if (initialBooks && initialBooks.length > 0) return initialBooks;
+    if (emptyHide) return [];
+    return DEFAULT_RECOMMENDED;
+  });
   const [addedBookId, setAddedBookId] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -220,11 +224,20 @@ export default function RecommendedReadsCarousel({
 
   // Tải danh sách sách từ database hoặc nhận từ props initialBooks
   useEffect(() => {
-    if (initialBooks !== undefined) {
+    // 1. Nếu có initialBooks với ít nhất 1 sách
+    if (initialBooks && initialBooks.length > 0) {
       setBooks(initialBooks);
       return;
     }
 
+    // 2. Nếu cấu hình emptyHide = true và initialBooks rỗng (ví dụ: tác giả không có sách khác)
+    if (emptyHide && initialBooks !== undefined && initialBooks.length === 0) {
+      setBooks([]);
+      return;
+    }
+
+    // 3. Nếu chưa có sách (hoặc initialBooks rỗng nhưng emptyHide = false), tải từ API hoặc fallback
+    let isCancelled = false;
     const fetchBooks = async () => {
       try {
         const url = user?.user_id
@@ -235,20 +248,31 @@ export default function RecommendedReadsCarousel({
         if (res.ok) {
           const json = await res.json();
           const items = json.data || json.items || [];
-          if (items.length > 0) {
+          if (!isCancelled && items.length > 0) {
             setBooks(items);
+            return;
           }
         }
       } catch (e) {
         // Fallback về DEFAULT_RECOMMENDED nếu backend offline
       }
+
+      if (!isCancelled && (!initialBooks || initialBooks.length === 0)) {
+        setBooks(DEFAULT_RECOMMENDED);
+      }
     };
 
     fetchBooks();
-  }, [initialBooks, user]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [initialBooks, user, emptyHide]);
+
+  // Bảo đảm luôn có sách để hiển thị nếu emptyHide = false (không bao giờ để khoảng trắng)
+  const displayBooks = books.length > 0 ? books : (emptyHide ? [] : DEFAULT_RECOMMENDED);
 
   // Nếu cấu hình emptyHide và không có sách thì ẩn hoàn toàn phần này
-  if (emptyHide && (!books || books.length === 0)) {
+  if (emptyHide && displayBooks.length === 0) {
     return null;
   }
 
@@ -356,7 +380,7 @@ export default function RecommendedReadsCarousel({
             className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-none scroll-smooth w-full py-4 px-1"
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {books.map((book) => {
+            {displayBooks.map((book) => {
               const { salePrice, listPrice } = getBookPricing(book.book_id);
               const isAdded = addedBookId === book.book_id;
 

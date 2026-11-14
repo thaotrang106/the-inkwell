@@ -481,14 +481,14 @@ export default function Home() {
               </motion.div>
             </AnimatePresence>
             
-            {/* Search Bar phong cách Book Outlet: Ô tìm kiếm + Icon Kính lúp + Nút Ask Mercy */}
+            {/* Search Bar phong cách Editorial: Khung viền mỏng tinh tế, bo góc 5px, nút Hỏi Mercy AI thanh lịch */}
             <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-lg"}`} ref={searchRef}>
               <div 
                 onClick={() => {
                   setShowDropdown(true);
                   inputRef.current?.focus();
                 }}
-                className="flex items-center w-full bg-white/95 backdrop-blur-sm border border-ink/20 rounded-2xl shadow-md hover:border-ink/40 focus-within:border-[#B12704] focus-within:ring-2 focus-within:ring-[#B12704]/20 px-3.5 py-2.5 transition-all cursor-text"
+                className="flex items-center w-full bg-white border border-stone-300 rounded-[5px] shadow-xs hover:border-stone-400 focus-within:border-[#1C1917] focus-within:ring-1 focus-within:ring-[#1C1917]/20 px-3.5 py-2 transition-all cursor-text font-sans"
               >
                 <input 
                   ref={inputRef}
@@ -498,34 +498,34 @@ export default function Home() {
                   onFocus={() => setShowDropdown(true)}
                   onClick={() => setShowDropdown(true)}
                   placeholder="Tìm theo tên sách, tác giả (VD: Harry Potter, Dune...)" 
-                  className="w-full py-1.5 px-2 bg-transparent focus:outline-none text-ink text-sm sm:text-base font-medium placeholder:text-ink/40"
+                  className="w-full py-1.5 px-2 bg-transparent focus:outline-none text-[#1C1917] text-sm sm:text-base font-medium placeholder:text-stone-400"
                 />
 
                 {/* Icon Loading khi đang tìm */}
                 {isSearching && (
-                  <Loader2 className="text-[#B12704] animate-spin shrink-0 mx-2" size={18} />
+                  <Loader2 className="text-[#1C1917] animate-spin shrink-0 mx-2" size={18} />
                 )}
 
                 {/* Icon Kính lúp tìm kiếm (Bấm vào để tìm gợi ý sách) */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="p-2 text-ink/50 hover:text-[#B12704] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                  className="p-2 text-stone-500 hover:text-[#1C1917] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                   title="Tìm kiếm sách gợi ý"
                 >
-                  {loading ? <Loader2 size={20} className="animate-spin text-[#B12704]" /> : <Search size={20} />}
+                  {loading ? <Loader2 size={19} className="animate-spin text-[#1C1917]" /> : <Search size={19} />}
                 </button>
 
-                {/* Nút Ask Mercy phong cách Ask Dash của Book Outlet */}
+                {/* Nút Ask Mercy phong cách Biên tập / Editorial: Outline đen than, bo góc 4px */}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsMercyOpen(true);
                   }}
-                  className="flex items-center gap-1.5 ml-2 px-4 py-2 rounded-full border border-[#B12704] text-[#B12704] hover:bg-[#FFF5F2] active:scale-95 text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-1.5 ml-2 px-3.5 py-2 rounded-[4px] border border-[#1C1917] text-[#1C1917] hover:bg-[#1C1917] hover:text-white active:scale-95 text-xs font-semibold tracking-wide transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
                 >
-                  <Sparkles size={15} className="text-[#B12704] fill-[#B12704]/20" />
+                  <BookOpen size={14} />
                   <span>Hỏi Mercy AI</span>
                 </button>
               </div>
@@ -534,26 +534,26 @@ export default function Home() {
             <AnimatePresence>
               {showDropdown && (
                 <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-white border border-ink/10 rounded-2xl shadow-xl overflow-hidden z-50 text-left"
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-[#FCFBF9] border border-stone-200 rounded-[6px] shadow-xl overflow-hidden z-50 text-left font-sans"
                 >
                   {/* TRƯỜNG HỢP 1: Chưa gõ từ khóa -> Hiện "Tìm kiếm gần đây" + "Xu hướng thịnh hành" */}
                   {searchQuery.length < 2 ? (
                     <div className="p-4 sm:p-5 space-y-4 max-h-[420px] overflow-y-auto">
                       {/* 1. TÌM KIẾM GẦN ĐÂY (chỉ xuất hiện khi người dùng có lịch sử tìm kiếm) */}
                       {recentSearches.length > 0 && (
-                        <div className="pb-3 border-b border-ink/5">
+                        <div className="pb-3 border-b border-stone-200/80">
                           <div className="flex items-center justify-between mb-2 px-1">
-                            <h4 className="text-[11px] font-bold uppercase tracking-wider text-ink/60 flex items-center gap-1.5">
-                              <Clock size={13} className="text-[#4B6584]" />
+                            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-stone-500 flex items-center gap-1.5">
+                              <Clock size={13} className="text-stone-500" />
                               <span>Tìm kiếm gần đây</span>
                             </h4>
                             <button
                               type="button"
                               onClick={clearAllRecentSearches}
-                              className="text-[11px] font-medium text-ink/40 hover:text-rose-600 transition-colors cursor-pointer"
+                              className="text-[11px] font-medium text-stone-400 hover:text-rose-700 transition-colors cursor-pointer"
                             >
                               Xóa tất cả
                             </button>
@@ -577,16 +577,16 @@ export default function Home() {
                                   }
                                   setIsSearching(false);
                                 }}
-                                className="flex items-center justify-between py-2 px-3 hover:bg-[#FAF7F2] rounded-xl cursor-pointer text-ink/80 text-sm group transition-colors"
+                                className="flex items-center justify-between py-2 px-3 hover:bg-stone-100 rounded-[4px] cursor-pointer text-stone-800 text-sm group transition-colors"
                               >
                                 <div className="flex items-center gap-2.5 truncate">
-                                  <Clock size={14} className="text-ink/40 group-hover:text-[#4B6584] shrink-0" />
-                                  <span className="group-hover:text-ink font-medium truncate">{term}</span>
+                                  <Clock size={14} className="text-stone-400 group-hover:text-stone-700 shrink-0" />
+                                  <span className="group-hover:text-stone-900 font-medium truncate">{term}</span>
                                 </div>
                                 <button
                                   type="button"
                                   onClick={(e) => removeRecentSearch(term, e)}
-                                  className="p-1 text-ink/30 hover:text-rose-500 rounded-md hover:bg-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                  className="p-1 text-stone-300 hover:text-rose-600 rounded-[3px] hover:bg-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                                   title="Xóa tìm kiếm này"
                                 >
                                   <X size={13} />
@@ -599,8 +599,8 @@ export default function Home() {
 
                       {/* 2. XU HƯỚNG TÌM KIẾM THỊNH HÀNH (Động theo Database) */}
                       <div>
-                        <h4 className="text-[11px] font-bold uppercase tracking-wider text-ink/60 mb-2 px-1 flex items-center gap-1.5">
-                          <TrendingUp size={13} className="text-[#B12704]" />
+                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-stone-500 mb-2 px-1 flex items-center gap-1.5">
+                          <TrendingUp size={13} className="text-[#881337]" />
                           <span>Xu hướng tìm kiếm thịnh hành</span>
                         </h4>
                         <div className="space-y-0.5">
@@ -621,10 +621,10 @@ export default function Home() {
                                 }
                                 setIsSearching(false);
                               }}
-                              className="flex items-center gap-3 py-2 px-3 hover:bg-[#FAF7F2] rounded-xl cursor-pointer text-ink/80 text-sm group transition-colors"
+                              className="flex items-center gap-3 py-2 px-3 hover:bg-stone-100 rounded-[4px] cursor-pointer text-stone-800 text-sm group transition-colors"
                             >
-                              <Search size={14} className="text-ink/40 group-hover:text-[#B12704] transition-colors shrink-0" />
-                              <span className="group-hover:text-ink font-medium truncate">{term}</span>
+                              <Search size={14} className="text-stone-400 group-hover:text-[#881337] transition-colors shrink-0" />
+                              <span className="group-hover:text-stone-900 font-medium truncate">{term}</span>
                             </div>
                           ))}
                         </div>
@@ -633,13 +633,13 @@ export default function Home() {
                   ) : (
                     /* TRƯỜNG HỢP 2: Đang gõ từ khóa -> Hiện kết quả Autocomplete từ Database */
                     searchResults.length > 0 && (
-                      <div>
+                      <div className="divide-y divide-stone-100 max-h-[420px] overflow-y-auto">
                         {searchResults.map(book => {
                           const cleanName = cleanTitle(book.title);
                           return (
                             <div 
                               key={book.book_id} 
-                              className="flex items-center justify-between p-3.5 hover:bg-[#FAF7F2] transition-colors border-b border-ink/5 last:border-0 group"
+                              className="flex items-center justify-between p-3.5 hover:bg-stone-100/80 transition-colors group"
                             >
                               {/* Nhấp vào toàn bộ cuốn sách để chuyển ngay tới trang Chi tiết sách */}
                               <Link 
@@ -666,14 +666,14 @@ export default function Home() {
                                   src={book.image_url ? book.image_url.replace(/^http:\/\//i, "https://").replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com").replace(/(\d+)[ms]\//i, "$1l/") : ""} 
                                   alt={cleanName} 
                                   referrerPolicy="no-referrer"
-                                  className="w-10 h-14 object-cover rounded shadow-xs flex-shrink-0 bg-ink/5" 
+                                  className="w-10 h-14 object-cover rounded-[3px] shadow-2xs flex-shrink-0 bg-stone-100" 
                                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />
                                 <div className="truncate pr-2">
-                                  <h4 className="font-bold text-ink text-sm leading-tight line-clamp-1 group-hover:text-[#B12704] transition-colors">
+                                  <h4 className="font-serif font-bold text-stone-900 text-sm leading-tight line-clamp-1 group-hover:text-[#881337] transition-colors">
                                     {cleanName}
                                   </h4>
-                                  <p className="text-xs text-ink/50 mt-1 truncate">
+                                  <p className="text-xs text-stone-500 mt-1 truncate font-sans">
                                     {typeof book.author === 'string' ? book.author.replace(/\[|\]|'/g, '') : book.author}
                                   </p>
                                 </div>
@@ -691,10 +691,10 @@ export default function Home() {
                                   setShowDropdown(false);
                                   fetchHybridForBook(book.book_id.toString());
                                 }}
-                                className="text-xs font-semibold text-[#B12704] hover:bg-[#FFF5F2] border border-[#B12704]/30 px-3 py-1.5 rounded-lg shrink-0 ml-2 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap"
+                                className="text-xs font-medium text-stone-700 hover:text-white bg-white hover:bg-[#1C1917] border border-stone-300 hover:border-[#1C1917] px-3 py-1.5 rounded-[4px] shrink-0 ml-2 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap font-sans shadow-2xs"
                                 title="Xem các sách có gu tương đồng cuốn này"
                               >
-                                <Sparkles size={13} className="text-[#B12704]" />
+                                <BookOpen size={12} />
                                 <span>Gợi ý tương tự</span>
                               </button>
                             </div>
@@ -709,7 +709,7 @@ export default function Home() {
           </form>
 
           {error && (
-            <p className={`text-terracotta mt-4 text-sm font-medium bg-red-50 inline-block px-4 py-2 rounded-full ${
+            <p className={`text-stone-800 mt-4 text-xs font-medium bg-stone-100 border border-stone-200 inline-block px-4 py-2 rounded-[4px] ${
               isCentered ? "mx-auto text-center" : ""
             }`}>
               {error}
@@ -717,12 +717,12 @@ export default function Home() {
           )}
 
           {!isLoggedIn && (
-            <div className={`mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border border-ink/10 text-xs text-ink/80 shadow-xs ${
+            <div className={`mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-[4px] bg-white/95 backdrop-blur-xs border border-stone-200 text-xs text-stone-700 shadow-2xs font-sans ${
               isCentered ? "mx-auto" : ""
             }`}>
-              <Sparkles size={14} className="text-[#B12704]" />
+              <BookOpen size={14} className="text-stone-700" />
               <span>Muốn nhận gợi ý theo gu đọc cá nhân?</span>
-              <Link href="/login" className="font-bold text-[#B12704] hover:underline inline-flex items-center gap-0.5">
+              <Link href="/login" className="font-semibold text-[#1C1917] hover:underline inline-flex items-center gap-0.5">
                 Đăng nhập ngay <ArrowRight size={12} />
               </Link>
             </div>
