@@ -10,8 +10,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
-  title: "The Inkwell | AI Bookstore",
-  description: "Experience smart book shopping with Mercy AI.",
+  title: "The Inkwell",
+  description: "Hiệu sách văn học khai phóng & Trợ lý văn học Mercy AI.",
 };
 
 export default function RootLayout({
