@@ -187,14 +187,14 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Tự động chuyển banner mỗi 5 giây (tự tạm dừng khi đang gõ tìm kiếm hoặc hover chuột)
+  // Tự động chuyển banner mỗi 5 giây (tự tạm dừng khi đang gõ tìm kiếm hoặc hover chuột, reset đếm khi chuyển slide)
   useEffect(() => {
     if (isPaused || showDropdown || isSearching) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+    }, 5500);
     return () => clearInterval(interval);
-  }, [isPaused, showDropdown, isSearching, heroSlides.length]);
+  }, [currentSlide, isPaused, showDropdown, isSearching, heroSlides.length]);
 
   // Tự động đọc lịch sử tìm kiếm từ localStorage khi mở trang
   useEffect(() => {
@@ -418,41 +418,32 @@ export default function Home() {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Background Banner Slides with Framer Motion crossfade (overflow-hidden chỉ giới hạn ở nền ảnh) */}
+        {/* Background Banner Slides với Crossfade đa tầng đồng thời (Hoàn toàn không nhấp nháy, không chớp trắng) */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={heroSlides[currentSlide].id}
-              initial={{ opacity: 0, scale: 1.01 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-              className="w-full h-full"
+          {heroSlides.map((slide, idx) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+                currentSlide === idx ? "opacity-100 z-1" : "opacity-0 z-0 pointer-events-none"
+              }`}
             >
               <picture className="w-full h-full">
-                <source media="(max-width: 767px)" srcSet={heroSlides[currentSlide].mobileImg} />
+                <source media="(max-width: 767px)" srcSet={slide.mobileImg} />
                 <img 
-                  src={heroSlides[currentSlide].desktopImg} 
-                  alt={heroSlides[currentSlide].titleLine1} 
-                  className={`w-full h-full object-cover ${heroSlides[currentSlide].objectPosition}`}
+                  src={slide.desktopImg} 
+                  alt={slide.titleLine1} 
+                  className={`w-full h-full object-cover ${slide.objectPosition}`}
+                  loading="eager"
+                  decoding="async"
                 />
               </picture>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          ))}
         </div>
 
         {/* Lớp phủ mờ nhẹ tinh tế để chữ luôn sắc nét và tương thích tối đa với nền tường */}
-        {isCentered ? (
-          <>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(250,248,245,0.85)_0%,_rgba(250,248,245,0.45)_50%,_transparent_80%)] pointer-events-none hidden md:block" />
-            <div className="absolute inset-0 bg-[#FAF8F5]/85 pointer-events-none md:hidden" />
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 via-45% to-transparent pointer-events-none hidden md:block" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden" />
-          </>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 via-45% to-transparent pointer-events-none hidden md:block z-2" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/95 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden z-2" />
 
         <div className={`w-full z-10 py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center transition-all duration-300 ${
           isCentered 
@@ -464,35 +455,41 @@ export default function Home() {
               ? "max-w-2xl mx-auto flex flex-col items-center text-center" 
               : "max-w-xl lg:max-w-2xl text-left"
           }`}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroSlides[currentSlide].id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className={isCentered ? "flex flex-col items-center text-center w-full" : "text-left w-full"}
-              >
-                <span className={`uppercase tracking-[0.3em] text-xs font-bold text-terracotta mb-3 block ${
-                  isCentered ? "text-center mx-auto" : ""
-                }`}>
-                  {heroSlides[currentSlide].tag}
-                </span>
-                <h1 className={`font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink mb-4 leading-[1.08] tracking-tight ${
-                  isCentered ? "text-center" : ""
-                }`}>
-                  {heroSlides[currentSlide].titleLine1}<br />
-                  <span className="italic font-normal text-terracotta">
-                    {heroSlides[currentSlide].titleLine2}
-                  </span>
-                </h1>
-                <p className={`text-ink/75 text-sm sm:text-base lg:text-lg mb-7 leading-relaxed ${
-                  isCentered ? "text-center max-w-xl mx-auto" : "max-w-lg text-left"
-                }`}>
-                  {heroSlides[currentSlide].description}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+            {/* Chuyển đổi nội dung chữ mượt mà dạng Grid xếp chồng (Giữ nguyên chiều cao, tuyệt đối không bị giựt thanh tìm kiếm) */}
+            <div className="grid grid-cols-1 grid-rows-1 w-full mb-7">
+              {heroSlides.map((slide, idx) => {
+                const isActive = currentSlide === idx;
+                return (
+                  <div
+                    key={slide.id}
+                    className={`col-start-1 row-start-1 w-full transition-all duration-700 ease-in-out ${
+                      isActive 
+                        ? "opacity-100 translate-y-0 pointer-events-auto" 
+                        : "opacity-0 -translate-y-2 pointer-events-none"
+                    } ${isCentered ? "flex flex-col items-center text-center" : "text-left"}`}
+                  >
+                    <span className={`uppercase tracking-[0.3em] text-xs font-bold text-terracotta mb-3 block ${
+                      isCentered ? "text-center mx-auto" : ""
+                    }`}>
+                      {slide.tag}
+                    </span>
+                    <h1 className={`font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink mb-4 leading-[1.08] tracking-tight ${
+                      isCentered ? "text-center" : ""
+                    }`}>
+                      {slide.titleLine1}<br />
+                      <span className="italic font-normal text-terracotta">
+                        {slide.titleLine2}
+                      </span>
+                    </h1>
+                    <p className={`text-ink/75 text-sm sm:text-base lg:text-lg leading-relaxed ${
+                      isCentered ? "text-center max-w-xl mx-auto" : "max-w-lg text-left"
+                    }`}>
+                      {slide.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
             
             {/* Search Bar phong cách Editorial: Khung viền mỏng tinh tế, bo góc 5px, nút Hỏi Mercy AI thanh lịch */}
             <form onSubmit={handleSearchSubmit} className={`relative w-full ${isCentered ? "max-w-xl mx-auto" : "max-w-xl lg:max-w-2xl"}`} ref={searchRef}>
