@@ -118,8 +118,6 @@ export default function Home() {
   const [hybridBooks, setHybridBooks] = useState<any[]>([]);
   const [personalizedBooks, setPersonalizedBooks] = useState<any[]>([]);
   const [isPersonalizedLoading, setIsPersonalizedLoading] = useState(false);
-  const [showUserSwitcher, setShowUserSwitcher] = useState(false);
-  const userSwitcherRef = useRef<HTMLDivElement>(null);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -264,9 +262,6 @@ export default function Home() {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
-      }
-      if (userSwitcherRef.current && !userSwitcherRef.current.contains(event.target as Node)) {
-        setShowUserSwitcher(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -765,142 +760,38 @@ export default function Home() {
             </p>
           )}
 
-          {/* Thanh chuyển đổi người dùng mẫu (User Switcher Dropdown) phục vụ thực nghiệm Đồ án */}
-          <div className={`mt-6 relative inline-block text-left ${isCentered ? "mx-auto" : ""}`} ref={userSwitcherRef}>
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                onClick={() => setShowUserSwitcher(!showUserSwitcher)}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-white/95 backdrop-blur-xs border border-stone-300 hover:border-[#1C1917] text-xs text-stone-800 shadow-2xs font-sans transition-all cursor-pointer hover:shadow-xs active:scale-98"
-                title="Chuyển đổi người dùng mẫu để kiểm tra thuật toán đề xuất"
-              >
-                <Users size={13} className="text-[#881337]" />
-                <span className="font-medium text-[11px] sm:text-xs">
-                  {isLoggedIn && user ? (
-                    <>Đang xem: <strong className="font-semibold text-[#1C1917]">{user.name}</strong></>
-                  ) : (
-                    <>Chuyển đổi người dùng mẫu (User Switcher): <strong className="font-semibold text-stone-600">Khách vãng lai</strong></>
-                  )}
+          {/* Trạng thái chào mừng độc giả cá nhân hóa (Phong cách thương mại điện tử sang trọng) */}
+          <div className={`mt-5 flex items-center gap-2.5 flex-wrap ${isCentered ? "justify-center" : ""}`}>
+            {isLoggedIn && user ? (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-stone-200/90 shadow-2xs text-xs text-stone-700 font-sans">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>
+                  Xin chào, <strong className="font-semibold text-stone-900">{user.name}</strong>
                 </span>
-                <ChevronDown size={13} className={`text-stone-400 transition-transform ${showUserSwitcher ? "rotate-180" : ""}`} />
-              </button>
-
-              {!isLoggedIn ? (
-                <Link href="/login" className="text-xs font-semibold text-[#1C1917] hover:underline inline-flex items-center gap-0.5 ml-1">
-                  Đăng nhập <ArrowRight size={12} />
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    logout();
-                    setPersonalizedBooks([]);
+                <span className="text-stone-300">•</span>
+                <a
+                  href="#personalized-section"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("personalized-section")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="text-[11px] font-medium text-stone-400 hover:text-rose-700 transition-colors ml-1 cursor-pointer"
+                  className="text-[#881337] hover:underline font-medium inline-flex items-center gap-0.5 cursor-pointer"
                 >
-                  (Đăng xuất)
-                </button>
-              )}
-            </div>
-
-            {/* Menu Dropdown người dùng mẫu */}
-            <AnimatePresence>
-              {showUserSwitcher && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
-                  className="absolute left-0 mt-1.5 w-80 sm:w-88 bg-white border border-stone-200 rounded-[6px] shadow-xl overflow-hidden z-50 text-left font-sans"
+                  Gợi ý may đo cho bạn <ArrowRight size={11} />
+                </a>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/80 shadow-2xs text-xs text-stone-600 font-sans">
+                <Sparkles size={13} className="text-[#881337]" />
+                <span>Muốn nhận gợi ý may đo theo gu đọc của bạn?</span>
+                <Link
+                  href="/login"
+                  className="text-[#881337] hover:underline font-semibold inline-flex items-center gap-0.5 ml-1"
                 >
-                  <div className="px-3.5 py-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">
-                      CHUYỂN ĐỔI NGƯỜI DÙNG MẪU
-                    </span>
-                    <span className="text-[10px] text-[#881337] font-bold font-mono">Báo cáo Đồ án</span>
-                  </div>
-
-                  <div className="p-1.5 space-y-1">
-                    {DEMO_READERS.map((reader) => {
-                      const isSelected = isLoggedIn && user?.user_id === reader.user_id;
-                      return (
-                        <button
-                          key={reader.user_id}
-                          type="button"
-                          onClick={() => {
-                            setPersonalizedBooks(reader.books);
-                            login({
-                              user_id: reader.user_id,
-                              name: reader.name,
-                              email: reader.email,
-                              tier: reader.tier,
-                            });
-                            setShowUserSwitcher(false);
-                            setTimeout(() => {
-                              const el = document.getElementById("personalized-section");
-                              if (el) {
-                                el.scrollIntoView({ behavior: "smooth", block: "start" });
-                              }
-                            }, 120);
-                          }}
-                          className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
-                            isSelected ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
-                          }`}
-                        >
-                          <div className="pr-2">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
-                                {reader.name}
-                              </span>
-                              <span className="text-[9px] bg-stone-100 text-stone-600 px-1.5 py-0.5 rounded font-mono">
-                                #{reader.user_id}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-[#881337] font-medium mt-0.5">
-                              {reader.genre}
-                            </p>
-                            <p className="text-[10px] text-stone-400 line-clamp-1 mt-0.5">
-                              {reader.tagline}
-                            </p>
-                          </div>
-                          {isSelected && (
-                            <span className="text-[#881337] mt-1 shrink-0">
-                              <Check size={14} />
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-
-                    {/* Khách vãng lai / Cold-Start */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        setPersonalizedBooks([]);
-                        setShowUserSwitcher(false);
-                      }}
-                      className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
-                        !isLoggedIn ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
-                      }`}
-                    >
-                      <div>
-                        <span className="text-xs font-bold text-stone-800">
-                          Khách vãng lai (Chưa đăng nhập)
-                        </span>
-                        <p className="text-[11px] text-stone-500 mt-0.5">
-                          Thử nghiệm bài toán Cold-Start (Hiện Sách Thịnh Hành)
-                        </p>
-                      </div>
-                      {!isLoggedIn && (
-                        <span className="text-[#881337] mt-1 shrink-0">
-                          <Check size={14} />
-                        </span>
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  Đăng nhập ngay <ArrowRight size={11} />
+                </Link>
+              </div>
+            )}
           </div>
           </div>
         </div>
