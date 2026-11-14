@@ -8,6 +8,7 @@ import MercyChatDrawer from "@/components/MercyChatDrawer";
 import RecommendedReadsCarousel from "@/components/RecommendedReadsCarousel";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL as BACKEND_URL } from "@/lib/api";
+import { CURATED_BOOKS } from "@/lib/curatedBooks";
 
 // Hàm làm sạch tên sách: loại bỏ phần (Harry Potter, #1) thô của dataset
 const cleanTitle = (title: string) => {
@@ -1222,8 +1223,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* Mục Đề Xuất Tuyển Chọn (Recommended Reads Carousel) - Lấy dữ liệu sách từ Database */}
-      <RecommendedReadsCarousel title="Gợi ý tuyển chọn" initialBooks={popularBooks} />
+      {/* Mục Đề Xuất Tuyển Chọn (Recommended Reads Carousel) - Tuyển tập văn học kinh điển & kiệt tác tư tưởng */}
+      <RecommendedReadsCarousel title="Gợi ý tuyển chọn" initialBooks={CURATED_BOOKS} />
 
       {/* Sách Thịnh Hành (Popular) - Phong cách Editorial cao cấp */}
       <section id="trending" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-20 scroll-mt-24">

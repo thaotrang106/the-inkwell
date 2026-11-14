@@ -6,24 +6,13 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE_URL } from "@/lib/api";
+import { CURATED_BOOKS, CuratedBook } from "@/lib/curatedBooks";
+import { getBookPricing, formatPriceVND } from "@/lib/bookPricing";
 
 // Hàm làm sạch tên sách
 const cleanTitle = (title: string) => {
   if (!title) return "";
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
-};
-
-// Định dạng giá VNĐ
-const formatVND = (price: number) => {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
-};
-
-// Tính toán giá bán và giá niêm yết ổn định theo book_id
-const getBookPricing = (bookId: number) => {
-  const base = 135000 + ((bookId * 179) % 115000);
-  const salePrice = Math.round(base / 1000) * 1000;
-  const listPrice = Math.round((salePrice * 1.75) / 1000) * 1000;
-  return { salePrice, listPrice };
 };
 
 // Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động lấy ảnh từ Open Library nếu thiếu
@@ -65,65 +54,9 @@ interface BookItem {
   isbn?: string;
   price?: number;
   list_price?: number;
+  badge?: string;
+  genre?: string;
 }
-
-// Danh sách sách đề xuất tuyển chọn với CDN chuẩn
-const DEFAULT_RECOMMENDED: BookItem[] = [
-  {
-    book_id: 1,
-    title: "The Hunger Games",
-    author: "Suzanne Collins",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1447303603i/2767052.jpg",
-  },
-  {
-    book_id: 2,
-    title: "Harry Potter and the Sorcerer's Stone",
-    author: "J.K. Rowling",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
-  },
-  {
-    book_id: 25,
-    title: "Harry Potter and the Deathly Hallows",
-    author: "J.K. Rowling",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1474171184i/136251.jpg",
-  },
-  {
-    book_id: 27,
-    title: "Harry Potter and the Half-Blood Prince",
-    author: "J.K. Rowling",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1361039191i/1.jpg",
-  },
-  {
-    book_id: 18,
-    title: "The Fellowship of the Ring",
-    author: "J.R.R. Tolkien",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1298411339i/34.jpg",
-  },
-  {
-    book_id: 21,
-    title: "The Hobbit",
-    author: "J.R.R. Tolkien",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg",
-  },
-  {
-    book_id: 4,
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg",
-  },
-  {
-    book_id: 17,
-    title: "Catching Fire",
-    author: "Suzanne Collins",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1586722975i/6148028.jpg",
-  },
-  {
-    book_id: 19,
-    title: "The Fault in Our Stars",
-    author: "John Green",
-    image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1360206420i/11870085.jpg",
-  },
-];
 
 /**
  * Component hiển thị bìa sách 3D có hiệu ứng gáy và đổ bóng.
@@ -136,6 +69,7 @@ function Book3DCover({ book }: { book: BookItem }) {
   const [retryStep, setRetryStep] = useState(0); // 0: initial, 1: weserv proxy, 2: open library, 3: failed
   const [imgFailed, setImgFailed] = useState(!initialUrl);
   const theme = COVER_THEMES[Math.abs(book.book_id) % COVER_THEMES.length];
+  const authorName = book.author || book.authors || "The Inkwell";
 
   useEffect(() => {
     const url = formatImageUrl(book.image_url, book.isbn);
@@ -164,7 +98,7 @@ function Book3DCover({ book }: { book: BookItem }) {
         {!imgFailed && imgSrc ? (
           <img
             src={imgSrc}
-            alt={cleanTitle(book.title)}
+            alt={`Bìa sách ${cleanTitle(book.title)} - ${authorName}`}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover rounded-r-md rounded-l-xs shadow-[0_12px_24px_-6px_rgba(0,0,0,0.3),0_6px_12px_-4px_rgba(0,0,0,0.2)]"
             onError={handleImageError}
@@ -186,7 +120,7 @@ function Book3DCover({ book }: { book: BookItem }) {
               </p>
               <div className="w-8 h-[1px] bg-amber-400/40 mx-auto my-2"></div>
               <p className="text-[10px] text-stone-300 line-clamp-1 italic">
-                {book.author || book.authors || "Special Edition"}
+                {authorName}
               </p>
             </div>
 
@@ -221,7 +155,7 @@ interface RecommendedReadsCarouselProps {
 
 export default function RecommendedReadsCarousel({
   title = "Gợi ý tuyển chọn",
-  subtitle = "Tuyển chọn những tác phẩm nổi bật được cộng đồng yêu thích nhất",
+  subtitle = "Tuyển chọn những kiệt tác văn học & tư tưởng được Ban biên tập tuyển lựa kỹ lưỡng",
   initialBooks,
   emptyHide = false,
 }: RecommendedReadsCarouselProps) {
@@ -230,7 +164,7 @@ export default function RecommendedReadsCarousel({
   const [books, setBooks] = useState<BookItem[]>(() => {
     if (initialBooks && initialBooks.length > 0) return initialBooks;
     if (emptyHide) return [];
-    return DEFAULT_RECOMMENDED;
+    return CURATED_BOOKS;
   });
   const [addedBookId, setAddedBookId] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -239,56 +173,24 @@ export default function RecommendedReadsCarousel({
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Tải danh sách sách từ database hoặc nhận từ props initialBooks
+  // Tải danh sách sách hoặc nhận từ props initialBooks
   useEffect(() => {
-    // 1. Nếu có initialBooks với ít nhất 1 sách
     if (initialBooks && initialBooks.length > 0) {
       setBooks(initialBooks);
       return;
     }
 
-    // 2. Nếu cấu hình emptyHide = true và initialBooks rỗng (ví dụ: tác giả không có sách khác)
     if (emptyHide && initialBooks !== undefined && initialBooks.length === 0) {
       setBooks([]);
       return;
     }
 
-    // 3. Nếu chưa có sách (hoặc initialBooks rỗng nhưng emptyHide = false), tải từ API hoặc fallback
-    let isCancelled = false;
-    const fetchBooks = async () => {
-      try {
-        const url = user?.user_id
-          ? `${API_BASE_URL}/api/recommendations/foryou/${user.user_id}?limit=15`
-          : `${API_BASE_URL}/api/recommendations/popular?limit=15`;
+    setBooks(CURATED_BOOKS);
+  }, [initialBooks, emptyHide]);
 
-        const res = await fetch(url);
-        if (res.ok) {
-          const json = await res.json();
-          const items = json.data || json.items || [];
-          if (!isCancelled && items.length > 0) {
-            setBooks(items);
-            return;
-          }
-        }
-      } catch (e) {
-        // Fallback về DEFAULT_RECOMMENDED nếu backend offline
-      }
+  // Bảo đảm luôn có sách để hiển thị nếu emptyHide = false
+  const displayBooks = books.length > 0 ? books : (emptyHide ? [] : CURATED_BOOKS);
 
-      if (!isCancelled && (!initialBooks || initialBooks.length === 0)) {
-        setBooks(DEFAULT_RECOMMENDED);
-      }
-    };
-
-    fetchBooks();
-    return () => {
-      isCancelled = true;
-    };
-  }, [initialBooks, user, emptyHide]);
-
-  // Bảo đảm luôn có sách để hiển thị nếu emptyHide = false (không bao giờ để khoảng trắng)
-  const displayBooks = books.length > 0 ? books : (emptyHide ? [] : DEFAULT_RECOMMENDED);
-
-  // Nếu cấu hình emptyHide và không có sách thì ẩn hoàn toàn phần này
   if (emptyHide && displayBooks.length === 0) {
     return null;
   }
@@ -298,51 +200,43 @@ export default function RecommendedReadsCarousel({
     if (!scrollContainerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
     const maxScroll = scrollWidth - clientWidth;
-
+    if (maxScroll <= 0) {
+      setScrollProgress(0);
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    setScrollProgress(Math.min(100, Math.max(0, (scrollLeft / maxScroll) * 100)));
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < maxScroll - 10);
-
-    if (maxScroll > 0) {
-      setScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
-    }
   };
 
-  useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (el) {
-      handleScroll();
-      el.addEventListener("scroll", handleScroll, { passive: true });
-      return () => el.removeEventListener("scroll", handleScroll);
-    }
-  }, [books]);
-
-  // Điều khiển nút cuộn Trái / Phải
   const scroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
-    const scrollAmount = scrollContainerRef.current.clientWidth * 0.75;
-    scrollContainerRef.current.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
+    const scrollAmount = direction === "left" ? -460 : 460;
+    scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
-  // Xử lý thêm vào giỏ và ghi nhận hành vi
   const handleAddToCart = (book: BookItem, salePrice: number, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const bookToCart = {
-      ...book,
-      price: salePrice,
-    };
-
-    addToCart(bookToCart, 1);
+    addToCart(
+      {
+        book_id: book.book_id,
+        title: cleanTitle(book.title),
+        author: book.author || book.authors || "Nhiều tác giả",
+        image_url: book.image_url,
+        price: salePrice,
+      },
+      1
+    );
 
     setAddedBookId(book.book_id);
     setTimeout(() => {
       setAddedBookId(null);
-    }, 1500);
+    }, 1800);
 
+    // Ghi nhận hành vi tương tác add_to_cart
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
       method: "POST",
@@ -356,33 +250,30 @@ export default function RecommendedReadsCarousel({
   };
 
   return (
-    <section className="w-full py-12 bg-white">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Tiêu đề phần (Recommended Reads / You may also like / Also By This Author) */}
-        <div className="text-center mb-8 sm:mb-10">
-          <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-stone-500 mb-2">
+    <section className="w-full py-12 sm:py-16 bg-[#FAF8F5]/60 border-y border-stone-200/60 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header mục Gợi ý tuyển chọn */}
+        <div className="text-center mb-10 max-w-2xl mx-auto">
+          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-stone-500 font-medium mb-2 block">
             THE INKWELL CURATIONS
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1C1917] tracking-tight">
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight mb-2.5">
             {title}
           </h2>
-          {subtitle && (
-            <p className="text-xs sm:text-sm text-stone-500 mt-1.5 font-serif italic max-w-xl mx-auto">
-              {subtitle}
-            </p>
-          )}
+          <p className="text-stone-500 text-xs sm:text-sm font-sans">
+            {subtitle}
+          </p>
+          <div className="w-12 h-[1px] bg-stone-300 mx-auto mt-4"></div>
         </div>
 
-        {/* Khung Carousel với hai mũi tên điều hướng hai bên */}
-        <div className="relative flex items-center group">
-          
+        {/* Carousel Container */}
+        <div className="relative group">
           {/* Nút mũi tên Trái */}
           <button
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
             aria-label="Cuộn sang trái"
-            className={`hidden md:flex absolute -left-4 lg:-left-5 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
+            className={`hidden md:flex absolute -left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
               canScrollLeft
                 ? "text-stone-800 hover:text-black hover:border-stone-400 hover:scale-105 active:scale-95"
                 : "text-stone-300 border-stone-100 cursor-not-allowed opacity-30"
@@ -394,18 +285,20 @@ export default function RecommendedReadsCarousel({
           {/* Dãy các thẻ sách cuộn ngang */}
           <div
             ref={scrollContainerRef}
+            onScroll={handleScroll}
             className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-none scroll-smooth w-full py-4 px-1"
             style={{ scrollSnapType: "x mandatory" }}
           >
             {displayBooks.map((book) => {
-              const { salePrice, listPrice } = getBookPricing(book.book_id);
+              const pricing = getBookPricing(book.book_id, book.price);
               const isAdded = addedBookId === book.book_id;
+              const authorName = book.author || book.authors || "Nhiều tác giả";
 
               return (
                 <div
                   key={book.book_id}
                   style={{ scrollSnapAlign: "start" }}
-                  className="flex-shrink-0 w-[200px] sm:w-[220px] lg:w-[235px] bg-[#FAF9F6] border border-stone-200/90 rounded-[6px] p-4 sm:p-5 flex flex-col justify-between items-center text-center transition-all duration-300 hover:border-stone-400 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)] hover:bg-white"
+                  className="flex-shrink-0 w-[205px] sm:w-[225px] lg:w-[240px] bg-white border border-stone-200/90 rounded-[6px] p-4 sm:p-5 flex flex-col justify-between items-center text-center transition-all duration-300 hover:border-stone-400 hover:shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)]"
                 >
                   {/* Bìa sách định dạng 3D */}
                   <Link
@@ -413,41 +306,60 @@ export default function RecommendedReadsCarousel({
                     onClick={() => {
                       if (typeof window !== "undefined") {
                         try {
-                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: salePrice }));
+                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: pricing.price }));
                         } catch {}
                       }
                     }}
                     onMouseEnter={() => {
                       if (typeof window !== "undefined") {
                         try {
-                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: salePrice }));
+                          sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify({ ...book, price: pricing.price }));
                         } catch {}
                       }
                     }}
                     className="w-full flex flex-col items-center group/card cursor-pointer"
                   >
+                    {/* Huy hiệu biên tập (Badge) */}
+                    {book.badge && (
+                      <span className="mb-2 font-mono text-[9px] font-semibold uppercase tracking-wider text-[#881337] bg-rose-50 px-2 py-0.5 rounded-[3px] border border-[#881337]/15">
+                        {book.badge}
+                      </span>
+                    )}
+
                     <Book3DCover book={book} />
 
-                    {/* Tên sách */}
-                    <h3 className="font-serif font-bold text-[#1C1917] text-sm mt-3 line-clamp-1 group-hover/card:text-stone-600 transition-colors">
+                    {/* Tên sách (Font Serif) */}
+                    <h3 className="font-serif font-bold text-[#1C1917] text-sm mt-3 line-clamp-2 min-h-[2.5rem] group-hover/card:text-stone-600 transition-colors">
                       {cleanTitle(book.title)}
                     </h3>
+
+                    {/* Tên tác giả */}
+                    <p className="text-[11px] text-stone-500 font-sans line-clamp-1 mt-0.5">
+                      {authorName}
+                    </p>
                   </Link>
 
-                  {/* Phần giá tiền */}
+                  {/* Phần giá tiền đồng bộ 100% với BookCard */}
                   <div className="mt-3 w-full">
-                    <p className="font-serif font-bold text-[#1C1917] text-base sm:text-lg tracking-tight">
-                      {formatVND(salePrice)}
-                    </p>
-                    <p className="text-[11px] sm:text-xs text-stone-400 mt-0.5 line-through decoration-stone-300 font-sans">
-                      Giá niêm yết: {formatVND(listPrice)}
-                    </p>
+                    <div className="flex items-baseline justify-center gap-1.5 flex-wrap">
+                      <span className="font-serif font-bold text-[#1C1917] text-base sm:text-lg tracking-tight">
+                        {formatPriceVND(pricing.price)}
+                      </span>
+                      <span className="text-[11px] text-stone-400 line-through decoration-stone-300 font-sans">
+                        {formatPriceVND(pricing.originalPrice)}
+                      </span>
+                    </div>
+                    <div className="mt-1">
+                      <span className="text-[10px] font-bold font-mono text-[#881337] bg-rose-50/80 px-1.5 py-0.5 rounded-[3px]">
+                        Tiết kiệm {pricing.discountPercent}%
+                      </span>
+                    </div>
                   </div>
 
                   {/* Nút Add to Cart / Thêm vào giỏ viền mảnh tinh tế, bo góc 5px */}
                   <button
                     type="button"
-                    onClick={(e) => handleAddToCart(book, salePrice, e)}
+                    onClick={(e) => handleAddToCart(book, pricing.price, e)}
                     className={`w-full mt-4 py-2 px-3 text-xs font-medium rounded-[5px] border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-xs font-sans ${
                       isAdded
                         ? "bg-[#1C1917] border-[#1C1917] text-white"
@@ -473,7 +385,7 @@ export default function RecommendedReadsCarousel({
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
             aria-label="Cuộn sang phải"
-            className={`hidden md:flex absolute -right-4 lg:-right-5 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
+            className={`hidden md:flex absolute -right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-10 h-10 rounded-full border border-stone-200 bg-white/95 backdrop-blur-xs shadow-sm transition-all cursor-pointer ${
               canScrollRight
                 ? "text-stone-800 hover:text-black hover:border-stone-400 hover:scale-105 active:scale-95"
                 : "text-stone-300 border-stone-100 cursor-not-allowed opacity-30"
@@ -483,19 +395,13 @@ export default function RecommendedReadsCarousel({
           </button>
         </div>
 
-        {/* Thanh chỉ báo cuộn (Progress Slider Bar) */}
-        <div className="mt-8 flex justify-center">
-          <div className="w-24 sm:w-32 h-[3px] bg-stone-200 rounded-full relative overflow-hidden">
-            <div
-              className="h-full bg-stone-800 rounded-full transition-all duration-150"
-              style={{
-                width: "40%",
-                transform: `translateX(${scrollProgress * 150}%)`,
-              }}
-            />
-          </div>
+        {/* Thanh tiến độ cuộn trang trí bên dưới */}
+        <div className="w-48 h-1 bg-stone-200/80 rounded-full mx-auto mt-6 overflow-hidden">
+          <div
+            className="h-full bg-stone-700 transition-all duration-200 rounded-full"
+            style={{ width: `${Math.max(15, scrollProgress)}%` }}
+          ></div>
         </div>
-
       </div>
     </section>
   );
