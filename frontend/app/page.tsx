@@ -144,7 +144,7 @@ export default function Home() {
     layout: "left" | "center";
   }
 
-  // Danh sách các banner trang chủ (Tự động chuyển slide sau mỗi 5 giây)
+  // Danh sách các banner trang chủ (Tự động chuyển slide sau mỗi 5.5 giây)
   const heroSlides: HeroSlide[] = [
     {
       id: 1,
@@ -152,8 +152,8 @@ export default function Home() {
       titleLine1: "Thủ Thư Số",
       titleLine2: "Thấu Cảm Độc Giả",
       description: "Không chỉ tìm sách theo từ khóa đơn thuần. Mercy AI lắng nghe tâm trạng và phong cách đọc để dẫn lối bạn đến đúng tác phẩm bạn cần.",
-      desktopImg: "/banner_mercy_editorial_right.jpg",
-      mobileImg: "/banner_mercy_editorial_right.jpg",
+      desktopImg: "/banner_mercy_flatlay_right.jpg",
+      mobileImg: "/banner_mercy_flatlay_right.jpg",
       objectPosition: "object-right md:object-right",
       badge: "Trợ lý Văn học AI",
       layout: "left",
