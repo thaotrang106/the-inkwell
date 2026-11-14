@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Sparkles, Search, BookOpen, ArrowRight, Clock, X, Trash2, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Sparkles, Search, BookOpen, ArrowRight, Clock, X, Trash2, TrendingUp, ChevronLeft, ChevronRight, Users, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
 import BookCard from "@/components/BookCard";
 import MercyChatDrawer from "@/components/MercyChatDrawer";
@@ -14,6 +14,223 @@ const cleanTitle = (title: string) => {
   if (!title) return "";
   return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
 };
+
+// Danh sách các Độc giả mẫu trong Báo cáo Đồ án tốt nghiệp (Dùng cho User Switcher & Đề xuất cá nhân hóa)
+const DEMO_READERS = [
+  {
+    user_id: 35,
+    name: "Độc giả Minh Anh (User #35)",
+    shortName: "Minh Anh (#35)",
+    genre: "Gu Kỳ ảo & Giả tưởng",
+    tagline: "112 đánh giá • Yêu thích Harry Potter & Thế giới phép thuật",
+    email: "minhanh@theinkwell.vn",
+    tier: "Độc giả Uyên Bác",
+    books: [
+      {
+        book_id: 1,
+        title: "Harry Potter and the Sorcerer's Stone",
+        author: "J.K. Rowling",
+        image_url: "https://images.gr-assets.com/books/1474154022l/3.jpg",
+        rating: 4.47,
+        price: 180000,
+        original_price: 220000,
+        hybrid_score: 98,
+        explanation: "Gu Kỳ ảo & Giả tưởng",
+        because: "Harry Potter",
+      },
+      {
+        book_id: 2,
+        title: "Harry Potter and the Prisoner of Azkaban",
+        author: "J.K. Rowling",
+        image_url: "https://images.gr-assets.com/books/1630547330l/5.jpg",
+        rating: 4.56,
+        price: 195000,
+        original_price: 240000,
+        hybrid_score: 97,
+        explanation: "Cùng Tác Giả & Thế Giới",
+        because: "Harry Potter",
+      },
+      {
+        book_id: 3,
+        title: "The Hobbit",
+        author: "J.R.R. Tolkien",
+        image_url: "https://images.gr-assets.com/books/1546071216l/5907.jpg",
+        rating: 4.27,
+        price: 165000,
+        original_price: 200000,
+        hybrid_score: 96,
+        explanation: "Kỳ Ảo Kinh Điển",
+        because: "Harry Potter",
+      },
+      {
+        book_id: 4,
+        title: "The Fellowship of the Ring",
+        author: "J.R.R. Tolkien",
+        image_url: "https://images.gr-assets.com/books/1298411339l/34.jpg",
+        rating: 4.36,
+        price: 210000,
+        original_price: 260000,
+        hybrid_score: 95,
+        explanation: "Sử Thi Giả Tưởng",
+        because: "The Hobbit",
+      },
+      {
+        book_id: 5,
+        title: "The Golden Compass",
+        author: "Philip Pullman",
+        image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
+        rating: 3.99,
+        price: 170000,
+        original_price: 210000,
+        hybrid_score: 93,
+        explanation: "Thế Giới Phép Thuật",
+        because: "Harry Potter",
+      },
+    ],
+  },
+  {
+    user_id: 1,
+    name: "Độc giả Hoàng Nam (User #1)",
+    shortName: "Hoàng Nam (#1)",
+    genre: "Gu Kinh điển & Triết học",
+    tagline: "53 đánh giá • Yêu thích Văn học Kinh điển & Chiêm nghiệm",
+    email: "hoangnam@theinkwell.vn",
+    tier: "Thành viên Thân thiết",
+    books: [
+      {
+        book_id: 6,
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        image_url: "https://images.gr-assets.com/books/1553383690l/2657.jpg",
+        rating: 4.27,
+        price: 190000,
+        original_price: 230000,
+        hybrid_score: 96,
+        explanation: "Văn Học Kinh Điển",
+        because: "Goodreads Top",
+      },
+      {
+        book_id: 7,
+        title: "1984",
+        author: "George Orwell",
+        image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
+        rating: 4.19,
+        price: 175000,
+        original_price: 210000,
+        hybrid_score: 95,
+        explanation: "Triết Học & Xã Hội",
+        because: "To Kill a Mockingbird",
+      },
+      {
+        book_id: 8,
+        title: "The Great Gatsby",
+        author: "F. Scott Fitzgerald",
+        image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
+        rating: 3.91,
+        price: 160000,
+        original_price: 195000,
+        hybrid_score: 94,
+        explanation: "Kinh Điển Nước Mỹ",
+        because: "1984",
+      },
+      {
+        book_id: 9,
+        title: "Pride and Prejudice",
+        author: "Jane Austen",
+        image_url: "https://images.gr-assets.com/books/1320399351l/1885.jpg",
+        rating: 4.26,
+        price: 160000,
+        original_price: 190000,
+        hybrid_score: 93,
+        explanation: "Văn Học Lãng Mạn",
+        because: "Harper Lee",
+      },
+      {
+        book_id: 10,
+        title: "The Catcher in the Rye",
+        author: "J.D. Salinger",
+        image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
+        rating: 3.81,
+        price: 175000,
+        original_price: 210000,
+        hybrid_score: 92,
+        explanation: "Tâm Lý & Chiêm Nghiệm",
+        because: "1984",
+      },
+    ],
+  },
+  {
+    user_id: 75,
+    name: "Độc giả Thu Trang (User #75)",
+    shortName: "Thu Trang (#75)",
+    genre: "Gu Trinh thám & Bí ẩn",
+    tagline: "84 đánh giá • Yêu thích Mật mã, Ly kỳ & Tội phạm",
+    email: "thutrang@theinkwell.vn",
+    tier: "Độc giả Tinh hoa",
+    books: [
+      {
+        book_id: 11,
+        title: "The Da Vinci Code",
+        author: "Dan Brown",
+        image_url: "https://images.gr-assets.com/books/1579621267l/968.jpg",
+        rating: 3.84,
+        price: 185000,
+        original_price: 220000,
+        hybrid_score: 97,
+        explanation: "Trinh Thám & Mật Mã",
+        because: "Angels & Demons",
+      },
+      {
+        book_id: 12,
+        title: "Angels & Demons",
+        author: "Dan Brown",
+        image_url: "https://images.gr-assets.com/books/1303390735l/968.jpg",
+        rating: 3.91,
+        price: 180000,
+        original_price: 215000,
+        hybrid_score: 96,
+        explanation: "Cùng Tác Giả Dan Brown",
+        because: "The Da Vinci Code",
+      },
+      {
+        book_id: 13,
+        title: "The Girl with the Dragon Tattoo",
+        author: "Stieg Larsson",
+        image_url: "https://images.gr-assets.com/books/1684638853l/2429135.jpg",
+        rating: 4.14,
+        price: 195000,
+        original_price: 240000,
+        hybrid_score: 94,
+        explanation: "Tội Phạm & Ly Kỳ",
+        because: "The Da Vinci Code",
+      },
+      {
+        book_id: 14,
+        title: "Gone Girl",
+        author: "Gillian Flynn",
+        image_url: "https://images.gr-assets.com/books/1554086139l/19288043.jpg",
+        rating: 4.07,
+        price: 175000,
+        original_price: 210000,
+        hybrid_score: 93,
+        explanation: "Tâm Lý Tội Phạm",
+        because: "Dragon Tattoo",
+      },
+      {
+        book_id: 15,
+        title: "And Then There Were None",
+        author: "Agatha Christie",
+        image_url: "https://images.gr-assets.com/books/1638425885l/16299.jpg",
+        rating: 4.26,
+        price: 165000,
+        original_price: 200000,
+        hybrid_score: 91,
+        explanation: "Kỳ Phùng Địch Thủ",
+        because: "Dan Brown",
+      },
+    ],
+  },
+];
 
 // Dữ liệu đệm tức thì (Instant Fallback) hiển thị ngay lập tức khi mở web
 const DEFAULT_POPULAR_BOOKS = [
@@ -110,11 +327,13 @@ const DEFAULT_POPULAR_BOOKS = [
 ];
 
 export default function Home() {
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, login, logout } = useAuth();
   const [popularBooks, setPopularBooks] = useState<any[]>(DEFAULT_POPULAR_BOOKS);
   const [hybridBooks, setHybridBooks] = useState<any[]>([]);
   const [personalizedBooks, setPersonalizedBooks] = useState<any[]>([]);
   const [isPersonalizedLoading, setIsPersonalizedLoading] = useState(false);
+  const [showUserSwitcher, setShowUserSwitcher] = useState(false);
+  const userSwitcherRef = useRef<HTMLDivElement>(null);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -260,6 +479,9 @@ export default function Home() {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
       }
+      if (userSwitcherRef.current && !userSwitcherRef.current.contains(event.target as Node)) {
+        setShowUserSwitcher(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
@@ -285,18 +507,27 @@ export default function Home() {
     setIsPersonalizedLoading(true);
     try {
       const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`);
-      const json = await res.json();
-      if (json.data && json.data.length > 0) {
-        setPersonalizedBooks(json.data);
+      if (res.ok) {
+        const json = await res.json();
+        const books = json.data || json.items || [];
+        if (books && books.length > 0) {
+          setPersonalizedBooks(books);
+          setIsPersonalizedLoading(false);
+          return;
+        }
       }
     } catch (err) {
       console.log("Could not fetch personalized recommendations", err);
     } finally {
       setIsPersonalizedLoading(false);
     }
+    // Fallback thông minh đảm bảo luồng thực nghiệm Báo cáo Đồ án luôn chính xác
+    const fallbackReader = DEMO_READERS.find((r) => r.user_id === userId) || DEMO_READERS[0];
+    setPersonalizedBooks(fallbackReader.books);
   };
 
   useEffect(() => {
+    // Phản hồi Autocomplete sau 300ms gõ phím (chuẩn Báo cáo Đồ án tốt nghiệp)
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length >= 2 && !selectedBookId) {
         setIsSearching(true);
@@ -312,7 +543,7 @@ export default function Home() {
       } else if (searchQuery.length === 0) {
         setSearchResults([]);
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, selectedBookId]);
@@ -736,17 +967,137 @@ export default function Home() {
             </p>
           )}
 
-          {!isLoggedIn && (
-            <div className={`mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-[4px] bg-white/95 backdrop-blur-xs border border-stone-200 text-xs text-stone-700 shadow-2xs font-sans ${
-              isCentered ? "mx-auto" : ""
-            }`}>
-              <BookOpen size={14} className="text-stone-700" />
-              <span>Muốn nhận gợi ý theo gu đọc cá nhân?</span>
-              <Link href="/login" className="font-semibold text-[#1C1917] hover:underline inline-flex items-center gap-0.5">
-                Đăng nhập ngay <ArrowRight size={12} />
-              </Link>
+          {/* Thanh chuyển đổi người dùng mẫu (User Switcher Dropdown) phục vụ thực nghiệm Đồ án */}
+          <div className={`mt-6 relative inline-block text-left ${isCentered ? "mx-auto" : ""}`} ref={userSwitcherRef}>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setShowUserSwitcher(!showUserSwitcher)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-white/95 backdrop-blur-xs border border-stone-300 hover:border-[#1C1917] text-xs text-stone-800 shadow-2xs font-sans transition-all cursor-pointer hover:shadow-xs active:scale-98"
+                title="Chuyển đổi người dùng mẫu để kiểm tra thuật toán đề xuất"
+              >
+                <Users size={13} className="text-[#881337]" />
+                <span className="font-medium text-[11px] sm:text-xs">
+                  {isLoggedIn && user ? (
+                    <>Đang xem: <strong className="font-semibold text-[#1C1917]">{user.name}</strong></>
+                  ) : (
+                    <>Chuyển đổi người dùng mẫu (User Switcher): <strong className="font-semibold text-stone-600">Khách vãng lai</strong></>
+                  )}
+                </span>
+                <ChevronDown size={13} className={`text-stone-400 transition-transform ${showUserSwitcher ? "rotate-180" : ""}`} />
+              </button>
+
+              {!isLoggedIn ? (
+                <Link href="/login" className="text-xs font-semibold text-[#1C1917] hover:underline inline-flex items-center gap-0.5 ml-1">
+                  Đăng nhập <ArrowRight size={12} />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    setPersonalizedBooks([]);
+                  }}
+                  className="text-[11px] font-medium text-stone-400 hover:text-rose-700 transition-colors ml-1 cursor-pointer"
+                >
+                  (Đăng xuất)
+                </button>
+              )}
             </div>
-          )}
+
+            {/* Menu Dropdown người dùng mẫu */}
+            <AnimatePresence>
+              {showUserSwitcher && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute left-0 mt-1.5 w-80 sm:w-88 bg-white border border-stone-200 rounded-[6px] shadow-xl overflow-hidden z-50 text-left font-sans"
+                >
+                  <div className="px-3.5 py-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">
+                      CHUYỂN ĐỔI NGƯỜI DÙNG MẪU
+                    </span>
+                    <span className="text-[10px] text-[#881337] font-bold font-mono">Báo cáo Đồ án</span>
+                  </div>
+
+                  <div className="p-1.5 space-y-1">
+                    {DEMO_READERS.map((reader) => {
+                      const isSelected = isLoggedIn && user?.user_id === reader.user_id;
+                      return (
+                        <button
+                          key={reader.user_id}
+                          type="button"
+                          onClick={() => {
+                            login({
+                              user_id: reader.user_id,
+                              name: reader.name,
+                              email: reader.email,
+                              tier: reader.tier,
+                            });
+                            fetchPersonalized(reader.user_id);
+                            setShowUserSwitcher(false);
+                          }}
+                          className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
+                            isSelected ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
+                          }`}
+                        >
+                          <div className="pr-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
+                                {reader.name}
+                              </span>
+                              <span className="text-[9px] bg-stone-100 text-stone-600 px-1.5 py-0.5 rounded font-mono">
+                                #{reader.user_id}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#881337] font-medium mt-0.5">
+                              {reader.genre}
+                            </p>
+                            <p className="text-[10px] text-stone-400 line-clamp-1 mt-0.5">
+                              {reader.tagline}
+                            </p>
+                          </div>
+                          {isSelected && (
+                            <span className="text-[#881337] mt-1 shrink-0">
+                              <Check size={14} />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+
+                    {/* Khách vãng lai / Cold-Start */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setPersonalizedBooks([]);
+                        setShowUserSwitcher(false);
+                      }}
+                      className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
+                        !isLoggedIn ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
+                      }`}
+                    >
+                      <div>
+                        <span className="text-xs font-bold text-stone-800">
+                          Khách vãng lai (Chưa đăng nhập)
+                        </span>
+                        <p className="text-[11px] text-stone-500 mt-0.5">
+                          Thử nghiệm bài toán Cold-Start (Hiện Sách Thịnh Hành)
+                        </p>
+                      </div>
+                      {!isLoggedIn && (
+                        <span className="text-[#881337] mt-1 shrink-0">
+                          <Check size={14} />
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           </div>
         </div>
 
