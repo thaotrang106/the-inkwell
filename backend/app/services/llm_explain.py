@@ -52,8 +52,16 @@ def generate_explanation(book_title: str, book_author: str, description: str):
         print(f"Lỗi kết nối Gemini API: {e}")
         return f"Tác phẩm \"{book_title}\" của tác giả {book_author} là một áng văn giàu chiều sâu tư tưởng, khai mở những góc nhìn nhân văn tinh tế và xứng đáng là một điểm sáng trong tủ sách của mọi độc giả."
 
+# Bộ nhớ đệm hội thoại Mercy để phản hồi tức thì cho các câu hỏi phổ biến
+MERCY_CHAT_CACHE: dict = {}
+
 def chat_with_mercy(user_message: str):
-    """API trò chuyện cùng Thủ Thư Tri Âm Mercy — Đa dạng hóa câu trả lời, giọng văn văn chương tao nhã tự nhiên"""
+    """API trò chuyện cùng Thủ Thư Tri Âm Mercy — Đa dạng hóa câu trả lời, giọng văn văn chương tao nhã tự nhiên, phản hồi siêu tốc"""
+    clean_msg = user_message.strip()
+    cache_key = clean_msg.lower()
+    if cache_key in MERCY_CHAT_CACHE:
+        return MERCY_CHAT_CACHE[cache_key]
+
     api_key = os.getenv("GEMINI_API_KEY")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key={api_key}"
     
@@ -110,13 +118,27 @@ def chat_with_mercy(user_message: str):
     "{user_message}"
     """
     
-    payload = {"contents": [{"parts": [{"text": prompt}]}]}
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.65,
+            "maxOutputTokens": 450,
+            "topP": 0.95,
+        }
+    }
     
     try:
-        response = requests.post(url, json=payload, timeout=30)
+        response = requests.post(url, json=payload, timeout=12)
         response.raise_for_status()
         data = response.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"]
+        generated_reply = data["candidates"][0]["content"]["parts"][0]["text"]
+        
+        # Lưu vào cache (giới hạn 300 mục)
+        if len(MERCY_CHAT_CACHE) > 300:
+            MERCY_CHAT_CACHE.pop(next(iter(MERCY_CHAT_CACHE)))
+        MERCY_CHAT_CACHE[cache_key] = generated_reply
+        
+        return generated_reply
     except Exception as e:
         print(f"Lỗi Chat Mercy: {e}")
         return "Thủ thư Mercy hiện chưa thể kết nối đến máy chủ AI. Xin bạn vui lòng thử lại sau ít phút."
