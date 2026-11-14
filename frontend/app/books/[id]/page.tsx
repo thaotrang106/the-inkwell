@@ -445,16 +445,18 @@ export default function BookDetailPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         
-        {/* LEFT COLUMN: Image & Samples (col-span-3) */}
-        <div className="lg:col-span-3 flex flex-col items-center">
-          <div className="w-full max-w-[300px] mb-6 aspect-[2/3] relative rounded-xl overflow-hidden shadow-xl border border-ink/10 bg-[#1A1A1A] flex items-center justify-center">
+        {/* LEFT COLUMN: Image & Samples & Publishing Colophon (col-span-3) */}
+        <div className="lg:col-span-3 flex flex-col items-start w-full max-w-[320px] mx-auto lg:mx-0">
+          
+          {/* Bìa sách ấn phẩm nghệ thuật */}
+          <div className="w-full mb-4 aspect-[2/3] relative rounded-[6px] overflow-hidden shadow-[0_12px_32px_-6px_rgba(0,0,0,0.18)] border border-stone-200/90 bg-[#1A1A1A] flex items-center justify-center group">
             {!detailImgFailed && detailImgSrc ? (
               <img 
                 src={detailImgSrc} 
                 alt={cleanTitle(book.title)} 
                 referrerPolicy="no-referrer"
                 onError={handleDetailImageError}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
               />
             ) : (
               /* Bìa sách mạ vàng cổ điển sang trọng nếu ảnh gốc không tồn tại */
@@ -483,17 +485,17 @@ export default function BookDetailPage() {
             )}
           </div>
           
-          {/* Nút Đọc thử & Nghe thử: Chỉ hiển thị và dẫn link khi có dữ liệu, không có thì bỏ đi */}
+          {/* Nút Đọc thử & Nghe thử: Thiết kế tối giản tinh tế */}
           {(readSampleUrl || audioSampleUrl) && (
-            <div className="flex gap-2 w-full max-w-[300px]">
+            <div className="flex gap-2 w-full mb-6">
               {readSampleUrl && (
                 <a
                   href={readSampleUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2 cursor-pointer no-underline"
+                  className="flex-1 py-2 px-3 border border-stone-300 hover:border-stone-900 rounded-[5px] text-xs font-sans font-medium text-stone-800 bg-white hover:bg-stone-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer no-underline shadow-2xs"
                 >
-                  <BookOpen size={16} /> Đọc thử
+                  <BookOpen size={14} /> Đọc thử
                 </a>
               )}
               {audioSampleUrl && (
@@ -501,77 +503,129 @@ export default function BookDetailPage() {
                   href={audioSampleUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2 px-3 border border-ink/20 rounded-full text-sm font-medium text-ink hover:bg-ink/5 transition-colors flex items-center justify-center gap-2 cursor-pointer no-underline"
+                  className="flex-1 py-2 px-3 border border-stone-300 hover:border-stone-900 rounded-[5px] text-xs font-sans font-medium text-stone-800 bg-white hover:bg-stone-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer no-underline shadow-2xs"
                 >
-                  <Play size={16} /> Nghe thử
+                  <Play size={14} /> Nghe thử
                 </a>
               )}
             </div>
           )}
           
-          <div className="w-full max-w-[300px] mt-8 pt-6 border-t border-ink/10 text-left">
-            <h3 className="font-bold text-ink mb-3 flex items-center gap-2">Theo dõi tác giả <span className="text-ink/40 text-xs">ⓘ</span></h3>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-ink/10 overflow-hidden flex items-center justify-center text-ink/30">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {/* Thông tin tác giả: Khối biên tập trang trọng */}
+          <div className="w-full pt-5 border-t border-stone-200 text-left">
+            <h4 className="font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500 mb-3.5">
+              Tác giả ấn phẩm
+            </h4>
+            <div className="flex items-center gap-3.5 p-3 rounded-[6px] bg-[#FAF9F6] border border-stone-200/80">
+              <div className="w-11 h-11 rounded-full bg-[#1C1917] text-amber-100 flex items-center justify-center font-serif text-base font-bold shadow-xs shrink-0 select-none">
+                {authorName ? authorName.trim().charAt(0) : "A"}
               </div>
-              <p className="font-medium text-ink hover:text-terracotta cursor-pointer">{authorName}</p>
+              <div className="min-w-0 flex-1">
+                <p className="font-serif font-bold text-sm text-stone-900 truncate hover:text-stone-700 cursor-pointer">
+                  {authorName}
+                </p>
+                <p className="text-[11px] text-stone-500 font-sans mt-0.5">
+                  Tác giả văn học
+                </p>
+              </div>
             </div>
+            <button 
+              type="button"
+              onClick={() => alert(`Đã theo dõi tác giả ${authorName}! Bạn sẽ nhận được thông báo khi có ấn bản mới.`)}
+              className="w-full mt-2.5 py-1.5 px-3 border border-stone-300 hover:border-stone-900 rounded-[5px] text-xs font-sans font-medium text-stone-700 hover:text-stone-900 bg-white hover:bg-stone-50 transition-colors text-center cursor-pointer"
+            >
+              + Theo dõi tác giả
+            </button>
           </div>
+
+          {/* Thông số ấn bản (Publishing Colophon & Metadata) */}
+          <div className="w-full mt-6 pt-5 border-t border-stone-200 text-left">
+            <h4 className="font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500 mb-3">
+              Thông số ấn phẩm
+            </h4>
+            <dl className="text-xs space-y-2 text-stone-600 font-sans">
+              <div className="flex justify-between py-1 border-b border-stone-100">
+                <dt className="text-stone-500">Mã ấn phẩm</dt>
+                <dd className="font-mono text-stone-900 font-medium">{book.isbn || book.isbn13 || `#INK-${book.book_id}`}</dd>
+              </div>
+              {book.original_publication_year && (
+                <div className="flex justify-between py-1 border-b border-stone-100">
+                  <dt className="text-stone-500">Năm phát hành</dt>
+                  <dd className="font-medium text-stone-900">{book.original_publication_year}</dd>
+                </div>
+              )}
+              <div className="flex justify-between py-1 border-b border-stone-100">
+                <dt className="text-stone-500">Nhà phát hành</dt>
+                <dd className="font-medium text-stone-900">The Inkwell Editions</dd>
+              </div>
+              <div className="flex justify-between py-1 border-b border-stone-100">
+                <dt className="text-stone-500">Ngôn ngữ</dt>
+                <dd className="font-medium text-stone-900">Tiếng Việt & Nguyên bản</dd>
+              </div>
+              <div className="flex justify-between py-1">
+                <dt className="text-stone-500">Tình trạng</dt>
+                <dd className="font-medium text-emerald-800">Mới 100% nguyên màng co</dd>
+              </div>
+            </dl>
+          </div>
+
         </div>
         
         {/* CENTER COLUMN: Details & Description (col-span-6) */}
         <div className="lg:col-span-6 flex flex-col">
-          <div className="flex justify-between items-start">
-            <h1 className="font-serif text-3xl lg:text-4xl font-bold text-ink leading-tight mb-1 pr-8">
+          <div className="flex justify-between items-start mb-2">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#1C1917] leading-[1.18] tracking-tight pr-6">
               {cleanTitle(book.title)}
             </h1>
-            <button className="text-ink/50 hover:text-ink"><Share size={20} /></button>
+            <button className="text-stone-400 hover:text-stone-800 transition-colors cursor-pointer p-1" title="Chia sẻ tác phẩm">
+              <Share size={19} />
+            </button>
           </div>
           
-          <div className="text-sm text-ink mb-2">
-            Tác giả: <Link href="#" className="text-[#007185] hover:text-[#C7511F] hover:underline font-medium">{authorName}</Link> 
-            <span className="mx-2 text-ink/30">|</span> 
-            Định dạng: <span className="font-semibold text-terracotta">{selectedFormatLabel}</span>
+          <div className="text-sm font-sans text-stone-600 mb-3 flex flex-wrap items-center gap-1.5">
+            <span>Tác giả:</span> 
+            <Link href="#" className="text-stone-900 hover:text-[#B12704] font-medium underline-offset-2 hover:underline">
+              {authorName}
+            </Link> 
+            <span className="mx-2 text-stone-300">|</span> 
+            <span>Định dạng:</span> 
+            <span className="font-semibold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-[4px] text-xs">
+              {selectedFormatLabel}
+            </span>
           </div>
           
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-3 mb-5 font-sans">
             <div className="flex items-center gap-1">
-              <span className="font-bold text-ink mr-1">{book.score || "4.6"}</span>
+              <span className="font-bold text-stone-900 mr-1 text-sm">{book.score || "4.6"}</span>
               <div className="flex">
                 {[1,2,3,4,5].map((s) => (
-                  <Star key={s} className="fill-[#FFA41C] text-[#FFA41C]" size={16} />
+                  <Star key={s} className="fill-amber-500 text-amber-500" size={15} />
                 ))}
               </div>
-              <span className="text-[#007185] hover:text-[#C7511F] hover:underline cursor-pointer ml-2">
-                ({book.ratings_count ? `${new Intl.NumberFormat("vi-VN").format(book.ratings_count)} đánh giá` : "Xem đánh giá"})
+              <span className="text-stone-500 hover:text-stone-800 hover:underline cursor-pointer ml-2 text-xs">
+                ({book.ratings_count ? `${new Intl.NumberFormat("vi-VN").format(book.ratings_count)} đánh giá Goodreads` : "Xem đánh giá"})
               </span>
             </div>
           </div>
           
           {/* Badge & Nút Xem tất cả phiên bản */}
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-ink/10">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-200">
             {book.rank && (
-              <>
-                <span className="bg-[#232F3E] text-white text-xs font-bold px-2 py-1 rounded-sm">
-                  Bảng xếp hạng thịnh hành
-                </span>
-                <span className="text-[#007185] text-sm font-medium hover:underline cursor-pointer">
-                  #{book.rank} tuần này
-                </span>
-              </>
+              <span className="bg-[#1C1917] text-white text-[11px] font-sans font-medium px-2.5 py-1 rounded-[4px]">
+                Tuyển tập chọn lọc #{book.rank}
+              </span>
             )}
             <button
               type="button"
               onClick={() => setShowFormatsModal(true)}
-              className="ml-auto text-[#007185] hover:text-[#C7511F] text-sm hover:underline cursor-pointer font-medium transition-colors"
+              className="ml-auto text-stone-700 hover:text-stone-900 text-xs font-sans font-medium underline underline-offset-2 cursor-pointer transition-colors"
             >
               Xem tất cả phiên bản
             </button>
           </div>
           
-          {/* Formats Grid (Có thể bấm chọn từng bản và đổi giá tức thì) */}
-          <div className="grid grid-cols-3 gap-2.5 mb-8">
+          {/* Formats Grid: Tinh gọn, bo góc 6px, màu đen than sang trọng */}
+          <div className="grid grid-cols-3 gap-2.5 mb-8 font-sans">
             {formatsList.map((f) => {
               const isSelected = selectedFormat === f.id;
               return (
@@ -579,21 +633,21 @@ export default function BookDetailPage() {
                   key={f.id}
                   type="button"
                   onClick={() => setSelectedFormat(f.id)}
-                  className={`p-3 rounded-lg text-center relative transition-all duration-200 cursor-pointer flex flex-col justify-between items-center ${
+                  className={`p-3 rounded-[6px] text-center relative transition-all duration-200 cursor-pointer flex flex-col justify-between items-center ${
                     isSelected
-                      ? "border-2 border-[#E77600] bg-[#FFF8F0] shadow-xs"
-                      : "border border-ink/20 hover:border-ink/40 hover:bg-ink/[0.03] bg-white"
+                      ? "border-2 border-[#1C1917] bg-stone-50 shadow-xs"
+                      : "border border-stone-200 hover:border-stone-400 bg-white"
                   }`}
                 >
                   {isSelected && (
-                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#E77600] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm whitespace-nowrap shadow-xs">
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#1C1917] text-white text-[9px] font-sans font-medium px-2 py-0.5 rounded-[3px] whitespace-nowrap shadow-xs uppercase tracking-wider">
                       Đã chọn
                     </div>
                   )}
-                  <div className="font-bold text-xs sm:text-sm text-ink leading-snug mt-0.5">
+                  <div className="font-semibold text-xs sm:text-sm text-stone-900 leading-snug mt-0.5">
                     {f.name}
                   </div>
-                  <div className="text-[#B12704] text-xs sm:text-sm font-semibold mt-1.5">
+                  <div className="text-[#1C1917] text-xs sm:text-sm font-bold mt-1.5 font-serif">
                     {formatPrice(f.price)}
                   </div>
                 </button>
@@ -601,95 +655,105 @@ export default function BookDetailPage() {
             })}
           </div>
           
-          {/* Description */}
-          <div className="prose prose-sm max-w-none text-ink/90 leading-relaxed font-sans mb-8">
-            <p className="font-bold mb-4 uppercase text-xs tracking-wider text-terracotta">
-              TÓM TẮT NỘI DUNG SÁCH
-            </p>
+          {/* Description: Tăng line-height [1.85], Sans-serif cho nội dung */}
+          <div className="mb-8">
+            <h4 className="font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500 mb-3 pb-1 border-b border-stone-200">
+              Tóm tắt nội dung tác phẩm
+            </h4>
 
-            {/* Hiển thị nội dung thật từ Database hoặc shimmer nhẹ khi đang hoàn tất tải */}
             {book.description ? (
-              <p className="whitespace-pre-line text-base">
+              <p className="font-sans text-[15px] sm:text-base text-stone-800 leading-[1.85] font-normal whitespace-pre-line">
                 {book.description}
               </p>
             ) : (
-              <div className="space-y-2.5 animate-pulse py-1">
-                <div className="h-4 bg-ink/10 rounded-sm w-full"></div>
-                <div className="h-4 bg-ink/10 rounded-sm w-11/12"></div>
-                <div className="h-4 bg-ink/10 rounded-sm w-4/5"></div>
+              <div className="space-y-3 animate-pulse py-2">
+                <div className="h-4 bg-stone-200/60 rounded-[4px] w-full"></div>
+                <div className="h-4 bg-stone-200/60 rounded-[4px] w-11/12"></div>
+                <div className="h-4 bg-stone-200/60 rounded-[4px] w-4/5"></div>
               </div>
             )}
           </div>
 
-          {/* Góc nhìn Cố vấn Mercy AI */}
-          <div className="p-6 bg-[#FAF7F2] border border-[#B12704]/20 rounded-2xl mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 font-bold text-[#B12704]">
-                <Sparkles size={18} className="fill-[#B12704]/20 text-[#B12704]" />
-                <span className="text-base">Góc nhìn từ Cố vấn Mercy AI</span>
+          {/* Khối Cột báo Biên tập: Góc nhìn từ Cố vấn Mercy AI (The Inkwell Critique) */}
+          <div className="bg-[#FAF9F6] border border-stone-200/90 rounded-[8px] p-6 sm:p-7 mb-8 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-stone-200/80">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-stone-500 font-semibold block">
+                  THE INKWELL CRITIQUE • MERCY DESK
+                </span>
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1C1917] mt-0.5">
+                  Góc nhìn từ Cố vấn Mercy AI
+                </h3>
               </div>
+
               {!mercyMessage && (
                 <button
                   type="button"
                   onClick={askMercy}
                   disabled={isMercyThinking}
-                  className="text-xs font-semibold bg-[#B12704] hover:bg-[#8e1f03] text-white px-4 py-2 rounded-full transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="self-start sm:self-auto text-xs font-sans font-medium bg-white hover:bg-stone-100 text-stone-900 border border-stone-300 hover:border-stone-700 px-4 py-2 rounded-[5px] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs active:scale-95"
                 >
-                  {isMercyThinking ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-                  <span>{isMercyThinking ? "Mercy đang suy nghĩ..." : "Hỏi Mercy về cuốn này"}</span>
+                  {isMercyThinking && <Loader2 size={13} className="animate-spin text-stone-600" />}
+                  <span>{isMercyThinking ? "Đang biên soạn bài bình luận..." : "Xem bình luận văn học"}</span>
                 </button>
               )}
             </div>
 
             {isMercyThinking && (
-              <div className="flex items-center gap-2 text-ink/60 text-xs italic py-3 bg-white/60 rounded-xl px-4 border border-ink/5">
-                <Loader2 size={15} className="animate-spin text-[#B12704]" />
-                <span>Mercy đang tra cứu và tổng hợp phân tích học thuật về tác phẩm này...</span>
+              <div className="flex items-center gap-3 py-4 px-4 bg-white rounded-[6px] border border-stone-200/80 text-stone-600 text-xs sm:text-sm font-serif italic">
+                <Loader2 size={16} className="animate-spin text-stone-700 shrink-0" />
+                <span>Mercy đang tra cứu tư liệu, đối chiếu phong cách học thuật và tổng hợp phân tích văn học về tác phẩm...</span>
               </div>
             )}
 
             {mercyMessage && (
-              <div className="bg-white/80 rounded-xl p-4 sm:p-5 border border-ink/5 text-sm sm:text-[15px] text-ink/90 leading-relaxed font-sans shadow-xs">
-                {renderCleanMercyText(mercyMessage)}
+              <div className="bg-white rounded-[6px] p-5 sm:p-6 border border-stone-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+                <div className="font-serif text-[15px] sm:text-base text-stone-800 leading-[1.85] font-normal">
+                  {renderCleanMercyText(mercyMessage)}
+                </div>
+                <div className="mt-5 pt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-500 font-serif italic">
+                  <span>— Bình luận trích dẫn từ Cố vấn Thư viện số Mercy AI</span>
+                  <span className="font-sans text-[11px] not-italic text-stone-400 uppercase tracking-widest font-mono">
+                    The Inkwell Literary Curations
+                  </span>
+                </div>
               </div>
             )}
 
             {!isMercyThinking && !mercyMessage && (
-              <p className="text-xs text-ink/60 leading-relaxed">
-                Nhấn "Hỏi Mercy về cuốn này" để nhận phân tích học thuật chuyên sâu về văn phong, chủ đề cốt lõi và giá trị văn học của tác phẩm từ Cố vấn Mercy AI.
+              <p className="font-serif italic text-stone-600 text-sm leading-relaxed">
+                Nhấn <strong>"Xem bình luận văn học"</strong> để nhận góc nhìn biên tập độc quyền về cấu tứ tác phẩm, văn phong tác giả và giá trị triết học của ấn bản này.
               </p>
-  
             )}
-
           </div>
         </div>
         
-        {/* RIGHT COLUMN: Buy Box (col-span-3) */}
+        {/* RIGHT COLUMN: Buy Box (col-span-3) - Thiết kế Editorial Sang Trọng */}
         <div className="lg:col-span-3">
-          <div className="bg-white border border-ink/10 rounded-2xl p-5 sm:p-6 sticky top-24 shadow-[0_12px_36px_-12px_rgba(0,0,0,0.08)] transition-all">
+          <div className="bg-white border border-stone-200/90 rounded-[8px] p-5 sm:p-6 sticky top-24 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
             
             {/* Giá & Ưu đãi */}
             <div className="mb-4">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-serif text-3xl sm:text-[32px] font-bold text-[#B12704] tracking-tight">
+                <span className="font-serif text-3xl sm:text-[32px] font-bold text-[#1C1917] tracking-tight">
                   {formatPrice(currentPrice)}
                 </span>
-                <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                <span className="text-[11px] font-medium font-sans text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded-[4px] border border-stone-200 shrink-0">
                   Tiết kiệm 20%
                 </span>
               </div>
-              <div className="text-[11px] text-ink/45 line-through mt-0.5">
+              <div className="text-[11px] font-sans text-stone-400 line-through mt-0.5">
                 Giá gốc: {formatPrice(Math.round(currentPrice * 1.25))}
               </div>
             </div>
 
             {/* Phiên bản đang chọn */}
-            <div className="text-xs text-ink/70 font-medium mb-4 pb-3 border-b border-ink/10 flex items-center justify-between">
-              <span>Định dạng:</span>
+            <div className="text-xs text-stone-600 font-sans font-medium mb-4 pb-3 border-b border-stone-100 flex items-center justify-between">
+              <span>Định dạng đã chọn:</span>
               <button 
                 type="button"
                 onClick={() => setShowFormatsModal(true)}
-                className="font-semibold text-[#007185] hover:text-[#C7511F] hover:underline flex items-center gap-1 cursor-pointer"
+                className="font-medium text-[#1C1917] hover:text-stone-600 underline flex items-center gap-1 cursor-pointer"
                 title="Bấm để đổi ấn bản"
               >
                 {selectedFormatLabel}
@@ -699,60 +763,60 @@ export default function BookDetailPage() {
             
             {/* Trạng thái kho hàng */}
             <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium font-sans text-stone-800 bg-stone-50 px-2.5 py-1 rounded-[4px] border border-stone-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                 Còn hàng sẵn sàng giao
               </span>
-              <span className="text-[11px] text-ink/50 ml-auto">Kho The Inkwell</span>
+              <span className="text-[11px] font-sans text-stone-400 ml-auto">Kho The Inkwell</span>
             </div>
 
             {/* Thông tin vận chuyển & Địa chỉ */}
-            <div className="bg-[#FAF8F5] rounded-xl p-3.5 border border-ink/8 mb-5 space-y-2.5 text-xs">
-              <div className="flex items-start gap-2.5 text-ink/80">
-                <Truck size={15} className="text-[#B12704] shrink-0 mt-0.5" />
+            <div className="bg-[#FAF9F6] rounded-[6px] p-3.5 border border-stone-200/80 mb-5 space-y-2.5 text-xs font-sans">
+              <div className="flex items-start gap-2.5 text-stone-700">
+                <Truck size={15} className="text-stone-800 shrink-0 mt-0.5" />
                 <div className="leading-snug">
                   {selectedFormat === "kindle" ? (
-                    <span>Giao nhận: <strong className="text-ink font-semibold">Tức thì</strong> qua thư viện số</span>
+                    <span>Giao nhận: <strong className="text-stone-900 font-semibold">Tức thì</strong> qua thư viện số</span>
                   ) : (
-                    <span>Giao tiêu chuẩn: <strong className="text-ink font-semibold">Miễn phí vào Ngày mai</strong></span>
+                    <span>Giao tiêu chuẩn: <strong className="text-stone-900 font-semibold">Miễn phí vào Ngày mai</strong></span>
                   )}
                 </div>
               </div>
               {selectedFormat !== "kindle" && (
-                <div className="flex items-center gap-2.5 text-ink/70">
-                  <Clock size={14} className="text-amber-700 shrink-0" />
-                  <span>Đặt trước trong <strong className="text-ink font-semibold">5 giờ 30 phút</strong></span>
+                <div className="flex items-center gap-2.5 text-stone-600">
+                  <Clock size={14} className="text-stone-500 shrink-0" />
+                  <span>Đặt trước trong <strong className="text-stone-800 font-semibold">5 giờ 30 phút</strong></span>
                 </div>
               )}
-              <div className="flex items-center justify-between pt-2 border-t border-ink/5 text-[11px]">
-                <span className="flex items-center gap-1 text-ink/65">
-                  <MapPin size={13} className="text-[#007185]" /> Giao tới: <strong className="text-ink font-medium">Việt Nam</strong>
+              <div className="flex items-center justify-between pt-2 border-t border-stone-200/60 text-[11px]">
+                <span className="flex items-center gap-1 text-stone-500">
+                  <MapPin size={13} className="text-stone-400" /> Giao tới: <strong className="text-stone-700 font-medium">Việt Nam</strong>
                 </span>
-                <span className="text-[#007185] font-semibold hover:underline cursor-pointer">Miễn phí đổi trả</span>
+                <span className="text-stone-600 font-medium hover:underline cursor-pointer">Miễn phí đổi trả</span>
               </div>
             </div>
             
-            {/* Bộ chọn số lượng tinh gọn (Stepper - +) */}
+            {/* Bộ chọn số lượng tinh gọn (Stepper - +) với bo góc 4px-6px */}
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-semibold text-ink">Số lượng:</span>
-              <div className="flex items-center border border-ink/20 rounded-xl bg-white shadow-xs overflow-hidden">
+              <span className="text-xs font-medium text-stone-700 font-sans">Số lượng:</span>
+              <div className="flex items-center border border-stone-300 rounded-[5px] bg-white shadow-xs overflow-hidden">
                 <button 
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
-                  className="w-8 h-8 flex items-center justify-center text-ink/70 hover:bg-ink/5 hover:text-ink disabled:opacity-30 transition-colors cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 transition-colors cursor-pointer"
                   title="Giảm số lượng"
                 >
                   <Minus size={13} />
                 </button>
-                <span className="w-9 text-center text-xs font-bold text-ink select-none">
+                <span className="w-9 text-center text-xs font-bold text-stone-900 select-none font-sans">
                   {quantity}
                 </span>
                 <button 
                   type="button"
                   onClick={() => setQuantity(Math.min(10, quantity + 1))}
                   disabled={quantity >= 10}
-                  className="w-8 h-8 flex items-center justify-center text-ink/70 hover:bg-ink/5 hover:text-ink disabled:opacity-30 transition-colors cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 transition-colors cursor-pointer"
                   title="Tăng số lượng"
                 >
                   <Plus size={13} />
@@ -760,25 +824,25 @@ export default function BookDetailPage() {
               </div>
             </div>
             
-            {/* Nút Thêm vào giỏ hàng & Mua ngay */}
-            <div className="space-y-2.5 mb-5">
+            {/* Nút Thêm vào giỏ hàng (Nút chính: Than đen #1C1917, bo góc 5px) & Mua ngay (Nút phụ: Dạng outline) */}
+            <div className="space-y-2.5 mb-5 font-sans">
               <button 
                 type="button"
                 onClick={handleAddToCartDetail}
-                className={`w-full py-3 px-4 rounded-xl font-semibold text-sm shadow-xs border flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] ${
+                className={`w-full py-3 px-4 rounded-[5px] font-medium text-sm transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99] ${
                   isAddedToCart 
-                    ? "bg-emerald-600 border-emerald-600 text-white shadow-md" 
-                    : "bg-[#FFD814] hover:bg-[#F7CA00] text-[#111827] border-[#FCD200] hover:shadow-sm"
+                    ? "bg-[#284234] text-white shadow-sm" 
+                    : "bg-[#1C1917] hover:bg-[#2B2725] text-white shadow-sm"
                 }`}
               >
                 {isAddedToCart ? (
                   <>
-                    <Check size={18} className="animate-bounce" />
+                    <Check size={16} className="animate-bounce" />
                     <span>Đã thêm vào giỏ hàng!</span>
                   </>
                 ) : (
                   <>
-                    <ShoppingCart size={18} />
+                    <ShoppingCart size={16} />
                     <span>Thêm vào giỏ hàng</span>
                   </>
                 )}
@@ -787,41 +851,41 @@ export default function BookDetailPage() {
               <button 
                 type="button"
                 onClick={handlePurchaseDetail}
-                className="w-full bg-[#FFA41C] hover:bg-[#FA8900] text-[#111827] py-3 px-4 rounded-xl font-semibold text-sm shadow-xs border border-[#FF8F00] hover:shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]"
+                className="w-full py-3 px-4 rounded-[5px] font-medium text-sm border border-[#1C1917] text-[#1C1917] hover:bg-[#1C1917]/5 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99]"
               >
-                <Zap size={16} className="fill-[#111827]" />
+                <Zap size={15} className="fill-[#1C1917]" />
                 <span>Mua ngay</span>
               </button>
             </div>
             
             {/* Bảng cam kết & Đơn vị bán */}
-            <div className="space-y-2 pt-4 border-t border-ink/10 text-xs">
-              <div className="flex items-center justify-between text-ink/70">
-                <span className="flex items-center gap-1.5 text-ink/50">
-                  <ShieldCheck size={13} className="text-emerald-600" /> Cung cấp bởi
+            <div className="space-y-2 pt-4 border-t border-stone-200/80 text-xs font-sans">
+              <div className="flex items-center justify-between text-stone-600">
+                <span className="flex items-center gap-1.5 text-stone-500">
+                  <ShieldCheck size={13} className="text-stone-600" /> Cung cấp bởi
                 </span>
-                <span className="font-semibold text-ink">The Inkwell Official</span>
+                <span className="font-medium text-stone-900">The Inkwell Official</span>
               </div>
-              <div className="flex items-center justify-between text-ink/70">
-                <span className="flex items-center gap-1.5 text-ink/50">
-                  <RotateCcw size={13} className="text-[#007185]" /> Đổi trả an tâm
+              <div className="flex items-center justify-between text-stone-600">
+                <span className="flex items-center gap-1.5 text-stone-500">
+                  <RotateCcw size={13} className="text-stone-600" /> Đổi trả an tâm
                 </span>
-                <span className="text-[#007185] hover:underline cursor-pointer font-medium">30 ngày miễn phí</span>
+                <span className="text-stone-800 hover:underline cursor-pointer font-medium">30 ngày miễn phí</span>
               </div>
             </div>
             
             {/* Nút Thêm vào danh sách yêu thích */}
-            <div className="mt-4 pt-4 border-t border-ink/10">
+            <div className="mt-4 pt-4 border-t border-stone-200/80">
               <button 
                 type="button"
                 onClick={handleWishlistDetail}
-                className={`w-full py-2.5 px-4 rounded-xl border text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`w-full py-2.5 px-4 rounded-[5px] border text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-2 ${
                   isWishlisted 
-                    ? "bg-rose-50 border-rose-200 text-rose-600 shadow-xs" 
-                    : "bg-white hover:bg-[#FAF8F5] border-ink/20 text-ink/75 hover:text-ink hover:border-ink/40 shadow-xs"
+                    ? "bg-rose-50 border-rose-200 text-rose-700 shadow-xs" 
+                    : "bg-white hover:bg-stone-50 border-stone-300 text-stone-700 hover:text-stone-900 hover:border-stone-400"
                 }`}
               >
-                <Heart size={16} className={isWishlisted ? "fill-rose-500 text-rose-500" : "text-ink/40"} />
+                <Heart size={15} className={isWishlisted ? "fill-rose-600 text-rose-600" : "text-stone-400"} />
                 <span>{isWishlisted ? "Đã lưu vào Yêu thích" : "Thêm vào danh sách yêu thích"}</span>
               </button>
             </div>
