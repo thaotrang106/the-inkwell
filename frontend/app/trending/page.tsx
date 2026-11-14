@@ -11,11 +11,17 @@ import {
   BookOpen, 
   SlidersHorizontal,
   Compass,
-  X
+  X,
+  Sparkles,
+  Users,
+  ChevronDown,
+  Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BookCard from "@/components/BookCard";
 import { API_BASE_URL } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+import { DEMO_READERS } from "@/lib/demoReaders";
 
 // Cấu hình danh mục thể loại chuẩn hóa theo Dataset Goodreads-10k
 const GENRE_CONFIG: Record<string, { title: string; desc: string }> = {
@@ -157,6 +163,10 @@ function TrendingPageContent() {
   const genreParam = searchParams.get("genre") || "";
   const filterParam = searchParams.get("filter") || "";
 
+  const { user, isLoggedIn, login, logout } = useAuth();
+  const [showUserSwitcher, setShowUserSwitcher] = useState(false);
+  const currentDemoReader = DEMO_READERS.find((r) => r.user_id === user?.user_id);
+
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -291,8 +301,8 @@ function TrendingPageContent() {
     <div className="min-h-screen bg-[#FAF7F2] py-8 sm:py-12 pb-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* 1. BREADCRUMB ĐIỀU HƯỚNG */}
-        <div className="mb-6 flex items-center justify-between">
+        {/* 1. BREADCRUMB & USER SWITCHER */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link 
             href="/" 
             className="inline-flex items-center gap-2 text-xs sm:text-sm text-ink/60 hover:text-ink transition-colors font-medium"
@@ -300,14 +310,109 @@ function TrendingPageContent() {
             <ArrowLeft size={16} /> Quay lại Trang chủ
           </Link>
 
-          <div className="text-xs text-ink/50 hidden sm:flex items-center gap-1.5">
-            <span>Trang chủ</span>
-            <span>/</span>
-            <span>{genreParam ? "Danh mục thể loại" : "Bảng xếp hạng"}</span>
-            <span>/</span>
-            <span className="font-semibold text-ink/80">
-              {activeGenreMeta ? activeGenreMeta.title : "Sách Thịnh Hành"}
-            </span>
+          {/* User Switcher Dropdown trên Trending */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowUserSwitcher(!showUserSwitcher)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-white border border-stone-300 hover:border-stone-800 text-xs text-stone-800 shadow-2xs font-sans transition-all cursor-pointer"
+            >
+              <Users size={13} className="text-[#881337]" />
+              <span className="font-medium text-[11px] sm:text-xs">
+                {currentDemoReader ? (
+                  <>Độc giả: <strong className="font-semibold text-[#881337]">{currentDemoReader.shortName}</strong></>
+                ) : (
+                  <>Độc giả mẫu: <strong className="font-semibold text-stone-600">Khách vãng lai</strong></>
+                )}
+              </span>
+              <ChevronDown size={13} className={`text-stone-400 transition-transform ${showUserSwitcher ? "rotate-180" : ""}`} />
+            </button>
+
+            <AnimatePresence>
+              {showUserSwitcher && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute right-0 mt-1.5 w-80 bg-white border border-stone-200 rounded-[6px] shadow-xl overflow-hidden z-50 text-left font-sans"
+                >
+                  <div className="px-3.5 py-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">
+                      CHUYỂN ĐỔI NGƯỜI DÙNG MẪU
+                    </span>
+                    <span className="text-[10px] text-[#881337] font-bold font-mono">Báo cáo Đồ án</span>
+                  </div>
+
+                  <div className="p-1.5 space-y-1">
+                    {DEMO_READERS.map((reader) => {
+                      const isSelected = isLoggedIn && user?.user_id === reader.user_id;
+                      return (
+                        <button
+                          key={reader.user_id}
+                          type="button"
+                          onClick={() => {
+                            login({
+                              user_id: reader.user_id,
+                              name: reader.name,
+                              email: reader.email,
+                              tier: reader.tier,
+                            });
+                            setShowUserSwitcher(false);
+                          }}
+                          className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
+                            isSelected ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
+                          }`}
+                        >
+                          <div className="pr-2">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
+                                {reader.name}
+                              </span>
+                              <span className="text-[9px] bg-stone-100 text-stone-600 px-1.5 py-0.5 rounded font-mono">
+                                #{reader.user_id}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#881337] font-medium mt-0.5">
+                              {reader.genre}
+                            </p>
+                          </div>
+                          {isSelected && (
+                            <span className="text-[#881337] mt-1 shrink-0">
+                              <Check size={14} />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setShowUserSwitcher(false);
+                      }}
+                      className={`w-full text-left p-2.5 rounded-[4px] hover:bg-stone-50 transition-colors flex items-start justify-between cursor-pointer group ${
+                        !isLoggedIn ? "bg-rose-50/70 border border-[#881337]/20" : "border border-transparent"
+                      }`}
+                    >
+                      <div>
+                        <span className="text-xs font-bold text-stone-800">
+                          Khách vãng lai (Chưa đăng nhập)
+                        </span>
+                        <p className="text-[11px] text-stone-500 mt-0.5">
+                          Thử nghiệm bài toán Cold-Start
+                        </p>
+                      </div>
+                      {!isLoggedIn && (
+                        <span className="text-[#881337] mt-1 shrink-0">
+                          <Check size={14} />
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -445,6 +550,41 @@ function TrendingPageContent() {
           </div>
 
         </div>
+
+        {/* GỢI Ý RIÊNG CHO ĐỘC GIẢ ĐĂNG NHẬP (TRÊN TRANG TRENDING) */}
+        {currentDemoReader && (
+          <div className="bg-white rounded-[6px] p-6 sm:p-8 border border-[#881337]/25 shadow-xs mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-50 text-[#881337] flex items-center justify-center shrink-0">
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                      Dành Riêng Cho {currentDemoReader.shortName}
+                    </h2>
+                    <span className="text-[10px] font-mono font-bold bg-rose-50 text-[#881337] px-2 py-0.5 rounded-[3px] border border-[#881337]/20">
+                      #{currentDemoReader.user_id}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#881337] font-medium mt-0.5">
+                    {currentDemoReader.genre} • May đo theo lịch sử đánh giá thực tế (Thuật toán Hybrid AI)
+                  </p>
+                </div>
+              </div>
+              <Link href="/" className="text-xs font-semibold text-[#881337] hover:underline flex items-center gap-1 self-start sm:self-auto font-sans">
+                Về Trang chủ xem đầy đủ →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6">
+              {currentDemoReader.books.map((b) => (
+                <BookCard key={b.book_id} book={b} isHybrid={true} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 5. DANH SÁCH TÁC PHẨM */}
         {loading ? (
