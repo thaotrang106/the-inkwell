@@ -710,8 +710,6 @@ def ask_mercy_explain(book_id: int, response: Response = None, db: Session = Dep
         "data": ai_response,
         "cached": False
     }
-        "cached": False
-    }
 
 # ----------------- API THỨ 8 (GHI NHẬN HÀNH VI NGƯỜI DÙNG) -----------------
 @app.post("/api/interactions", status_code=201)
@@ -757,14 +755,93 @@ def for_you(user_id: int, limit: int = 10):
     """
     return {"user_id": user_id, **get_for_you(user_id, limit)}
 
+# ----------------- HÀM TRÍCH XUẤT VÀ TÌM KIẾM SÁCH TỪ PHẢN HỒI MERCY -----------------
+def extract_and_match_books(reply_text: str, db: Session = None):
+    """
+    Trích xuất các cuốn sách được Mercy đề xuất từ text (format: **[Tên sách] ([Tiếng Việt]) — [Tác giả]**)
+    và tra cứu trong database hoặc CSV để gắn link trực tiếp đến trang sản phẩm (/books/{id}).
+    """
+    if not reply_text:
+        return []
+
+    matched = []
+    seen_ids = set()
+
+    # Bắt tất cả các tiêu đề in đậm **...**
+    matches = re.findall(r'\*\*([^*]+)\*\*', reply_text)
+    for raw in matches:
+        raw_clean = raw.strip()
+        # Bỏ qua nếu là tiêu đề chung
+        if any(kw in raw_clean.lower() for kw in ["nhận định", "tóm tắt", "đề xuất", "chú ý", "lưu ý"]):
+            continue
+
+        # Tách tên sách tiếng Anh: trước dấu ( hoặc — hoặc -
+        clean_title = re.sub(r'\(.*?\)', '', raw_clean).strip()
+        clean_title = re.sub(r'[-—].*$', '', clean_title).strip()
+        clean_title = clean_title.strip()
+
+        if len(clean_title) < 2:
+            continue
+
+        book_data = None
+
+        # 1. Tra cứu Database
+        if db:
+            try:
+                b = db.query(Book).filter(Book.title.ilike(f"%{clean_title}%")).first()
+                if b and b.book_id not in seen_ids:
+                    book_data = {
+                        "book_id": b.book_id,
+                        "title": b.title,
+                        "author": b.authors or "",
+                        "image_url": format_hd_image_url(b.image_url) if b.image_url else "",
+                        "matched_text": raw_clean
+                    }
+                    seen_ids.add(b.book_id)
+            except Exception as e:
+                print(f"[Match Mercy Book DB Error]: {e}")
+
+        # 2. Tra cứu CSV nếu chưa tìm thấy trong DB
+        if not book_data:
+            try:
+                csv_path = Path(__file__).resolve().parent.parent / "data" / "books_enriched.csv"
+                if not csv_path.exists():
+                    csv_path = Path("data/books_enriched.csv")
+                if csv_path.exists():
+                    clean_lower = clean_title.lower()
+                    with open(csv_path, "r", encoding="utf-8") as f:
+                        reader = csv.DictReader(f)
+                        for row in reader:
+                            row_title = row.get("title", "")
+                            if clean_lower in row_title.lower():
+                                b_id = int(row.get("book_id", 0))
+                                if b_id and b_id not in seen_ids:
+                                    book_data = {
+                                        "book_id": b_id,
+                                        "title": row_title,
+                                        "author": row.get("authors", ""),
+                                        "image_url": format_hd_image_url(row.get("image_url", "")),
+                                        "matched_text": raw_clean
+                                    }
+                                    seen_ids.add(b_id)
+                                    break
+            except Exception as csv_err:
+                print(f"[Match Mercy Book CSV Error]: {csv_err}")
+
+        if book_data:
+            matched.append(book_data)
+
+    return matched
+
 # ----------------- API CHAT VỚI MERCY (ASK MERCY) -----------------
 @app.post("/api/chat/mercy")
-def chat_mercy_endpoint(payload: ChatRequest):
-    """Endpoint nhận tin nhắn từ giao diện Ask Mercy và trả lời"""
+def chat_mercy_endpoint(payload: ChatRequest, db: Session = Depends(get_db)):
+    """Endpoint nhận tin nhắn từ giao diện Ask Mercy và trả lời kèm danh sách sách và link tới sản phẩm"""
     if not payload.message.strip():
         raise HTTPException(status_code=400, detail="Tin nhắn không được để trống")
     reply = chat_with_mercy(payload.message)
-    return {"reply": reply}
+    books = extract_and_match_books(reply, db)
+    return {"reply": reply, "books": books}
 
 # ----------------- API THỨ 10 (DANH SÁCH USER CÓ SẴN ĐỂ DEMO) -----------------
 @app.get("/api/users/active")
