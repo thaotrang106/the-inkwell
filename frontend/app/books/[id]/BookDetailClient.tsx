@@ -452,11 +452,12 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   };
 
   // Xác định hồ sơ độc giả cá nhân hóa (Chỉ áp dụng khi độc giả đã đăng nhập)
-  const activeReader = (user && DEMO_READERS.find((r) => r.user_id === user.user_id)) || (user ? {
+  const matchedDemo = user ? DEMO_READERS.find((r) => r.user_id === user.user_id && (user.name.includes(r.shortName) || user.name === r.name)) : null;
+  const activeReader = matchedDemo || (user ? {
     user_id: user.user_id,
     name: user.name,
-    shortName: user.name.replace(/^Độc giả\s+/i, ""),
-    genre: "Gu tuyển chọn riêng",
+    shortName: user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim(),
+    genre: "Tuyển chọn khởi đầu",
     tagline: "Tuyển chọn theo gu đọc cá nhân",
     books: []
   } : null);

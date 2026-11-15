@@ -442,21 +442,26 @@ export default function ProfilePage() {
 
   // Xác định hồ sơ độc giả theo tài khoản hiện tại
   const currentUserId = user?.user_id;
-  const currentProfileData: ProfileMetadata = currentUserId && PROFILES_BY_USER_ID[currentUserId]
+  const isDemoMatch = currentUserId && user?.name && [35, 1, 75, 102].includes(currentUserId) && (
+    (currentUserId === 35 && (user.name.includes("Minh Anh") || user.name.includes("35"))) ||
+    (currentUserId === 1 && (user.name.includes("Hoàng Nam") || user.name.includes("1"))) ||
+    (currentUserId === 75 && (user.name.includes("Thu Trang") || user.name.includes("75"))) ||
+    (currentUserId === 102 && (user.name.includes("Tuấn Kiệt") || user.name.includes("102")))
+  );
+
+  const currentProfileData: ProfileMetadata = isDemoMatch && currentUserId && PROFILES_BY_USER_ID[currentUserId]
     ? PROFILES_BY_USER_ID[currentUserId]
     : user
     ? {
-        readCount: 12,
-        libraryCount: 8,
-        tagline: "Độc giả yêu thích văn học tư tưởng và các ấn phẩm kinh điển",
-        favoriteAuthors: ["Harper Lee", "George Orwell"],
-        readingHabit: "Đọc 2-3 tác phẩm/tháng",
+        readCount: 0,
+        libraryCount: 0,
+        tagline: "Độc giả mới tại The Inkwell • Bắt đầu khám phá và xây dựng tủ sách yêu thích",
+        favoriteAuthors: ["Chưa có tác giả yêu thích"],
+        readingHabit: "Thành viên mới • Chưa có lịch sử đánh giá",
         genres: [
-          { name: "Văn học Kinh điển", percent: 50, colorClass: "bg-[#1C1917]" },
-          { name: "Triết học Tư tưởng", percent: 30, colorClass: "bg-[#881337]" },
-          { name: "Khoa học Đời sống", percent: 20, colorClass: "bg-stone-600" },
+          { name: "Khám phá tổng hợp", percent: 100, colorClass: "bg-[#881337]" },
         ],
-        savedBooks: PROFILES_BY_USER_ID[1].savedBooks.slice(0, 2),
+        savedBooks: [],
         orders: []
       }
     : DEFAULT_GUEST_PROFILE;

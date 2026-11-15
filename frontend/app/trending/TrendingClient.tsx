@@ -62,11 +62,11 @@ export default function TrendingClient({
   const { user, isLoggedIn, login, logout } = useAuth();
   const [showUserSwitcher, setShowUserSwitcher] = useState(false);
   const currentDemoReader = (isLoggedIn && user)
-    ? DEMO_READERS.find((r) => r.user_id === user.user_id) || null
+    ? DEMO_READERS.find((r) => r.user_id === user.user_id && (user.name.includes(r.shortName) || user.name === r.name)) || null
     : null;
-  const readerDisplayName = currentDemoReader
-    ? currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
-    : (user?.name ? user.name.replace(/^Độc giả\s+/i, "").trim() : "Bạn");
+  const readerDisplayName = user?.name
+    ? user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
+    : (currentDemoReader ? currentDemoReader.shortName : "Bạn");
 
   // Quản lý thể loại đang chọn đồng bộ URL và phản hồi lập tức 0ms
   const [selectedGenre, setSelectedGenre] = useState<string>(genreParam);

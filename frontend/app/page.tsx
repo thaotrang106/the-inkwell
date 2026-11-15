@@ -279,20 +279,19 @@ export default function Home() {
   }, [user]);
 
   const fetchPersonalized = async (userId: number) => {
-    // 1. Nếu là Độc giả mẫu trong Báo cáo Đồ án (User #35, #1, #75):
-    // Luôn khóa vào danh mục sách may đo riêng chuẩn theo kịch bản đồ án,
-    // không bị ghi đè bởi fallback popular của máy chủ backend khi chưa seed dữ liệu.
+    // 1. Nếu là Độc giả mẫu trong Báo cáo Đồ án (User #35, #1, #75) VÀ tên khớp với độc giả mẫu:
+    // Khóa vào danh mục sách may đo riêng chuẩn theo kịch bản đồ án
     const demoReader = DEMO_READERS.find((r) => r.user_id === userId);
-    if (demoReader) {
+    if (demoReader && user?.name && (user.name.includes(demoReader.shortName) || user.name === demoReader.name)) {
       setPersonalizedBooks(demoReader.books);
       setIsPersonalizedLoading(false);
       return;
     }
 
-    // 2. Với user thông thường khác, gọi API backend
+    // 2. Với user mới đăng ký hoặc user thông thường khác, gọi API backend
     setIsPersonalizedLoading(true);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`, {
@@ -304,10 +303,13 @@ export default function Home() {
         const books = json.data || json.items || [];
         if (books && books.length > 0) {
           setPersonalizedBooks(books);
+          return;
         }
       }
+      // Cold-start fallback: độc giả mới chưa có tương tác -> đề xuất sách phổ biến theo chuẩn Bayesian
+      setPersonalizedBooks(DEFAULT_POPULAR_BOOKS.slice(0, 5));
     } catch (err) {
-      setPersonalizedBooks(DEMO_READERS[0].books);
+      setPersonalizedBooks(DEFAULT_POPULAR_BOOKS.slice(0, 5));
     } finally {
       setIsPersonalizedLoading(false);
     }
@@ -893,16 +895,19 @@ export default function Home() {
               <div>
                 <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
                   Dành Riêng Cho {
-                    (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || "Bạn")
-                      .replace(/\s*\(\s*#\d+\s*\)/g, "")
-                      .replace(/^Độc giả\s+/i, "")
-                      .trim()
+                    (user?.name 
+                      ? user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
+                      : (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || "Bạn"))
                   }
                 </h2>
                 <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
-                  {DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre 
-                    ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Dựa trên gu đọc và tâm trạng của bạn`
-                    : "Dựa trên gu đọc và tâm trạng của bạn"}
+                  {(() => {
+                    const matchedDemo = DEMO_READERS.find(r => r.user_id === user?.user_id && user?.name && (user.name.includes(r.shortName) || user.name === r.name));
+                    if (matchedDemo) {
+                      return `${matchedDemo.genre} • Dựa trên gu đọc và tâm trạng của bạn`;
+                    }
+                    return "Tuyển tập sách đề xuất khởi đầu • Dựa trên gu đọc và tâm trạng của bạn";
+                  })()}
                 </p>
               </div>
 

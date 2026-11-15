@@ -81,18 +81,48 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     setTimeout(() => {
-      login({
-        user_id: selectedUserId || 35,
-        name: mode === "register" ? name : "Độc giả The Inkwell",
-        email: email,
-        tier: "Thành viên Thân thiết",
-      });
-      setSuccessMessage("Đăng nhập thành công! Đang chuyển hướng...");
+      if (mode === "register") {
+        const cleanName = name.trim() || "Độc giả Mới";
+        // Sinh mã User ID mới độc lập cho tài khoản đăng ký (10001 - 99999)
+        const newUserId = Math.floor(10000 + Math.random() * 90000);
+        login({
+          user_id: newUserId,
+          name: cleanName,
+          email: email.trim(),
+          tier: "Thành viên Mới",
+        });
+        setSuccessMessage(`Đăng ký thành công! Chào mừng ${cleanName} đến với The Inkwell...`);
+      } else {
+        // Đăng nhập: kiểm tra nếu email thuộc một trong các user demo
+        const matchedDemo = demoUsers.find(
+          (u) => u.email.toLowerCase() === email.trim().toLowerCase()
+        );
+        if (matchedDemo) {
+          login({
+            user_id: matchedDemo.id,
+            name: matchedDemo.name,
+            email: matchedDemo.email,
+            tier: matchedDemo.tier,
+          });
+          setSuccessMessage(`Đã đăng nhập với tư cách ${matchedDemo.name}!`);
+        } else {
+          const emailPrefix = email.split("@")[0];
+          const displayName = emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : "Độc giả The Inkwell";
+          const newUserId = Math.floor(10000 + Math.random() * 90000);
+          login({
+            user_id: newUserId,
+            name: displayName,
+            email: email.trim(),
+            tier: "Thành viên Thân thiết",
+          });
+          setSuccessMessage("Đăng nhập thành công! Đang chuyển hướng...");
+        }
+      }
       setTimeout(() => {
         router.push("/");
-      }, 1000);
+      }, 800);
       setIsSubmitting(false);
-    }, 600);
+    }, 400);
   };
 
   // Xử lý đăng nhập 1-click bằng User Demo GoodReads
@@ -201,7 +231,10 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setMode("register")}
+                onClick={() => {
+                  setMode("register");
+                  if (name === "Độc giả The Inkwell") setName("");
+                }}
                 className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                   mode === "register" ? "bg-white text-ink shadow-xs" : "text-ink/60 hover:text-ink"
                 }`}
