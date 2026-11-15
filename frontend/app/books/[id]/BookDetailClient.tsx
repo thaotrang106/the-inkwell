@@ -37,6 +37,7 @@ import ProductReviews from "@/components/ProductReviews";
 import { BookDetailData } from "@/lib/serverBooks";
 import { getBookPricing, formatPriceVND } from "@/lib/bookPricing";
 import { getKnownAuthorBooks } from "@/lib/authorBooksMap";
+import { DEMO_READERS } from "@/lib/demoReaders";
 
 const cleanTitle = (title: string) => {
   if (!title) return "";
@@ -410,6 +411,56 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
       }),
     }).catch(() => {});
   };
+
+  // Xác định hồ sơ độc giả cá nhân hóa (Ưu tiên độc giả đăng nhập hoặc mặc định Độc giả mẫu Minh Anh)
+  const activeReader = (user && DEMO_READERS.find((r) => r.user_id === user.user_id)) || (user ? {
+    user_id: user.user_id,
+    name: user.name,
+    shortName: user.name.replace(/^Độc giả\s+/i, ""),
+    genre: "Gu tuyển chọn riêng",
+    tagline: "Tuyển chọn theo gu đọc cá nhân",
+    books: []
+  } : DEMO_READERS[0]);
+
+  const currentBookTitle = cleanTitle(book?.title || initialBook?.title);
+  const personalizedTitle = `Có Thể ${activeReader.shortName} Cũng Thích`;
+  const personalizedSubtitle = `${activeReader.genre} • May đo riêng theo gu đọc của ${activeReader.shortName} & sự đồng điệu với tác phẩm "${currentBookTitle}"`;
+
+  // Hợp nhất danh sách đề xuất cá nhân hóa:
+  // Ưu tiên các tác phẩm theo gu độc giả (loại trừ cuốn đang xem) + sách tương đồng từ AI Hybrid
+  const displayPersonalizedBooks = (() => {
+    const currentBookId = Number(id) || initialBook.book_id;
+    const seenIds = new Set<number>([currentBookId]);
+    const merged: any[] = [];
+
+    if (activeReader.books && activeReader.books.length > 0) {
+      for (const b of activeReader.books) {
+        if (!seenIds.has(b.book_id)) {
+          seenIds.add(b.book_id);
+          merged.push({
+            ...b,
+            badge: b.explanation || activeReader.genre
+          });
+          if (merged.length >= 5) break;
+        }
+      }
+    }
+
+    if (similarBooks && similarBooks.length > 0) {
+      for (const b of similarBooks) {
+        if (!seenIds.has(b.book_id)) {
+          seenIds.add(b.book_id);
+          merged.push({
+            ...b,
+            badge: b.badge || b.explanation || "Gợi ý tương đồng AI"
+          });
+          if (merged.length >= 10) break;
+        }
+      }
+    }
+
+    return merged.length > 0 ? merged : (similarBooks.length > 0 ? similarBooks : undefined);
+  })();
 
   return (
     <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#FAF7F2] min-h-screen font-sans">
@@ -805,12 +856,12 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
         </div>
       )}
 
-      {/* 2. Phần Sách tương tự bạn có thể thích (You may also like) */}
+      {/* 2. Phần Sách tương tự bạn có thể thích (You may also like) - Cá nhân hóa theo độc giả */}
       <div className="mt-14 border-t border-stone-200/80 pt-10">
         <RecommendedReadsCarousel 
-          title="Có thể bạn cũng thích"
-          subtitle="Những tác phẩm tương đồng về phong cách nghệ thuật, bối cảnh và cảm xúc"
-          initialBooks={similarBooks.length > 0 ? similarBooks : undefined}
+          title={personalizedTitle}
+          subtitle={personalizedSubtitle}
+          initialBooks={displayPersonalizedBooks}
         />
       </div>
 

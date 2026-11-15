@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, Check, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, ShoppingBag, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -320,6 +320,12 @@ export default function RecommendedReadsCarousel({
                     className="w-full flex flex-col items-center cursor-pointer select-none"
                   >
                     <div className="w-full flex items-center justify-center py-1 relative">
+                      {((book as any).explanation || book.badge) && (
+                        <span className="absolute top-0 left-0 z-20 text-[9px] font-medium font-sans bg-[#1C1917]/90 text-amber-200 px-2 py-0.5 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1 max-w-[125px] truncate">
+                          <Sparkles size={8} className="text-amber-400 shrink-0" />
+                          <span className="truncate">{(book as any).explanation || book.badge}</span>
+                        </span>
+                      )}
                       {pricing.discountPercent > 0 && (
                         <span className="absolute top-0 right-1 z-20 text-[10px] font-bold font-sans bg-[#881337] text-white px-2 py-0.5 rounded-full shadow-xs">
                           -{pricing.discountPercent}%
