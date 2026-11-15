@@ -170,8 +170,8 @@ export default function Home() {
       description: "Vượt xa công cụ tìm kiếm thông thường. Mercy AI ứng dụng mô hình lai để phân tích gu đọc và ngữ cảnh, giúp bạn tiếp cận chính xác tác phẩm cần tìm.",
       desktopImg: "/cozy_sunlit_reading_nook_banner.png",
       mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
-      objectPosition: "object-[25%_center] md:object-[30%_center] lg:object-[35%_center]",
-      objectPositionStyle: "35% center",
+      objectPosition: "object-[center] md:object-[45%_center] lg:object-[45%_center]",
+      objectPositionStyle: "45% center",
       badge: "Trợ lý Văn học AI",
       layout: "left",
     },
@@ -480,7 +480,7 @@ export default function Home() {
           <div className={`w-full transition-all duration-300 ${
             isCentered 
               ? "max-w-2xl mx-auto flex flex-col items-center text-center" 
-              : "max-w-lg lg:max-w-xl text-left lg:-translate-x-7 xl:-translate-x-10"
+              : "max-w-lg lg:max-w-xl text-left"
           }`}>
             {/* Chuyển đổi nội dung chữ mượt mà dạng Grid xếp chồng (Giữ nguyên chiều cao, tuyệt đối không bị giựt thanh tìm kiếm) */}
             <div className="grid grid-cols-1 grid-rows-1 w-full mb-7">
