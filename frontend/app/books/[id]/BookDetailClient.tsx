@@ -117,6 +117,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const [detailImgFailed, setDetailImgFailed] = useState(false);
 
   const [mercyMessage, setMercyMessage] = useState<string>("");
+  const [hasRequestedMercy, setHasRequestedMercy] = useState(false);
   const [isMercyThinking, setIsMercyThinking] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<"kindle" | "paperback" | "hardcover">("paperback");
   const [showFormatsModal, setShowFormatsModal] = useState(false);
@@ -133,7 +134,11 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
 
   useEffect(() => {
-    // 1. Kiểm tra cache phiên client
+    // Reset trạng thái Mercy khi chuyển sách để không tự động hiển thị phân tích
+    setHasRequestedMercy(false);
+    setMercyMessage("");
+
+    // 1. Kiểm tra cache phiên client cho thông tin sách
     if (typeof window !== "undefined") {
       try {
         const cached = sessionStorage.getItem(`inkwell_book_${id}`);
@@ -143,8 +148,6 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             setBook(parsed);
           }
         }
-        const cachedMercy = sessionStorage.getItem(`inkwell_mercy_${id}`);
-        if (cachedMercy) setMercyMessage(cachedMercy);
       } catch {}
     }
 
@@ -317,6 +320,8 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const audioSampleUrl = book.audio_sample_url || book.audio_url || book.sample_audio_url || "";
 
   const askMercy = async () => {
+    setHasRequestedMercy(true);
+
     if (typeof window !== "undefined") {
       try {
         const cached = sessionStorage.getItem(`inkwell_mercy_${id}`);
@@ -610,48 +615,77 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             </div>
           </div>
 
-          {/* Mercy AI Book Overview Card */}
-          <div className="p-4 sm:p-5 rounded-[4px] bg-[#FAF7F2] border border-stone-200/90 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-[#881337]" />
-                <span className="text-sm font-cormorant font-bold uppercase tracking-[0.22em] text-[#881337]">
-                  VÌ SAO BẠN CÓ THỂ THÍCH CUỐN NÀY
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={askMercy}
-                disabled={isMercyThinking}
-                className="text-xs font-medium text-[#1C1917] hover:text-[#881337] transition-colors underline cursor-pointer"
-              >
-                {isMercyThinking ? "Đang phân tích..." : "Hỏi Mercy AI"}
-              </button>
-            </div>
-            <div className="text-xs sm:text-sm text-stone-700 leading-relaxed font-sans">
-              {isMercyThinking ? (
-                <div className="flex items-center gap-2 text-stone-500 py-2">
-                  <Loader2 size={14} className="animate-spin text-[#881337]" />
-                  <span>Mercy AI đang đọc sâu dữ liệu văn học của tác phẩm...</span>
-                </div>
-              ) : mercyMessage ? (
-                renderCleanMercyText(mercyMessage)
-              ) : (
-                <p>
-                  Tác phẩm thuộc danh mục tuyển chọn đặc sắc với cốt truyện hấp dẫn, phong cách hành văn điêu luyện và chủ đề nhân sinh sâu sắc. Bấm <em>"Hỏi Mercy AI"</em> để nhận lời bình văn học tức thì.
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Giới thiệu nội dung */}
-          <div className="space-y-4 mb-8">
+          {/* 1. Giới thiệu nội dung: Tóm tắt tác phẩm (lên trên) */}
+          <div className="space-y-3 mb-8">
             <h3 className="font-serif text-xl font-bold text-[#1C1917]">
               Tóm tắt tác phẩm
             </h3>
             <p className="text-stone-700 text-sm sm:text-base leading-relaxed font-sans">
               {book.description || `"${cleanTitle(book.title)}" là một trong những tác phẩm tiêu biểu của ${authorName}, đưa người đọc qua những trải nghiệm cảm xúc phong phú và bài học nhân sinh giá trị. Tác phẩm được chuẩn hóa từ kho dữ liệu văn học Goodreads-10k.`}
             </p>
+          </div>
+
+          {/* 2. Trợ lý Mercy AI (xuống dưới - chỉ ghi ra phân tích khi người dùng bấm hỏi) */}
+          <div className="p-4 sm:p-5 rounded-[4px] bg-[#FAF7F2] border border-stone-200/90 mb-8 transition-all">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-[#881337]" />
+                  <span className="text-xs sm:text-sm font-cormorant font-bold uppercase tracking-[0.2em] text-[#881337]">
+                    VÌ SAO BẠN CÓ THỂ THÍCH CUỐN NÀY
+                  </span>
+                </div>
+                <p className="text-xs text-stone-600 font-sans">
+                  Khám phá góc nhìn nghệ thuật và lời bình văn học chuyên sâu cùng Trợ lý Mercy AI.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={askMercy}
+                disabled={isMercyThinking}
+                className="shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-[4px] bg-[#1C1917] hover:bg-[#881337] text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-2xs disabled:opacity-60"
+              >
+                {isMercyThinking ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin text-white" />
+                    <span>Đang phân tích...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={13} className="text-amber-300" />
+                    <span>Hỏi Mercy AI</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Chỉ ghi ra phân tích khi người dùng bấm hỏi Mercy AI */}
+            {hasRequestedMercy && (
+              <div className="mt-4 pt-4 border-t border-stone-200/80">
+                {isMercyThinking ? (
+                  <div className="flex items-center gap-2.5 text-stone-600 py-3 text-xs sm:text-sm font-sans">
+                    <Loader2 size={15} className="animate-spin text-[#881337]" />
+                    <span>Mercy AI đang đọc sâu dữ liệu văn học của tác phẩm...</span>
+                  </div>
+                ) : mercyMessage ? (
+                  <div className="space-y-3">
+                    <div className="text-xs sm:text-sm text-stone-800 leading-relaxed font-sans">
+                      {renderCleanMercyText(mercyMessage)}
+                    </div>
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setHasRequestedMercy(false)}
+                        className="text-[11px] text-stone-500 hover:text-stone-800 underline transition-colors cursor-pointer"
+                      >
+                        Thu gọn phân tích
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
           </div>
 
         </div>
