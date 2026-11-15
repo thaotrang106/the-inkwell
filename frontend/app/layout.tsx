@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MercyFloatingButton from "@/components/MercyFloatingButton";
+import DemoFloatingSwitcher from "@/components/DemoFloatingSwitcher";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { MercyProvider } from "@/context/MercyContext";
@@ -67,6 +68,7 @@ export default function RootLayout({
               <main className="flex-grow">{children}</main>
               <Footer />
               <MercyFloatingButton />
+              <DemoFloatingSwitcher />
             </MercyProvider>
           </CartProvider>
         </AuthProvider>
