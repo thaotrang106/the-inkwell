@@ -477,11 +477,21 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   };
 
   // Xác định hồ sơ độc giả cá nhân hóa (Chỉ áp dụng khi độc giả đã đăng nhập)
-  const matchedDemo = user ? DEMO_READERS.find((r) => r.user_id === user.user_id && (user.name.includes(r.shortName) || user.name === r.name)) : null;
+  const matchedDemo = (user && user.email) ? DEMO_READERS.find((r) => r.user_id === user.user_id && user.email.toLowerCase() === r.email.toLowerCase()) : null;
+  const activeReaderShortName = (() => {
+    if (user?.name) {
+      const clean = user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim();
+      if (clean && clean !== "The Inkwell" && !clean.includes("The Inkwell")) return clean;
+    }
+    if (user?.email && user.email.toLowerCase().includes("thaotrang")) return "Thảo Trang";
+    if (matchedDemo) return matchedDemo.shortName;
+    return "Bạn";
+  })();
+
   const activeReader = matchedDemo || (user ? {
     user_id: user.user_id,
     name: user.name,
-    shortName: user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim(),
+    shortName: activeReaderShortName,
     genre: "Tuyển chọn khởi đầu",
     tagline: "Tuyển chọn theo gu đọc cá nhân",
     books: []

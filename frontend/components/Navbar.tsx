@@ -144,74 +144,93 @@ export default function Navbar() {
             {/* Đăng nhập / Dropdown Tài khoản */}
             {isLoggedIn && user ? (
               <div className="relative" ref={menuRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowUserDropdown(!showUserDropdown)}
-                  className="flex items-center gap-2 p-1.5 rounded-full hover:bg-ink/5 transition-colors cursor-pointer border border-ink/10"
-                  title="Tài khoản độc giả"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#4B6584] to-[#B12704] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <span className="hidden sm:inline text-xs font-semibold text-ink max-w-[110px] truncate">
-                    {user.name}
-                  </span>
-                  <ChevronDown size={14} className="text-ink/40 hidden sm:inline" />
-                </button>
+                {(() => {
+                  const navDisplayName = (() => {
+                    if (user.name && user.name !== "Độc giả The Inkwell" && !user.name.includes("The Inkwell")) {
+                      return user.name;
+                    }
+                    if (user.email && user.email.toLowerCase().includes("thaotrang")) {
+                      return "Thảo Trang";
+                    }
+                    if (user.email && user.email.toLowerCase() === "minhanh@theinkwell.vn") {
+                      return "Minh Anh";
+                    }
+                    return user.name || "Độc giả";
+                  })();
 
-                {/* Dropdown Menu khi đã đăng nhập */}
-                {showUserDropdown && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-ink/10 py-2 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-4 py-2.5 border-b border-ink/5">
-                      <p className="text-xs font-bold text-ink truncate">{user.name}</p>
-                      <p className="text-[11px] text-ink/50 truncate">{user.email}</p>
-                      <span className="inline-block mt-1 text-[10px] bg-[#FFF5F2] text-[#B12704] font-bold px-2 py-0.5 rounded-md border border-[#B12704]/20 font-mono">
-                        User ID: #{user.user_id}
-                      </span>
-                    </div>
-
-                    <Link 
-                      href="/profile?tab=taste" 
-                      onClick={() => setShowUserDropdown(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
-                    >
-                      <User size={15} />
-                      <span>Hồ sơ Gu đọc &amp; AI</span>
-                    </Link>
-
-                    <Link 
-                      href="/profile?tab=library" 
-                      onClick={() => setShowUserDropdown(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
-                    >
-                      <BookOpen size={15} />
-                      <span>Tủ sách cá nhân</span>
-                    </Link>
-
-                    <Link 
-                      href="/cart" 
-                      onClick={() => setShowUserDropdown(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
-                    >
-                      <ShoppingBag size={15} />
-                      <span>Giỏ hàng ({itemCount})</span>
-                    </Link>
-
-                    <div className="border-t border-ink/5 pt-1 mt-1">
+                  return (
+                    <>
                       <button
                         type="button"
-                        onClick={() => {
-                          logout();
-                          setShowUserDropdown(false);
-                        }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        onClick={() => setShowUserDropdown(!showUserDropdown)}
+                        className="flex items-center gap-2 p-1.5 rounded-full hover:bg-ink/5 transition-colors cursor-pointer border border-ink/10"
+                        title="Tài khoản độc giả"
                       >
-                        <LogOut size={15} />
-                        <span>Đăng xuất</span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#4B6584] to-[#B12704] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                          {navDisplayName.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="hidden sm:inline text-xs font-semibold text-ink max-w-[110px] truncate">
+                          {navDisplayName}
+                        </span>
+                        <ChevronDown size={14} className="text-ink/40 hidden sm:inline" />
                       </button>
-                    </div>
-                  </div>
-                )}
+
+                      {/* Dropdown Menu khi đã đăng nhập */}
+                      {showUserDropdown && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-ink/10 py-2 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
+                          <div className="px-4 py-2.5 border-b border-ink/5">
+                            <p className="text-xs font-bold text-ink truncate">{navDisplayName}</p>
+                            <p className="text-[11px] text-ink/50 truncate">{user.email}</p>
+                            <span className="inline-block mt-1 text-[10px] bg-[#FFF5F2] text-[#B12704] font-bold px-2 py-0.5 rounded-md border border-[#B12704]/20 font-mono">
+                              User ID: #{user.user_id}
+                            </span>
+                          </div>
+
+                          <Link 
+                            href="/profile?tab=taste" 
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
+                          >
+                            <User size={15} />
+                            <span>Hồ sơ Gu đọc &amp; AI</span>
+                          </Link>
+
+                          <Link 
+                            href="/profile?tab=library" 
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
+                          >
+                            <BookOpen size={15} />
+                            <span>Tủ sách cá nhân</span>
+                          </Link>
+
+                          <Link 
+                            href="/cart" 
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-ink hover:bg-[#FAF7F2] hover:text-[#B12704] transition-colors"
+                          >
+                            <ShoppingBag size={15} />
+                            <span>Giỏ hàng ({itemCount})</span>
+                          </Link>
+
+                          <div className="border-t border-ink/5 pt-1 mt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                logout();
+                                setShowUserDropdown(false);
+                              }}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            >
+                              <LogOut size={15} />
+                              <span>Đăng xuất</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             ) : (
               <Link 

@@ -61,12 +61,18 @@ export default function TrendingClient({
   const router = useRouter();
   const { user, isLoggedIn, login, logout } = useAuth();
   const [showUserSwitcher, setShowUserSwitcher] = useState(false);
-  const currentDemoReader = (isLoggedIn && user)
-    ? DEMO_READERS.find((r) => r.user_id === user.user_id && (user.name.includes(r.shortName) || user.name === r.name)) || null
+  const currentDemoReader = (isLoggedIn && user && user.email)
+    ? DEMO_READERS.find((r) => r.user_id === user.user_id && user.email.toLowerCase() === r.email.toLowerCase()) || null
     : null;
-  const readerDisplayName = user?.name
-    ? user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
-    : (currentDemoReader ? currentDemoReader.shortName : "Bạn");
+  const readerDisplayName = (() => {
+    if (user?.name) {
+      const clean = user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim();
+      if (clean && clean !== "The Inkwell" && !clean.includes("The Inkwell")) return clean;
+    }
+    if (user?.email && user.email.toLowerCase().includes("thaotrang")) return "Thảo Trang";
+    if (currentDemoReader) return currentDemoReader.shortName;
+    return "Bạn";
+  })();
 
   // Quản lý thể loại đang chọn đồng bộ URL và phản hồi lập tức 0ms
   const [selectedGenre, setSelectedGenre] = useState<string>(genreParam);

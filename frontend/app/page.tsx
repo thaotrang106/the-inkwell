@@ -312,9 +312,13 @@ export default function Home() {
     }
 
     // 2. Nếu là Độc giả mẫu trong Báo cáo Đồ án (User #35 Minh Anh, User #1 Hoàng Nam):
-    // Giữ nguyên bộ sách may đo chuẩn kịch bản đồ án khi chọn tab "Theo hành vi tương tác"
+    // Chỉ kích hoạt khi email đăng nhập chính xác là tài khoản mẫu đồ án (minhanh@theinkwell.vn / hoangnam@theinkwell.vn)
     const demoReader = DEMO_READERS.find((r) => r.user_id === userId);
-    if (demoReader && user?.name && (user.name.includes(demoReader.shortName) || user.name === demoReader.name)) {
+    if (
+      demoReader &&
+      user?.email &&
+      user.email.toLowerCase() === demoReader.email.toLowerCase()
+    ) {
       setPersonalizedBooks(demoReader.books);
       setBehaviorSubtitle(`${demoReader.genre} • May đo theo dữ liệu thực nghiệm đồ án`);
       setBehaviorSeed(null);
@@ -984,11 +988,24 @@ export default function Home() {
                   </div>
                 )}
                 <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
-                  Dành Riêng Cho {
-                    (user?.name 
-                      ? user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
-                      : (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || "Bạn"))
-                  }
+                  Dành Riêng Cho {(() => {
+                    if (user?.name) {
+                      const clean = user.name.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim();
+                      if (clean && clean !== "The Inkwell" && !clean.includes("The Inkwell")) {
+                        return clean;
+                      }
+                    }
+                    if (user?.email && user.email.toLowerCase().includes("thaotrang")) {
+                      return "Thảo Trang";
+                    }
+                    if (user?.email && user.email.toLowerCase() === "minhanh@theinkwell.vn") {
+                      return "Minh Anh";
+                    }
+                    if (user?.email && user.email.toLowerCase() === "hoangnam@theinkwell.vn") {
+                      return "Hoàng Nam";
+                    }
+                    return "Bạn";
+                  })()}
                 </h2>
                 <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
                   {behaviorSubtitle}
