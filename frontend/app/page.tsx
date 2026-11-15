@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Sparkles, Search, BookOpen, ArrowRight, Clock, X, Trash2, TrendingUp, ChevronLeft, ChevronRight, Users, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
 import BookCard from "@/components/BookCard";
-import MercyChatDrawer from "@/components/MercyChatDrawer";
 import RecommendedReadsCarousel from "@/components/RecommendedReadsCarousel";
 import BundleDealsSection from "@/components/BundleDealsSection";
 import { useAuth } from "@/context/AuthContext";
+import { useMercy } from "@/context/MercyContext";
 import { API_BASE_URL as BACKEND_URL } from "@/lib/api";
 import { CURATED_BOOKS } from "@/lib/curatedBooks";
 import { DEMO_READERS } from "@/lib/demoReaders";
@@ -128,8 +128,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
-  // State quản lý Bảng Chat trượt bên phải (Ask Mercy Drawer)
-  const [isMercyOpen, setIsMercyOpen] = useState(false);
+  // Trợ lý Mercy AI toàn cục
+  const { openMercy } = useMercy();
 
   // Quản lý Lịch sử tìm kiếm gần đây (Cách 2)
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -555,7 +555,7 @@ export default function Home() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsMercyOpen(true);
+                    openMercy(searchQuery.trim() || undefined);
                   }}
                   className="flex items-center gap-1.5 ml-2 px-3.5 py-2 rounded-[4px] border border-[#1C1917] text-[#1C1917] hover:bg-[#1C1917] hover:text-white active:scale-95 text-xs font-semibold tracking-wide transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
                 >
@@ -985,9 +985,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Bảng Chat trượt bên phải của Mercy AI (Slide-over Drawer) */}
-      <MercyChatDrawer isOpen={isMercyOpen} onClose={() => setIsMercyOpen(false)} />
 
     </div>
   );

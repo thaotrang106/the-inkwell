@@ -24,6 +24,7 @@ interface Message {
 interface MercyChatDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  initialPrompt?: string;
 }
 
 // Hàm làm sạch tên sách
@@ -391,7 +392,7 @@ function FormattedMessage({
   );
 }
 
-export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProps) {
+export default function MercyChatDrawer({ isOpen, onClose, initialPrompt }: MercyChatDrawerProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -407,6 +408,13 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  // Nếu mở drawer kèm câu hỏi khởi đầu ban đầu
+  useEffect(() => {
+    if (isOpen && initialPrompt && messages.length === 0) {
+      handleSend(initialPrompt);
+    }
+  }, [isOpen, initialPrompt]);
 
   // Làm mới cuộc trò chuyện (New Chat)
   const handleNewChat = () => {

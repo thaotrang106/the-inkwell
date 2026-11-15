@@ -4,8 +4,10 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DemoFloatingSwitcher from "@/components/DemoFloatingSwitcher";
+import MercyFloatingButton from "@/components/MercyFloatingButton";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { MercyProvider } from "@/context/MercyContext";
 
 const inter = Inter({ 
   subsets: ["latin", "vietnamese"], 
@@ -35,10 +37,13 @@ export default function RootLayout({
         <div className="fixed inset-0 pointer-events-none paper-texture opacity-30 mix-blend-multiply z-[-1]"></div>
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-            <DemoFloatingSwitcher />
+            <MercyProvider>
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+              <DemoFloatingSwitcher />
+              <MercyFloatingButton />
+            </MercyProvider>
           </CartProvider>
         </AuthProvider>
       </body>
