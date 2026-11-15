@@ -401,7 +401,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
                 className={`w-full h-full bg-gradient-to-br ${COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length].bg} p-6 flex flex-col justify-between items-center text-center relative select-none rounded-[4px]`}
               >
                 <div className="absolute inset-2 border border-amber-400/30 rounded pointer-events-none"></div>
-                <div className="w-full text-[10px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-2">
+                <div className="w-full text-xs uppercase tracking-[0.26em] text-amber-300/80 font-cormorant font-bold mt-2">
                   THE INKWELL
                 </div>
 
@@ -415,7 +415,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
                   </p>
                 </div>
 
-                <div className="text-[9px] text-amber-300/60 uppercase tracking-widest font-mono mb-2">
+                <div className="text-[11px] text-amber-300/70 uppercase tracking-[0.2em] font-cormorant font-semibold mb-2">
                   Collector's Edition
                 </div>
               </div>
@@ -545,7 +545,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
 
           {/* Chọn định dạng sách */}
           <div className="mb-6">
-            <p className="text-xs font-mono font-medium uppercase tracking-wider text-stone-500 mb-2.5">
+            <p className="text-sm font-cormorant font-semibold uppercase tracking-[0.22em] text-stone-500 mb-2">
               ĐỊNH DẠNG ẤN BẢN
             </p>
             <div className="grid grid-cols-3 gap-3">
@@ -579,7 +579,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-[#881337]" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#881337]">
+                <span className="text-sm font-cormorant font-bold uppercase tracking-[0.22em] text-[#881337]">
                   VÌ SAO BẠN CÓ THỂ THÍCH CUỐN NÀY
                 </span>
               </div>

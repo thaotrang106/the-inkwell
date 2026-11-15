@@ -107,7 +107,7 @@ export default function BundleDealsSection() {
         
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-stone-500 font-semibold mb-2 block">
+          <span className="font-cormorant text-sm sm:text-base uppercase tracking-[0.26em] text-stone-500 font-bold mb-1.5 block">
             TIẾT KIỆM HƠN CÙNG THE INKWELL
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1C1917] tracking-tight mb-3">

@@ -42,7 +42,7 @@ export default function ContactPage() {
         
         {/* Header trang phong cách Biên tập thanh lịch */}
         <header className="border-b border-stone-300/80 pb-8 mb-12">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold mb-2">
+          <p className="font-cormorant text-sm sm:text-base uppercase tracking-[0.24em] text-[#881337] font-bold mb-1.5">
             CHĂM SÓC KHÁCH HÀNG
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-normal text-[#1C1917] tracking-tight leading-tight mb-4">

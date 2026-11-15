@@ -199,7 +199,7 @@ export default function AlgorithmLabPage() {
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
             <span>Quay lại Cửa hàng The Inkwell</span>
           </Link>
-          <div className="text-[11px] uppercase tracking-[0.2em] font-mono text-stone-500 font-semibold">
+          <div className="text-sm uppercase tracking-[0.24em] font-cormorant text-stone-500 font-bold">
             CHUYÊN ĐỀ BIÊN TẬP • NGHỆ THUẬT TUYỂN CHỌN SÁCH
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function AlgorithmLabPage() {
         <header className="bg-white rounded-[4px] p-6 sm:p-10 border border-stone-200/90 shadow-2xs mb-8">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-stone-100">
             <div className="max-w-3xl">
-              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#881337] font-semibold mb-2.5 block">
+              <span className="font-cormorant text-sm sm:text-base uppercase tracking-[0.26em] text-[#881337] font-bold mb-2 block">
                 GÓC NHÌN BIÊN TẬP • KHO SÁCH THE INKWELL
               </span>
               <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#1C1917] tracking-tight leading-tight">

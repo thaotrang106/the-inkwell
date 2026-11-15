@@ -487,7 +487,7 @@ export default function Home() {
                         : "opacity-0 -translate-y-2 pointer-events-none"
                     } ${isCentered ? "flex flex-col items-center text-center" : "text-left"}`}
                   >
-                    <span className={`uppercase tracking-[0.3em] text-xs font-bold text-terracotta mb-3 block ${
+                    <span className={`font-cormorant uppercase tracking-[0.3em] text-sm sm:text-base font-bold text-terracotta mb-2.5 block ${
                       isCentered ? "text-center mx-auto" : ""
                     }`}>
                       {slide.tag}
@@ -922,7 +922,7 @@ export default function Home() {
       <section id="trending" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-20 scroll-mt-24">
         <div className="flex items-end justify-between mb-10 border-b border-stone-200/80 pb-6">
           <div>
-            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-stone-500 font-medium mb-1.5 block">
+            <span className="font-cormorant text-sm sm:text-base uppercase tracking-[0.25em] text-stone-500 font-semibold mb-1 block">
               THE INKWELL CANON • TUYỂN CHỌN
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight mb-2">
@@ -968,7 +968,7 @@ export default function Home() {
       <section id="newsletter" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-16 mb-6">
         <div className="bg-white border border-stone-300/80 rounded-[4px] p-8 sm:p-10 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xs">
           <div className="max-w-xl text-center md:text-left">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold block mb-1.5">
+            <span className="font-cormorant text-sm sm:text-base uppercase tracking-[0.24em] text-[#881337] font-bold block mb-1">
               BẢN TIN THE INKWELL
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#1C1917] tracking-tight mb-2">

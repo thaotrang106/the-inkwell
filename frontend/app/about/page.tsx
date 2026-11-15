@@ -112,7 +112,7 @@ export default function AboutPage() {
         {/* 3. THƯỚC ĐO DỮ LIỆU THỰC TẾ (Trung thực & Minh bạch) */}
         <section className="py-14 border-b border-stone-200">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#881337] font-semibold">
+            <span className="text-sm sm:text-base font-cormorant uppercase tracking-[0.24em] text-[#881337] font-bold">
               DỮ LIỆU & NĂNG LỰC HỆ THỐNG
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1C1917] tracking-tight mt-1">
@@ -261,7 +261,7 @@ export default function AboutPage() {
                 “Tôi luôn tưởng tượng rằng Thiên đường sẽ là một dạng của Thư viện.”
               </p>
               <div className="w-12 h-[1px] bg-amber-400/40 mx-auto my-3" />
-              <p className="text-xs uppercase tracking-widest text-amber-300/80 font-mono font-medium">
+              <p className="text-sm uppercase tracking-[0.22em] text-amber-300/80 font-cormorant font-semibold">
                 — Jorge Luis Borges (1899 – 1986)
               </p>
             </div>

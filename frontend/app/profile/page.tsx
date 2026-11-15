@@ -369,13 +369,13 @@ function ProfileSavedBookItem({ book }: { book: SavedBook }) {
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${theme.bg} p-3 flex flex-col justify-between items-center text-center relative select-none`}>
               <div className={`absolute inset-1.5 border ${theme.border} rounded-[2px] pointer-events-none`}></div>
-              <div className="text-[8px] uppercase tracking-widest text-amber-300/80 font-mono mt-1">THE INKWELL</div>
+              <div className="text-[10px] uppercase tracking-[0.26em] text-amber-300/80 font-cormorant font-bold mt-1">THE INKWELL</div>
               <div className="my-auto px-1 z-10">
                 <p className={`font-serif font-bold text-xs leading-snug line-clamp-3 ${theme.text}`}>{book.title}</p>
                 <div className="w-6 h-[1px] bg-amber-400/40 mx-auto my-1.5"></div>
                 <p className="text-[10px] text-stone-300 line-clamp-1 italic font-sans">{book.author}</p>
               </div>
-              <div className="text-[7px] text-amber-300/60 uppercase tracking-widest font-mono mb-1">Thư viện cá nhân</div>
+              <div className="text-[9px] text-amber-300/70 uppercase tracking-[0.2em] font-cormorant font-semibold mb-1">Thư viện cá nhân</div>
             </div>
           )}
         </div>

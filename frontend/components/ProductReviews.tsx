@@ -478,7 +478,7 @@ export default function ProductReviews({
         {/* Thanh lọc nhận xét theo số sao */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8 font-sans">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono uppercase tracking-[0.18em] text-stone-500 mr-2 flex items-center gap-1.5 font-semibold">
+            <span className="text-sm font-cormorant uppercase tracking-[0.2em] text-stone-500 mr-2 flex items-center gap-1.5 font-bold">
               <Filter size={12} /> Lọc theo:
             </span>
 

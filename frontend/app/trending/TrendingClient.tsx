@@ -275,7 +275,7 @@ export default function TrendingClient({
         <div className="bg-white rounded-[4px] p-6 sm:p-9 lg:p-10 border border-stone-200/90 mb-8 relative shadow-2xs">
           
           <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-3 text-stone-500 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] font-medium">
+            <div className="flex items-center gap-2 mb-2 text-stone-500 font-cormorant text-sm sm:text-base uppercase tracking-[0.24em] font-semibold">
               {genreParam ? (
                 <>
                   <BookOpen size={13} className="text-[#881337]" />
@@ -310,7 +310,7 @@ export default function TrendingClient({
 
           {/* 3. THANH DANH MỤC NHANH (QUICK TAGS) */}
           <div className="mt-8 pt-6 border-t border-stone-200/80">
-            <p className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-stone-500 mb-3.5 flex items-center gap-1.5">
+            <p className="text-sm font-cormorant font-semibold uppercase tracking-[0.22em] text-stone-500 mb-3 flex items-center gap-1.5">
               <Compass size={13} className="text-stone-600" />
               <span>KHÁM PHÁ CÁC THỂ LOẠI KHÁC</span>
             </p>

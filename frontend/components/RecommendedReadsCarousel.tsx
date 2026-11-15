@@ -110,7 +110,7 @@ function Book3DCover({ book }: { book: BookItem }) {
           >
             {/* Họa tiết viền chỉ vàng kim cổ điển */}
             <div className={`absolute inset-1.5 border ${theme.border} rounded pointer-events-none`}></div>
-            <div className="w-full text-[8px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-1">
+            <div className="w-full text-[10px] uppercase tracking-[0.26em] text-amber-300/80 font-cormorant font-bold mt-1">
               THE INKWELL
             </div>
 
@@ -124,7 +124,7 @@ function Book3DCover({ book }: { book: BookItem }) {
               </p>
             </div>
 
-            <div className="text-[7px] text-amber-300/60 uppercase tracking-widest font-mono mb-1">
+            <div className="text-[9px] text-amber-300/70 uppercase tracking-[0.2em] font-cormorant font-semibold mb-1">
               Collector's Pick
             </div>
           </div>
@@ -254,7 +254,7 @@ export default function RecommendedReadsCarousel({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header mục Gợi ý tuyển chọn */}
         <div className="text-center mb-10 max-w-2xl mx-auto">
-          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-stone-500 font-medium mb-2 block">
+          <span className="font-cormorant text-sm sm:text-base uppercase tracking-[0.26em] text-stone-500 font-semibold mb-1.5 block">
             THE INKWELL CURATIONS
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1917] tracking-tight mb-2.5">

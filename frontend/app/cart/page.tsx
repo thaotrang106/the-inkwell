@@ -77,7 +77,7 @@ export default function CartPage() {
         {/* Tiêu đề trang */}
         <div className="mb-8 pb-4 border-b border-stone-200/80 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#881337] font-semibold">
+            <span className="text-sm sm:text-base font-cormorant uppercase tracking-[0.24em] text-[#881337] font-bold">
               THE INKWELL CART
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1917] mt-1">

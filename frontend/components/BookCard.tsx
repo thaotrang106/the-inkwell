@@ -154,7 +154,7 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
             className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none rounded-[4px]`}
           >
             <div className={`absolute inset-2 border ${theme.border} rounded-[2px] pointer-events-none`}></div>
-            <div className="w-full text-[9px] uppercase tracking-[0.25em] text-amber-300/80 font-mono mt-1">
+            <div className="w-full text-[10px] uppercase tracking-[0.26em] text-amber-300/80 font-cormorant font-bold mt-1">
               THE INKWELL
             </div>
 
@@ -168,7 +168,7 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
               </p>
             </div>
 
-            <div className="text-[8px] text-amber-300/60 uppercase tracking-widest font-mono mb-1">
+            <div className="text-[9px] text-amber-300/70 uppercase tracking-[0.2em] font-cormorant font-semibold mb-1">
               Collector's Pick
             </div>
           </div>
