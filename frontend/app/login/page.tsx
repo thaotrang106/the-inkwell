@@ -24,9 +24,9 @@ export default function LoginPage() {
   const { login, isLoggedIn, user: currentUser } = useAuth();
 
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("reader@theinkwell.vn");
-  const [password, setPassword] = useState("123456");
-  const [name, setName] = useState("Độc giả The Inkwell");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<number>(35);
   const [customUserId, setCustomUserId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,41 +81,103 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     setTimeout(() => {
+      const cleanEmail = email.trim().toLowerCase();
+
+      // Đọc danh sách tài khoản đã đăng ký trong localStorage
+      let registeredAccounts: any[] = [];
+      try {
+        const stored = localStorage.getItem("inkwell_registered_accounts");
+        if (stored) registeredAccounts = JSON.parse(stored);
+      } catch {}
+
       if (mode === "register") {
-        const cleanName = name.trim() || "Độc giả Mới";
-        // Sinh mã User ID mới độc lập cho tài khoản đăng ký (10001 - 99999)
-        const newUserId = Math.floor(10000 + Math.random() * 90000);
-        login({
-          user_id: newUserId,
+        const cleanName = name.trim() || (cleanEmail.includes("thaotrang") ? "Thảo Trang" : "Độc giả Mới");
+        
+        // Tìm xem email này đã từng có ID chưa, nếu chưa sinh ID mới độc lập (10001 - 99999)
+        const existingAcc = registeredAccounts.find((a: any) => a.email.toLowerCase() === cleanEmail);
+        const assignedUserId = existingAcc?.user_id || Math.floor(10000 + Math.random() * 90000);
+
+        const newAccount = {
+          user_id: assignedUserId,
           name: cleanName,
-          email: email.trim(),
+          email: cleanEmail,
+          tier: "Thành viên Mới",
+          registered_at: new Date().toISOString()
+        };
+
+        // Lưu vĩnh viễn vào danh sách tài khoản đã đăng ký
+        const updatedAccounts = [
+          newAccount,
+          ...registeredAccounts.filter((a: any) => a.email.toLowerCase() !== cleanEmail)
+        ];
+        localStorage.setItem("inkwell_registered_accounts", JSON.stringify(updatedAccounts));
+
+        login({
+          user_id: assignedUserId,
+          name: cleanName,
+          email: cleanEmail,
           tier: "Thành viên Mới",
         });
         setSuccessMessage(`Đăng ký thành công! Chào mừng ${cleanName} đến với The Inkwell...`);
       } else {
-        // Đăng nhập: kiểm tra nếu email thuộc một trong các user demo
-        const matchedDemo = demoUsers.find(
-          (u) => u.email.toLowerCase() === email.trim().toLowerCase()
+        // CHẾ ĐỘ ĐĂNG NHẬP (mode === "login")
+        // 1. Ưu tiên kiểm tra trong danh sách tài khoản đã đăng ký (inkwell_registered_accounts)
+        const matchedRegistered = registeredAccounts.find(
+          (a: any) => a.email.toLowerCase() === cleanEmail
         );
-        if (matchedDemo) {
+
+        if (matchedRegistered) {
+          // Lấy đúng Họ và tên mà người dùng đã đăng ký trước đó
           login({
-            user_id: matchedDemo.id,
-            name: matchedDemo.name,
-            email: matchedDemo.email,
-            tier: matchedDemo.tier,
+            user_id: matchedRegistered.user_id,
+            name: matchedRegistered.name,
+            email: matchedRegistered.email,
+            tier: matchedRegistered.tier || "Thành viên Thân thiết",
           });
-          setSuccessMessage(`Đã đăng nhập với tư cách ${matchedDemo.name}!`);
+          setSuccessMessage(`Chào mừng bạn trở lại, ${matchedRegistered.name}!`);
         } else {
-          const emailPrefix = email.split("@")[0];
-          const displayName = emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : "Độc giả The Inkwell";
-          const newUserId = Math.floor(10000 + Math.random() * 90000);
-          login({
-            user_id: newUserId,
-            name: displayName,
-            email: email.trim(),
-            tier: "Thành viên Thân thiết",
-          });
-          setSuccessMessage("Đăng nhập thành công! Đang chuyển hướng...");
+          // 2. Kiểm tra nếu email thuộc một trong các user demo đồ án
+          const matchedDemo = demoUsers.find(
+            (u) => u.email.toLowerCase() === cleanEmail
+          );
+          if (matchedDemo) {
+            login({
+              user_id: matchedDemo.id,
+              name: matchedDemo.name,
+              email: matchedDemo.email,
+              tier: matchedDemo.tier,
+            });
+            setSuccessMessage(`Đã đăng nhập với tư cách ${matchedDemo.name}!`);
+          } else {
+            // 3. Nếu là email chưa có trong danh sách, suy luận tên đẹp từ email và lưu lại
+            let displayName = "Độc giả";
+            const prefix = cleanEmail.split("@")[0];
+            if (prefix.toLowerCase().includes("thaotrang")) {
+              displayName = "Thảo Trang";
+            } else if (prefix) {
+              displayName = prefix
+                .split(/[._-]/)
+                .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+                .join(" ");
+            }
+
+            const newUserId = Math.floor(10000 + Math.random() * 90000);
+            const userObj = {
+              user_id: newUserId,
+              name: displayName,
+              email: cleanEmail,
+              tier: "Thành viên Thân thiết",
+            };
+
+            const updatedAccounts = [
+              userObj,
+              ...registeredAccounts.filter((a: any) => a.email.toLowerCase() !== cleanEmail)
+            ];
+            localStorage.setItem("inkwell_registered_accounts", JSON.stringify(updatedAccounts));
+
+            login(userObj);
+            setSuccessMessage(`Đăng nhập thành công! Chào mừng ${displayName}...`);
+          }
         }
       }
       setTimeout(() => {

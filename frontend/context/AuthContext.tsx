@@ -28,7 +28,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const savedUser = localStorage.getItem("inkwell_user");
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        let parsed: UserProfile = JSON.parse(savedUser);
+        let hasModified = false;
+
+        // 1. Kiểm tra đối chiếu với danh sách tài khoản đã đăng ký (inkwell_registered_accounts)
+        try {
+          const registeredRaw = localStorage.getItem("inkwell_registered_accounts");
+          if (registeredRaw && parsed.email) {
+            const list = JSON.parse(registeredRaw);
+            const found = list.find((a: any) => a.email.toLowerCase() === parsed.email.toLowerCase());
+            if (found && found.name && found.name !== parsed.name) {
+              parsed = {
+                ...parsed,
+                name: found.name,
+                user_id: found.user_id || parsed.user_id,
+              };
+              hasModified = true;
+            }
+          }
+        } catch {}
+
+        // 2. Tự động khắc phục (Auto-heal) nếu session cũ bị gán nhầm tên mặc định "Độc giả The Inkwell" hoặc ID #35 của Minh Anh
+        if (parsed.email && !parsed.email.toLowerCase().includes("@theinkwell.vn")) {
+          if (parsed.name === "Độc giả The Inkwell" || parsed.name === "Độc giả Minh Anh" || !parsed.name) {
+            if (parsed.email.toLowerCase().includes("thaotrang")) {
+              parsed.name = "Thảo Trang";
+            } else {
+              const prefix = parsed.email.split("@")[0];
+              parsed.name = prefix
+                .split(/[._-]/)
+                .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+                .join(" ");
+            }
+            hasModified = true;
+          }
+          if (parsed.user_id === 35 || parsed.user_id === 1 || !parsed.user_id) {
+            parsed.user_id = Math.floor(10000 + Math.random() * 90000);
+            hasModified = true;
+          }
+        }
+
+        if (hasModified) {
+          localStorage.setItem("inkwell_user", JSON.stringify(parsed));
+        }
+
+        setUser(parsed);
       } catch (e) {
         console.error("Lỗi khi đọc dữ liệu đăng nhập:", e);
       }
