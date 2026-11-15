@@ -90,13 +90,10 @@ export default function AboutPage() {
               <div className="w-12 h-0.5 bg-[#881337] mt-2 mb-3" />
             </div>
 
-            {/* Bài luận xã luận chuẩn Magazine với line-height 1.7 */}
+            {/* Bài luận chuẩn mực với line-height 1.7 */}
             <div className="space-y-4 text-stone-800 text-sm sm:text-[14.5px] leading-[1.7] font-serif text-left">
               <p>
-                <span className="float-left text-5xl sm:text-6xl font-serif font-normal text-[#881337] mr-3 mt-1 leading-none select-none">
-                  T
-                </span>
-                he Inkwell được thành lập với mục tiêu xây dựng một không gian sách chất lượng cao, phục vụ độc giả quan tâm đến các tác phẩm văn học tư tưởng, triết học và các ấn phẩm học thuật có giá trị bền vững qua thời gian.
+                The Inkwell được thành lập với mục tiêu xây dựng một không gian sách chất lượng cao, phục vụ độc giả quan tâm đến các tác phẩm văn học tư tưởng, triết học và các ấn phẩm học thuật có giá trị bền vững qua thời gian.
               </p>
               
               <p>
