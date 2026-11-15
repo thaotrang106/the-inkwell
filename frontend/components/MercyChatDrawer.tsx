@@ -57,11 +57,13 @@ const formatImageUrl = (url?: string, isbn?: string) => {
 function MercyBookItem({
   rawTitle,
   summary,
+  summaryLabel = "Tổng quan",
   matchedBook,
   onClose,
 }: {
   rawTitle: string;
   summary: string;
+  summaryLabel?: string;
   matchedBook?: BookRecommendation;
   onClose: () => void;
 }) {
@@ -155,7 +157,7 @@ function MercyBookItem({
       {/* 2. Đoạn văn tóm tắt & phân tích */}
       {summary && (
         <p className="text-stone-700 text-xs sm:text-sm leading-relaxed mt-1.5 font-sans">
-          <strong className="font-semibold text-[#881337]">Tóm tắt: </strong>
+          <strong className="font-semibold text-[#881337]">{summaryLabel}: </strong>
           {renderFormattedInline(summary, book ? [book] : undefined, onClose)}
         </p>
       )}
@@ -304,9 +306,18 @@ function FormattedMessage({
 }) {
   const lines = content.split("\n");
 
-  // Gom các dòng lại: Dòng tiêu đề sách in đậm (**...**) và dòng tóm tắt đi liền kề
+  const isBookHeader = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed.startsWith("**")) return false;
+    // Phải có gạch ngang phân cách tác giả: "—" hoặc " - "
+    const hasAuthorSeparator = trimmed.includes("—") || trimmed.includes(" - ");
+    // Loại trừ các tiêu đề mục phân tích
+    const isSection = /^\*\*(Bối cảnh|Tâm lý|Chiều sâu|Bút pháp|Đánh giá|Trải nghiệm|Nội dung|Cốt truyện|Nhân vật|Thông điệp|Lưu ý|Điểm nhấn|Tổng quan)/i.test(trimmed);
+    return hasAuthorSeparator && !isSection;
+  };
+
   const items: Array<
-    | { type: "book"; rawTitle: string; summary: string }
+    | { type: "book"; rawTitle: string; summary: string; summaryLabel: string }
     | { type: "text"; text: string }
     | { type: "space" }
   > = [];
@@ -320,19 +331,29 @@ function FormattedMessage({
       continue;
     }
 
-    const isBookHeader = trimmed.startsWith("**") && (trimmed.includes("—") || trimmed.includes("-") || trimmed.endsWith("**"));
+    const isHeader = isBookHeader(trimmed);
 
-    if (isBookHeader) {
+    if (isHeader) {
       const rawTitle = trimmed.replace(/^\*\*|\*\*$/g, "").trim();
       let summary = "";
-      if (i + 1 < lines.length) {
-        const nextTrimmed = lines[i + 1].trim();
-        if (nextTrimmed.toLowerCase().startsWith("tóm tắt:") || nextTrimmed.toLowerCase().startsWith("phân tích:")) {
-          summary = nextTrimmed.replace(/^(Tóm tắt|Phân tích):\s*/i, "").trim();
-          i++;
+      let summaryLabel = "Tổng quan";
+
+      // Kiểm tra dòng tiếp theo (bỏ qua dòng trống nếu có)
+      let nextIdx = i + 1;
+      while (nextIdx < lines.length && !lines[nextIdx].trim()) {
+        nextIdx++;
+      }
+
+      if (nextIdx < lines.length) {
+        const nextTrimmed = lines[nextIdx].trim();
+        const labelMatch = nextTrimmed.match(/^(Tóm tắt|Tổng quan|Điểm nhấn|Phân tích|Giới thiệu):\s*(.*)$/i);
+        if (labelMatch) {
+          summaryLabel = labelMatch[1];
+          summary = labelMatch[2];
+          i = nextIdx;
         }
       }
-      items.push({ type: "book", rawTitle, summary });
+      items.push({ type: "book", rawTitle, summary, summaryLabel });
       i++;
     } else {
       items.push({ type: "text", text: trimmed });
@@ -360,13 +381,24 @@ function FormattedMessage({
               key={idx}
               rawTitle={item.rawTitle}
               summary={item.summary}
+              summaryLabel={item.summaryLabel}
               matchedBook={matched}
               onClose={onClose}
             />
           );
         }
 
-        // Dòng văn bản bình thường (mở đầu, đoạn văn phân tích hoặc kết luận)
+        // 0. Nếu là tiêu đề phân tích chuyên sâu in đậm đứng riêng 1 dòng (ví dụ: **Bối cảnh & Nút thắt cốt lõi:**)
+        const sectionHeadingMatch = item.text.match(/^\*\*([^*:]+)(?::\*\*|\*\*:?)\s*$/);
+        if (sectionHeadingMatch) {
+          return (
+            <h5 key={idx} className="font-serif font-bold text-[#881337] text-sm sm:text-base mt-3.5 mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#881337] inline-block shrink-0" />
+              <span>{sectionHeadingMatch[1].trim()}</span>
+            </h5>
+          );
+        }
+
         // 1. Nếu là tiêu đề markdown ### hoặc ##
         if (item.text.startsWith("#")) {
           const headingText = item.text.replace(/^#{1,6}\s*/, "");
