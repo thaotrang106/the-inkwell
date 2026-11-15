@@ -292,17 +292,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* 7. CHÂN TRANG BÁO CHÍ (Editorial Colophon) */}
-        <div className="border-t border-ink/20 pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-ink/60 gap-4">
-          <p>© 2026 The Inkwell Bookstore. Tuyển tập tinh hoa tri thức & văn học nhân loại.</p>
-          <div className="flex gap-6">
-            <Link href="/" className="hover:text-[#B12704] transition-colors">Trang chủ</Link>
-            <Link href="/trending" className="hover:text-[#B12704] transition-colors">Sách Thịnh hành</Link>
-            <Link href="/lab" className="hover:text-[#B12704] transition-colors">Algorithm Lab</Link>
-            <Link href="/profile" className="hover:text-[#B12704] transition-colors">Tủ sách</Link>
-          </div>
-        </div>
-
       </main>
     </div>
   );
