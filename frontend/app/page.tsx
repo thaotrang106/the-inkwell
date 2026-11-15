@@ -133,6 +133,8 @@ export default function Home() {
 
   // Quản lý Lịch sử tìm kiếm gần đây (Cách 2)
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
   interface HeroSlide {
     id: number;
@@ -982,17 +984,53 @@ export default function Home() {
         )}
       </section>
 
-      {/* Newsletter Section */}
-      <section id="trending" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10 scroll-mt-24">
-        <div className="bg-ink rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
-          <div className="text-cream max-w-lg text-center md:text-left relative z-10">
-            <h2 className="font-serif text-3xl font-bold mb-4">Đăng ký nhận bản tin.</h2>
-            <p className="text-cream/60">Đăng ký để nhận danh sách gợi ý sách hàng tuần do AI tuyển chọn gửi trực tiếp vào email của bạn.</p>
+      {/* Newsletter Section: Phong cách Editorial tạp chí văn học thanh lịch */}
+      <section id="newsletter" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-16 mb-6">
+        <div className="bg-white border border-stone-300/80 rounded-[4px] p-8 sm:p-10 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xs">
+          <div className="max-w-xl text-center md:text-left">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold block mb-1.5">
+              BẢN TIN THE INKWELL
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#1C1917] tracking-tight mb-2">
+              Đăng ký nhận bản tin
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+              Đăng ký để nhận danh sách gợi ý sách hàng tuần được tuyển chọn bởi đội ngũ biên tập The Inkwell.
+            </p>
           </div>
-          <div className="flex w-full md:w-auto gap-2 relative z-10">
-            <input type="email" placeholder="Nhập địa chỉ email của bạn" className="px-6 py-3 rounded-full bg-cream/10 border border-cream/20 text-cream focus:outline-none focus:border-terracotta w-full md:w-64 placeholder:text-cream/30" />
-            <button className="bg-terracotta text-cream px-6 py-3 rounded-full font-bold hover:bg-white hover:text-ink transition-colors whitespace-nowrap shadow-lg">Đăng ký</button>
+
+          <div className="w-full md:w-auto shrink-0">
+            {newsletterSubscribed ? (
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-[4px] text-xs font-sans text-stone-700">
+                <Check size={15} className="text-emerald-700 shrink-0" />
+                <span>Cảm ơn bạn đã đăng ký nhận bản tin tuyển chọn từ The Inkwell.</span>
+              </div>
+            ) : (
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newsletterEmail.trim()) {
+                    setNewsletterSubscribed(true);
+                  }
+                }}
+                className="flex flex-col sm:flex-row w-full md:w-auto gap-2.5"
+              >
+                <input 
+                  type="email" 
+                  required
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Nhập địa chỉ email của bạn" 
+                  className="px-4 py-2.5 rounded-[4px] bg-[#FAF7F2] border border-stone-300 text-[#1C1917] placeholder:text-stone-400 focus:outline-none focus:border-[#1C1917] w-full sm:w-72 md:w-80 text-xs font-sans transition-colors"
+                />
+                <button 
+                  type="submit"
+                  className="bg-[#881337] hover:bg-[#70102d] text-white px-6 py-2.5 rounded-[4px] font-sans text-xs font-semibold uppercase tracking-[0.15em] transition-colors whitespace-nowrap cursor-pointer shadow-2xs"
+                >
+                  ĐĂNG KÝ
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
