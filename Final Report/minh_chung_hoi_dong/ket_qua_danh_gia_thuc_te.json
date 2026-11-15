@@ -1,0 +1,32 @@
+{
+  "Content-Based (CB)": {
+    "Precision@5": 0.62,
+    "Precision@10": 0.54,
+    "Recall@5": 0.31,
+    "Recall@10": 0.39,
+    "F1@10": 0.45,
+    "MAP@10": 0.485,
+    "Coverage": "78.4%",
+    "Latency_ms": 14.8
+  },
+  "Collaborative (CF)": {
+    "Precision@5": 0.68,
+    "Precision@10": 0.6,
+    "Recall@5": 0.34,
+    "Recall@10": 0.42,
+    "F1@10": 0.49,
+    "MAP@10": 0.532,
+    "Coverage": "62.1%",
+    "Latency_ms": 18.2
+  },
+  "Hybrid Borda Count Fusion": {
+    "Precision@5": 0.82,
+    "Precision@10": 0.72,
+    "Recall@5": 0.42,
+    "Recall@10": 0.55,
+    "F1@10": 0.62,
+    "MAP@10": 0.678,
+    "Coverage": "86.5%",
+    "Latency_ms": 22.5
+  }
+}

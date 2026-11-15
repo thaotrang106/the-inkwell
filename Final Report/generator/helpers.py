@@ -129,34 +129,133 @@ def add_code_block(doc, code_text):
     run.font.color.rgb = RGBColor(30, 40, 50)
     return p
 
-def add_figure(doc, image_path, caption_text, width_inches=5.6):
-    if not os.path.exists(image_path):
+DEFAULT_FIGURE_SOURCES = {
+    "2.1": "Tác giả tổng hợp và xây dựng, 2026",
+    "2.4": "Tác giả thiết kế và trực quan hóa thuật toán, 2026",
+    "3.1": "Tác giả phân tích và thiết kế kiến trúc hệ thống, 2026",
+    "3.2": "Tác giả phân tích và thiết kế phần mềm, 2026",
+    "3.4": "Tác giả thiết kế mô hình quan hệ cơ sở dữ liệu, 2026",
+    "3.5": "Tác giả xây dựng đặc tả luồng nghiệp vụ hệ thống, 2026",
+    "4.1": "Ảnh chụp trực tiếp từ giao diện Swagger UI hệ thống The Inkwell, 2026",
+    "4.2": "Ảnh chụp thực tế từ website The Inkwell vận hành trên Next.js 16, 2026",
+    "4.3": "Ảnh chụp thực tế từ website The Inkwell tích hợp Gemini 2.5 Flash, 2026",
+    "4.4": "Ảnh chụp thực nghiệm tính năng cá nhân hóa động trên website The Inkwell, 2026",
+    "4.5": "Ảnh chụp thực nghiệm từ trang Algorithm Lab của hệ sinh thái The Inkwell, 2026",
+}
+
+DEFAULT_TABLE_SOURCES = {
+    "2.1": "Tác giả tổng hợp từ Ricci et al. (2015) và Aggarwal (2016)",
+    "2.2": "Tác giả tính toán và mô phỏng thực nghiệm, 2026",
+    "3.1": "Tác giả phân tích và tổng hợp thiết kế, 2026",
+    "3.2": "Tác giả xây dựng đặc tả yêu cầu chức năng, 2026",
+    "3.3": "Tác giả xây dựng theo chuẩn chất lượng phần mềm, 2026",
+    "3.4": "Tác giả xây dựng tài liệu đặc tả hệ thống The Inkwell, 2026",
+    "3.5": "Tác giả xây dựng tài liệu đặc tả hệ thống The Inkwell, 2026",
+    "3.6": "Trích xuất từ lược đồ cơ sở dữ liệu Supabase PostgreSQL The Inkwell, 2026",
+    "3.7": "Trích xuất từ thiết kế cơ sở dữ liệu hệ thống The Inkwell, 2026",
+    "3.8": "Đặc tả giao diện lập trình ứng dụng FastAPI của hệ thống The Inkwell, 2026",
+    "4.1": "Kết quả tiền xử lý dữ liệu thực nghiệm của tác giả, 2026",
+    "4.2": "Tính toán thực nghiệm thuật toán Bayesian Average của tác giả, 2026",
+    "4.3": "Tài liệu Swagger UI / OpenAPI của backend FastAPI The Inkwell, 2026",
+    "4.4": "Kết quả kiểm thử thực nghiệm trên hệ thống The Inkwell, 2026",
+    "4.5": "Đo lường thực nghiệm tải với Postman và FastAPI Profiler, 2026",
+}
+
+def resolve_figure_source(caption_text, source_text=None):
+    if source_text:
+        return source_text
+    if caption_text:
+        for k, v in DEFAULT_FIGURE_SOURCES.items():
+            if f"Hình {k}" in caption_text or f"hình {k}" in caption_text.lower():
+                return v
+    return "Tác giả xây dựng và tổng hợp, 2026"
+
+def resolve_table_source(caption_text, source_text=None):
+    if source_text:
+        return source_text
+    if caption_text:
+        for k, v in DEFAULT_TABLE_SOURCES.items():
+            if f"Bảng {k}" in caption_text or f"bảng {k}" in caption_text.lower():
+                return v
+    return "Tác giả tổng hợp, 2026"
+
+def add_figure(doc, image_path, caption_text, width_inches=5.8, source_text=None):
+    # Check candidates
+    candidates = [
+        image_path,
+        os.path.join("Final Report", image_path),
+        os.path.join("Final Report", os.path.basename(image_path))
+    ]
+    
+    # High-resolution official image mappings
+    alias_map = {
+        "use case": "Final Report/So_do_Use_Case_The_Inkwell_Chuan.drawio.png",
+        "recommendation system": "Final Report/So_do_kien_truc_The_Inkwell_Chuan.drawio (2).png",
+        "erd": "Final Report/So_do_ERD_The_Inkwell_Chuan.png",
+        "sequence": "Final Report/So_do_Sequence_Diagram_The_Inkwell_Chuan.png",
+        "borda": "Final Report/So_do_Borda_Count_Fusion.png",
+        "swagger": "Final Report/Hinh_4_1_Swagger_UI_Combined.png",
+        "user_a": "Final Report/Hinh_4_2_Trang_chu_User_A.png",
+        "detail": "Final Report/Hinh_4_3_Chi_tiet_sach_Mercy_AI.png",
+        "user_b": "Final Report/Hinh_4_4_Trang_chu_User_B.png",
+        "lab": "Final Report/Hinh_4_5_Algorithm_Lab.png"
+    }
+    
+    for k, v in alias_map.items():
+        if k in image_path.lower() and os.path.exists(v):
+            candidates.insert(0, v)
+            
+    resolved_path = None
+    for cand in candidates:
+        if os.path.exists(cand):
+            resolved_path = cand
+            break
+            
+    if not resolved_path:
         print(f"[WARN] Image not found: {image_path}")
         return None
+        
     p_img = doc.add_paragraph()
     p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_img.paragraph_format.space_before = Pt(8)
     p_img.paragraph_format.space_after = Pt(4)
     p_img.paragraph_format.first_line_indent = Inches(0)
     run_img = p_img.add_run()
-    run_img.add_picture(image_path, width=Inches(width_inches))
+    run_img.add_picture(resolved_path, width=Inches(width_inches))
     
+    # Caption line
     p_cap = doc.add_paragraph()
     p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_cap.paragraph_format.space_before = Pt(2)
-    p_cap.paragraph_format.space_after = Pt(10)
+    p_cap.paragraph_format.space_before = Pt(3)
+    p_cap.paragraph_format.space_after = Pt(1)
     p_cap.paragraph_format.first_line_indent = Inches(0)
+    p_cap.paragraph_format.keep_with_next = True
     run_cap = p_cap.add_run(caption_text)
-    set_font(run_cap, size_pt=11, bold=True, italic=True, color=(60, 60, 60))
+    set_font(run_cap, size_pt=11, bold=True, italic=True, color=(40, 40, 40))
+    
+    # Source line
+    src = resolve_figure_source(caption_text, source_text)
+    if src:
+        p_src = doc.add_paragraph()
+        p_src.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_src.paragraph_format.space_before = Pt(0)
+        p_src.paragraph_format.space_after = Pt(10)
+        p_src.paragraph_format.first_line_indent = Inches(0)
+        formatted_src = f"(Nguồn: {src})" if not src.startswith("(") else src
+        run_src = p_src.add_run(formatted_src)
+        set_font(run_src, size_pt=10.5, bold=False, italic=True, color=(70, 70, 70))
+        
+    print(f"  [FIGURE EMBEDDED] {resolved_path} -> {caption_text[:50]}...")
     return p_img
 
-def add_table(doc, headers, rows_data, caption_text=None, col_widths=None):
+def add_table(doc, headers, rows_data, caption_text=None, col_widths=None, source_text=None):
     if caption_text:
         p_cap = doc.add_paragraph()
         p_cap.alignment = WD_ALIGN_PARAGRAPH.LEFT
         p_cap.paragraph_format.space_before = Pt(8)
         p_cap.paragraph_format.space_after = Pt(4)
         p_cap.paragraph_format.first_line_indent = Inches(0)
+        p_cap.paragraph_format.keep_with_next = True
         run_cap = p_cap.add_run(caption_text)
         set_font(run_cap, size_pt=11.5, bold=True, italic=True, color=(40, 40, 40))
         
@@ -206,7 +305,20 @@ def add_table(doc, headers, rows_data, caption_text=None, col_widths=None):
                 if c_idx < len(row.cells):
                     row.cells[c_idx].width = Inches(w)
                     
-    p_spacer = doc.add_paragraph()
-    p_spacer.paragraph_format.space_before = Pt(2)
-    p_spacer.paragraph_format.space_after = Pt(4)
+    # Source line under table
+    src = resolve_table_source(caption_text, source_text)
+    if src:
+        p_src = doc.add_paragraph()
+        p_src.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_src.paragraph_format.space_before = Pt(3)
+        p_src.paragraph_format.space_after = Pt(8)
+        p_src.paragraph_format.first_line_indent = Inches(0)
+        formatted_src = f"(Nguồn: {src})" if not src.startswith("(") else src
+        run_src = p_src.add_run(formatted_src)
+        set_font(run_src, size_pt=10.5, bold=False, italic=True, color=(70, 70, 70))
+    else:
+        p_spacer = doc.add_paragraph()
+        p_spacer.paragraph_format.space_before = Pt(2)
+        p_spacer.paragraph_format.space_after = Pt(6)
+        
     return table

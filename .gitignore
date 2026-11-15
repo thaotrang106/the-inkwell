@@ -1,7 +1,7 @@
 # Environment variables (Bảo vệ thông tin bí mật: Supabase, Gemini Key)
 .env
-.env*.local
-.env.development
+.env.*
+!.env.example
 
 # Python
 __pycache__/
@@ -38,7 +38,4 @@ Thumbs.db
 
 # Large Samples / Temp
 Đồ án sample/
-
-
 .vercel
-.env*

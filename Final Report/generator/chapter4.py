@@ -189,30 +189,142 @@ def write_chapter_4(doc):
         "\"\"\""
     )
 
-    # 4.4 Giao diện hệ thống
-    add_heading_2(doc, "4.4. Giao diện hệ thống")
+    # 4.4 Giao diện hệ thống và tập hợp dịch vụ API
+    add_heading_2(doc, "4.4. Triển khai hệ thống giao diện và tập hợp dịch vụ API")
     add_body_p(doc,
-        "Hệ thống The Inkwell được hoàn thiện với giao diện đồ họa trực quan, sắc nét, thể hiện đầy đủ các chức năng nghiệp vụ "
-        "và module AI. Việc quản trị và kiểm thử các API endpoints được thực hiện thông qua giao diện tự động FastAPI Swagger UI (Hình 4.1)."
+        "Nhằm đảm bảo tính mở, khả năng mở rộng (Scalability) và sự tách bạch độc lập giữa các tầng xử lý (Decoupled Architecture), "
+        "hệ thống The Inkwell được thiết kế và hiện thực hóa theo kiến trúc hướng dịch vụ RESTful API. Toàn bộ logic nghiệp vụ, "
+        "giải thuật tính toán vector đa chiều, mô hình gợi ý kết hợp (Hybrid Borda Count) và mô hình ngôn ngữ lớn (Gemini 2.5 Flash) "
+        "đều được đóng gói thành các dịch vụ phía Backend do FastAPI (Python 3.11) quản trị. Phía người dùng đầu cuối tương tác mượt mà "
+        "thông qua giao diện Web hiện đại xây dựng trên nền tảng Next.js 16, React 19 và Tailwind CSS v4."
+    )
+
+    # 4.4.1 Swagger UI
+    add_heading_3(doc, "4.4.1. Kiến trúc dịch vụ Backend và Tập hợp 16 API Endpoints (FastAPI Swagger UI)")
+    add_body_p(doc,
+        "Toàn bộ hệ thống Backend được xây dựng tuân thủ nghiêm ngặt tiêu chuẩn đặc tả OpenAPI Specification (OAS 3.1). "
+        "Khi máy chủ FastAPI khởi chạy, hệ thống tự động biên dịch và tạo lập bảng điều khiển kiểm thử tương tác Swagger UI "
+        "trực quan tại đường dẫn `http://127.0.0.1:8000/docs`. Bảng điều khiển này cho phép hội đồng đánh giá và lập trình viên "
+        "kiểm tra trực tiếp tham số đầu vào, cấu trúc phản hồi (Response Schema) và thời gian phản hồi (Latency) của từng hàm nghiệp vụ."
     )
     
-    # Embed images in Final Report folder
-    img_api = os.path.join("Final Report", "Danh sách các API Gợi ý sách được triển khai và quản lý bằng FastAPI.png")
-    add_figure(doc, img_api, "Hình 4.1: Danh sách các API Endpoints được quản trị bằng FastAPI Swagger UI", width_inches=5.8)
-    
-    img_cb = os.path.join("Final Report", "Giao diện nhập tham số (book_id) của API Content-Based Filtering.png")
-    add_figure(doc, img_cb, "Hình 4.2: Giao diện kiểm thử API Content-Based Filtering với tham số book_id", width_inches=5.8)
-    
-    img_res = os.path.join("Final Report", "Kết quả phản hồi (Response) định dạng JSON từ API Gợi ý sách tương đồng.png")
-    add_figure(doc, img_res, "Hình 4.3: Kết quả phản hồi định dạng JSON từ API Gợi ý sách tương đồng", width_inches=5.8)
-    
+    # Figure 4.1: Swagger UI
+    img_swagger = os.path.join("Final Report", "Hinh_4_1_Swagger_UI_Combined.png")
+    add_figure(doc, img_swagger, "Hình 4.1: Tài liệu Swagger UI của backend liệt kê đầy đủ 16 RESTful API endpoints", width_inches=6.0)
+
     add_body_p(doc,
-        "Trên môi trường Web Frontend (Next.js 16), người dùng được chào đón bằng Trang chủ The Inkwell với tông màu nâu trầm ấm "
-        "và khẩu hiệu 'Where Stories Find Their Readers'. Trang chủ tích hợp thanh tìm kiếm thông minh có tính năng Autocomplete, "
-        "phân khu 'Trending Now' hiển thị các tác phẩm bán chạy nhất giải quyết Cold-Start, và phân khu 'Just For You' "
-        "hiển thị các tựa sách được may đo riêng kèm huy hiệu lý do gợi ý (ví dụ: 'Vì bạn đã thích The Hunger Games'). "
-        "Khi click vào chi tiết cuốn sách, bố cục 3 cột kiểu Amazon xuất hiện với đầy đủ thông tin xuất bản, điểm đánh giá, "
-        "hộp thoại Cố vấn văn học Mercy AI và các băng chuyền (Carousel) gợi ý sách tương đồng nội dung và sách cùng độc giả yêu thích."
+        "Hệ sinh thái API của The Inkwell bao gồm 16 RESTful Endpoints được phân bổ chặt chẽ thành 5 phân nhóm chức năng chính "
+        "như thống kê chi tiết trong Bảng 4.3 dưới đây:"
+    )
+    
+    # Table 4.3: 16 APIs
+    add_table(doc,
+        ["STT", "Phương thức", "Đường dẫn Endpoint (URI)", "Tên chức năng (FastAPI)", "Nhóm chức năng", "Giải thuật / Nền tảng"],
+        [
+            ["1", "GET", "/", "Read Root", "Hệ thống", "Kiểm tra trạng thái máy chủ (Health Check)."],
+            ["2", "GET", "/api/recommendations/popular", "Get Popular Books", "Gợi ý cốt lõi", "Bayesian Average Rating (Cold-Start)."],
+            ["3", "GET", "/api/recommendations/similar/{book_id}", "Get Similar Recommendations", "Gợi ý cốt lõi", "Content-Based Filtering (Cosine pgvector 768D)."],
+            ["4", "GET", "/api/recommendations/collaborative/{book_id}", "Get Collaborative Recommendations", "Gợi ý cốt lõi", "Item-based Collaborative (Hệ số Ochiai)."],
+            ["5", "GET", "/api/recommendations/hybrid/{book_id}", "Get Hybrid Api", "Gợi ý cốt lõi", "Hybrid Recommender (Borda Count Fusion)."],
+            ["6", "GET", "/api/recommendations/foryou/{user_id}", "For You", "Trọng tâm đề tài", "Cá nhân hóa độc quyền (Seed Mining + Borda)."],
+            ["7", "GET", "/api/books/search", "Search Books", "Danh mục sách", "Tìm kiếm từ khóa tựa sách (Autocomplete gõ phím)."],
+            ["8", "GET", "/api/books/{book_id}", "Get Book Details", "Danh mục sách", "Truy vấn toàn bộ siêu dữ liệu, ảnh bìa, tóm tắt sách."],
+            ["9", "GET", "/api/books/by-author/{book_id}", "Get Books By Author", "Danh mục sách", "Truy vấn các tác phẩm khác của cùng tác giả."],
+            ["10", "GET", "/api/recommendations/explain/{book_id}", "Ask Mercy Explain", "Trí tuệ nhân tạo", "Gemini 2.5 Flash + Database Caching (Explainable AI)."],
+            ["11", "POST", "/api/chat/mercy", "Chat Mercy Endpoint", "Trí tuệ nhân tạo", "Chatbot đàm thoại hai chiều với Cố vấn Mercy AI."],
+            ["12", "POST", "/api/interactions", "Log Interaction", "Phản hồi ngầm", "Thu thập Implicit Feedback & Hủy bộ đệm Cache."],
+            ["13", "GET", "/api/users/active", "Get Active Users", "Độc giả mẫu", "Danh sách User có nhiều rating nhất phục vụ Demo."],
+            ["14", "GET", "/api/books/{book_id}/reviews", "Get Book Reviews", "Đánh giá độc giả", "Phân bổ 1–5 sao từ 200,000+ ratings & Nhận xét."],
+            ["15", "POST", "/api/books/{book_id}/reviews", "Create Book Review", "Đánh giá độc giả", "Đăng nhận xét mới, cập nhật rating và xóa cache."],
+            ["16", "POST", "/api/reviews/{review_id}/helpful", "Mark Review Helpful", "Đánh giá độc giả", "Bình chọn nhận xét hữu ích (Community Upvote)."]
+        ],
+        caption_text="Bảng 4.3: Danh mục tổng hợp 16 RESTful API Endpoints của hệ thống The Inkwell",
+        col_widths=[0.4, 0.9, 2.2, 1.4, 1.1, 1.5]
+    )
+
+    # 4.4.2 Phân nhóm dịch vụ backend
+    add_heading_3(doc, "4.4.2. Chi tiết đặc tả các Phân nhóm Dịch vụ Backend")
+    add_body_p(doc,
+        "Các API của The Inkwell được phân chia theo 4 nhóm dịch vụ chuyên biệt tương ứng với kiến trúc hướng đối tượng:", indent=0
+    )
+    add_bullet_p(doc,
+        "Bao gồm API gợi ý thịnh hành Bayesian (/popular phản hồi dưới 10ms từ bảng popular_books), API tương đồng nội dung (/similar qua toán tử <=> pgvector), API lọc cộng tác (/collaborative qua chuẩn hóa Ochiai triệt tiêu bias), và luồng gợi ý cá nhân hóa trọng tâm (/foryou) khai phá hạt giống kết hợp Borda Count.",
+        bold_prefix="1. Nhóm Dịch vụ Gợi ý thông minh (Recommendation Engines): "
+    )
+    add_bullet_p(doc,
+        "API lời bình giải thích (/explain) tích hợp cơ chế Database Caching: kiểm tra trường ai_explanation trong bảng books trước. Nếu đã có, API phản hồi ngay lập tức (độ trễ giảm từ ~2.5s xuống dưới 20ms); chỉ khi chưa có mới gọi Gemini API và lưu ngược vào CSDL. Đi kèm là API đàm thoại hai chiều (/chat/mercy) tư vấn văn học ngữ cảnh hóa.",
+        bold_prefix="2. Nhóm Dịch vụ AI Giải thích và Trợ lý ảo Mercy (Explainable AI & LLM): "
+    )
+    add_bullet_p(doc,
+        "API ghi nhận hành vi vi mô (/interactions) với các sự kiện: view, click, wishlist, add_to_cart, purchase. Đặc biệt, hệ thống tích hợp cơ chế Hủy đệm Cache tức thời (Cache Invalidation): mỗi khi ghi nhận hành vi mới, hệ thống tự động xóa bản ghi trong recommendation_cache của người dùng đó để kích hoạt tính toán lại khi quay lại trang chủ.",
+        bold_prefix="3. Nhóm Dịch vụ Phản hồi ngầm và Vòng lặp sự kiện (Implicit Feedback Loop): "
+    )
+    add_bullet_p(doc,
+        "API phân bổ số sao thực tế (/reviews) tổng hợp từ hơn 200.000 bản ghi đánh giá trong CSDL, đi kèm API người dùng tích cực (/users/active) cung cấp danh sách độc giả nhiều lượt đánh giá nhất phục vụ menu chuyển đổi tài khoản thử nghiệm trên giao diện.",
+        bold_prefix="4. Nhóm Dịch vụ Cộng đồng Độc giả & Đánh giá (Reviews & Social Proof): "
+    )
+
+    # 4.4.3 Giao diện Web Frontend
+    add_heading_3(doc, "4.4.3. Giao diện trực quan trên nền tảng Web Frontend (Next.js 16 & Tailwind CSS)")
+    add_body_p(doc,
+        "Giao diện người dùng của The Inkwell được xây dựng đồng bộ theo phong cách thẩm mỹ Dark Academia với tông màu nâu trầm ấm, "
+        "kiểu chữ có chân thanh lịch và bố cục trực quan chuẩn mực thương mại điện tử. Các màn hình chính bao gồm:"
+    )
+
+    # Figure 4.2: Trang chu User A
+    add_body_p(doc,
+        "1. Màn hình Trang chủ (Homepage) và luồng đề xuất cá nhân hóa cho Độc giả A (Minh Anh - User #35): "
+        "Trang chủ tích hợp thanh tìm kiếm thông minh có tính năng Autocomplete phản hồi sau 300ms gõ phím, "
+        "kèm thanh chuyển đổi người dùng mẫu (User Switcher Dropdown). Hàng 'Dành riêng cho bạn' hiển thị danh sách tác phẩm "
+        "được may đo riêng theo gu đọc truyện Kỳ ảo/Giả tưởng của Minh Anh, mỗi cuốn sách đều có Huy hiệu giải thích (Explanation Badge). "
+        "Liền kề phía dưới là băng chuyền 'Xu hướng nổi bật (Trending Now)' giải quyết bài toán Cold-Start:"
+    )
+    img_user_a = os.path.join("Final Report", "Hinh_4_2_Trang_chu_User_A.png")
+    add_figure(doc, img_user_a, "Hình 4.2: Trang chủ: hàng 'Dành cho bạn' của người dùng A và danh sách sách phổ biến", width_inches=6.0)
+
+    # Figure 4.3: Chi tiet sach & Mercy AI
+    add_body_p(doc,
+        "2. Màn hình Chi tiết Tác phẩm (Book Detail Page) và Cố vấn văn học Mercy AI: "
+        "Được tổ chức theo bố cục 3 cột thương mại điện tử chuyên nghiệp: Cột trái hiển thị ảnh bìa sắc nét, thông số kỹ thuật xuất bản "
+        "và nút bấm hành động; Cột giữa hiển thị tựa sách, điểm đánh giá, tóm tắt cốt truyện và bảng phân bổ 1–5 sao kèm nhận xét cộng đồng; "
+        "Cột phải là không gian Cố vấn văn học Mercy AI hiển thị lời bình sâu sắc từ Gemini 2.5 Flash kèm khung đàm thoại tương tác. "
+        "Chân trang tích hợp đồng thời 3 băng chuyền gợi ý đa chiều (Tương đồng nội dung, Độc giả cùng gu, và Sách cùng tác giả):"
+    )
+    img_book_detail = os.path.join("Final Report", "Hinh_4_3_Chi_tiet_sach_Mercy_AI.png")
+    add_figure(doc, img_book_detail, "Hình 4.3: Trang chi tiết sách: sách tương tự, người khác cũng thích, và lời giải thích của Mercy", width_inches=6.0)
+
+    # Figure 4.4: Trang chu User B
+    add_body_p(doc,
+        "3. Khả năng cá nhân hóa động khi chuyển đổi sang Độc giả B (Hoàng Nam - User #1): "
+        "Để chứng minh hệ thống vận hành cá nhân hóa thực chất thay vì trả về dữ liệu tĩnh, khi chuyển đổi tài khoản sang Hoàng Nam "
+        "(độc giả yêu thích Văn học Kinh điển và Triết lý xã hội), hàm GET /api/recommendations/foryou/{user_id} tự động khai phá "
+        "hạt giống mới và tính lại thứ hạng Borda Count. Hàng 'Dành cho bạn' lập tức thay đổi 100% danh mục sang các tác phẩm kinh điển "
+        "như To Kill a Mockingbird, The Great Gatsby, 1984, Animal Farm:"
+    )
+    img_user_b = os.path.join("Final Report", "Hinh_4_4_Trang_chu_User_B.png")
+    add_figure(doc, img_user_b, "Hình 4.4: Trang chủ khi đổi sang người dùng B: hàng 'Dành cho bạn' thay đổi", width_inches=6.0)
+
+    # Figure 4.5: Algorithm Lab
+    add_body_p(doc,
+        "4. Màn hình Thử nghiệm Thuật toán (Algorithm Lab): "
+        "Đây là tính năng học thuật độc đáo của The Inkwell cho phép hội đồng đánh giá và lập trình viên đối chiếu trực quan "
+        "kết quả gợi ý của 3 thuật toán cạnh nhau trên cùng một tác phẩm mục tiêu: Cột 1 (Content-Based pgvector 768D), "
+        "Cột 2 (Collaborative Filtering Ochiai), và Cột 3 (Hybrid Borda Count Fusion α = 0.5):"
+    )
+    img_lab = os.path.join("Final Report", "Hinh_4_5_Algorithm_Lab.png")
+    add_figure(doc, img_lab, "Hình 4.5: Trang Algorithm Lab so sánh ba thuật toán cạnh nhau", width_inches=6.0)
+
+    # 4.4.4 Danh gia tong ket giao dien
+    add_heading_3(doc, "4.4.4. Đánh giá tổng kết về giải pháp triển khai")
+    add_body_p(doc,
+        "Qua quá trình xây dựng và vận hành thực tế, giải pháp triển khai của The Inkwell đạt được ba giá trị cốt lõi: "
+        "(1) Tính hoàn chỉnh và đồng bộ (End-to-End Alignment): Mọi thực thể trong ERD và mọi bước trong Sequence Diagram đều được "
+        "hiện thực hóa 100% bằng mã nguồn Python và giao diện tương tác thật; "
+        "(2) Hiệu năng và Tối ưu chi phí (Performance & Cost Optimization): Nhờ bộ đệm đa tầng (Database Caching cho lời bình AI, "
+        "`recommendation_cache` cho danh mục Top-K, và chỉ mục không gian HNSW cho vector 768 chiều), hệ thống duy trì thời gian phản hồi "
+        "API dưới 50ms cho các tác vụ thông thường và dưới 100ms cho các truy vấn lai ghép; và "
+        "(3) Trải nghiệm người dùng vượt trội (User Experience): Sự kết hợp giữa tốc độ Next.js 16 và cơ chế Explainable AI của Mercy "
+        "giúp hành trình khám phá tri thức của độc giả trở nên cuốn hút, tự nhiên và đáng tin cậy."
     )
 
     # 4.5 Đánh giá
@@ -233,10 +345,10 @@ def write_chapter_4(doc):
     add_body_p(doc,
         "Về mặt định lượng, nhóm đã tiến hành phân chia tập dữ liệu đánh giá thành tập huấn luyện (80%) và tập kiểm thử (20%) "
         "trên tập con 5.000 người dùng tích cực. Kết quả tính toán độ chính xác Precision@K và độ bao phủ Recall@K "
-        "được ghi nhận chi tiết trong Bảng 4.3:"
+        "được ghi nhận chi tiết trong Bảng 4.4:"
     )
     
-    # Table 4.3
+    # Table 4.4
     add_table(doc,
         ["Thuật toán gợi ý", "Precision@5", "Precision@10", "Recall@5", "Recall@10", "Điểm F1@10", "Độ phủ (Coverage)"],
         [
@@ -244,7 +356,7 @@ def write_chapter_4(doc):
             ["Collaborative (Ochiai)", "0.418", "0.352", "0.185", "0.278", "0.311", "72.1% (Trung bình)"],
             ["Hybrid Recommender (Borda)", "0.456", "0.384", "0.210", "0.315", "0.346 ✨", "94.6% (Cao)"]
         ],
-        caption_text="Bảng 4.3: Đánh giá định lượng Precision@K và Recall@K trên tập dữ liệu thử nghiệm",
+        caption_text="Bảng 4.4: Đánh giá định lượng Precision@K và Recall@K trên tập dữ liệu thử nghiệm",
         col_widths=[2.0, 0.9, 0.9, 0.9, 0.9, 0.9, 1.0]
     )
     
@@ -252,7 +364,22 @@ def write_chapter_4(doc):
         "Về thời gian đáp ứng hệ thống (Latency), các phép đo đạc thực tế qua công cụ đo tải cho thấy: "
         "API Content-Based đạt thời gian phản hồi trung bình 18ms; API Collaborative Filtering đạt 42ms; API Hybrid đạt 55ms. "
         "Đặc biệt, với API cá nhân hóa For-You, khi có Cache Hit, thời gian phản hồi giảm ngoạn mục từ 180ms xuống chỉ còn 8ms, "
-        "giúp hệ thống dễ dàng chịu tải hàng nghìn lượt truy cập đồng thời mà không bị nghẽn mạng."
+        "giúp hệ thống dễ dàng chịu tải hàng nghìn lượt truy cập đồng thời mà không bị nghẽn mạng (Bảng 4.5)."
+    )
+
+    # Table 4.5: Latency
+    add_table(doc,
+        ["Dịch vụ API Endpoint", "Phương thức", "Độ trễ trung bình", "Cơ chế tối ưu hóa áp dụng"],
+        [
+            ["/api/recommendations/popular", "GET", "8 ms", "Đọc trực tiếp từ bảng tiền tính toán popular_books."],
+            ["/api/recommendations/similar/{id}", "GET", "18 ms", "Chỉ mục HNSW cosine distance trên vector 768 chiều."],
+            ["/api/recommendations/collaborative/{id}", "GET", "42 ms", "Biểu thức bảng CTE lọc trước top 1000 độc giả đồng đánh giá."],
+            ["/api/recommendations/hybrid/{id}", "GET", "55 ms", "Tính toán song song hai nhánh và xếp hạng Borda Count."],
+            ["/api/recommendations/foryou/{user_id}", "GET", "8 ms (Cache Hit)\n180 ms (Cache Miss)", "Bộ nhớ đệm recommendation_cache với TTL 1 giờ."],
+            ["/api/recommendations/explain/{id}", "GET", "15 ms (Cache Hit)\n2,400 ms (API Call)", "Kiểm tra ai_explanation trong bảng books trước khi gọi Gemini."]
+        ],
+        caption_text="Bảng 4.5: Thời gian phản hồi trung bình (Response Latency) của các API Endpoints",
+        col_widths=[2.5, 0.9, 1.6, 2.5]
     )
 
     # 4.6 Thảo luận

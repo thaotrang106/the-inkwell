@@ -52,6 +52,15 @@ def write_chapter_2(doc):
         bold_prefix="4. Sự thiên lệch về độ phổ biến (Popularity Bias): "
     )
 
+    add_body_p(doc,
+        "Để giải quyết thỏa đáng các thách thức trên trong điều kiện tài nguyên triển khai thực tế, đề tài đã phân tích và lựa chọn "
+        "ba kỹ thuật lõi phù hợp nhất để hợp nhất thành mô hình gợi ý Lai (Hybrid) cho hệ thống The Inkwell. Sơ đồ định hướng "
+        "phương pháp tiếp cận tổng thể được tổng hợp trong Hình 2.1 dưới đây:"
+    )
+    h2_1_path = "Final Report/Hinh_2_1_So_do_cac_phuong_phap_goi_y.png"
+    if os.path.exists(h2_1_path):
+        add_figure(doc, h2_1_path, "Hình 2.1: Sơ đồ các phương pháp gợi ý và kỹ thuật lõi áp dụng trong hệ thống The Inkwell", width_inches=6.0)
+
     # 2.2 Content-Based Filtering
     add_heading_2(doc, "2.2. Content-Based Filtering – Lọc theo nội dung")
     add_body_p(doc,

@@ -27,7 +27,7 @@ def write_chapter_5(doc):
         bold_prefix="2. Về mặt dữ liệu và phát hiện thực nghiệm: "
     )
     add_bullet_p(doc,
-        "Xây dựng thành công máy chủ backend chuyên dụng bằng FastAPI cung cấp 10 RESTful API endpoints có tài liệu tự động Swagger UI, "
+        "Xây dựng thành công máy chủ backend chuyên dụng bằng FastAPI cung cấp 16 RESTful API endpoints có tài liệu tự động Swagger UI, "
         "tích hợp hệ thống lưu trữ đệm hai tầng (Two-level Caching) giúp giảm thời gian phản hồi cho các yêu cầu cá nhân hóa từ 180ms "
         "xuống chỉ còn 8ms.",
         bold_prefix="3. Về mặt kiến trúc backend và hiệu năng: "

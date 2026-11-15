@@ -1,6 +1,7 @@
 import os
 import sys
 import docx
+from docx.oxml import parse_xml
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -21,30 +22,45 @@ from chapter5 import write_chapter_5
 
 def build_full_report():
     template_path = os.path.join("Final Report", "Bao cao do án - Final.docx")
-    output_path = os.path.join("Final Report", "Bao cao do an - The Inkwell - Ban Chinh Thuc.docx")
+    output_v1_path = os.path.join("Final Report", "Final - V1.docx")
+    output_root_path = "Final - V1.docx"
+    output_legacy_path = os.path.join("Final Report", "Bao cao do an - The Inkwell - Ban Chinh Thuc.docx")
     
     print(f"Loading template document from {template_path} (READ-ONLY, KHÔNG GHI ĐÈ)...")
     doc = docx.Document(template_path)
+    body = doc._body._element
     
     # 1. Update front matter (Covers, Cam đoan, Abbreviations, Figures list, Tables list)
-    update_front_matter(doc)
+    # Returns the section break paragraph ending the Front Matter (Section 3)
+    p_sect3 = update_front_matter(doc)
     
-    # 2. Find the index where LỜI MỞ ĐẦU begins
-    idx_start_body = None
-    for i, p in enumerate(doc.paragraphs):
-        if "LỜI MỞ ĐẦU" in p.text.upper() or "MỞ ĐẦU" in p.text.upper():
-            idx_start_body = i
+    # 2. Extract Section 4's sectPr XML (Body section properties: footer rId21, page_start=1)
+    s_body_xml = None
+    for c in body:
+        for s in c.iter('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sectPr'):
+            start = s.xpath('.//w:pgNumType/@w:start')
+            if start and start[0] == '1':
+                s_body_xml = s.xml
+                break
+        if s_body_xml:
             break
             
-    if idx_start_body is not None:
-        print(f"Found LỜI MỞ ĐẦU at paragraph index {idx_start_body}. Deleting old empty body paragraphs...")
-        paras_to_remove = doc.paragraphs[idx_start_body:]
-        for p in paras_to_remove:
-            p._element.getparent().remove(p._element)
-    else:
-        print("[WARN] Could not find LỜI MỞ ĐẦU paragraph, appending to end of document.")
+    # 3. Clean out ALL old body children (BOTH paragraphs AND tables) after p_sect3
+    final_sectPr = body[-1]
+    p_sect3_idx = list(body).index(p_sect3)
+    to_remove_body = [c for i, c in enumerate(body) if i > p_sect3_idx and c != final_sectPr]
+    print(f"Cleaning out {len(to_remove_body)} old body children (paragraphs AND tables)...")
+    for c in to_remove_body:
+        body.remove(c)
         
-    # 3. Write all chapters sequentially
+    # Replace final_sectPr with the extracted body sectPr
+    if s_body_xml:
+        new_sectPr = parse_xml(s_body_xml)
+        body.replace(final_sectPr, new_sectPr)
+        
+    print(f"Verified tables in front matter: {len(doc.tables)} (Covers + Abbreviations)")
+    
+    # 4. Write all chapters sequentially
     print("\n--- GENERATING CHAPTERS ---")
     write_loi_mo_dau(doc)
     write_chapter_1(doc)
@@ -53,18 +69,23 @@ def build_full_report():
     write_chapter_4(doc)
     write_chapter_5(doc)
     
-    # 4. Save documents strictly to a separate file
-    print("\n--- SAVING COMPLETED DOCUMENT TO SEPARATE FILE ---")
-    try:
-        doc.save(output_path)
-        print(f"[SUCCESS] Đã lưu file kết quả riêng biệt tại: {output_path}")
-    except PermissionError:
-        fallback_path = os.path.join("Final Report", "Bao cao do an - The Inkwell - Ban Chinh Thuc - V2.docx")
-        print(f"[WARN] File đang được mở trong Word: {output_path}. Đang lưu vào file dự phòng: {fallback_path}")
-        doc.save(fallback_path)
-        print(f"[SUCCESS] Đã lưu thành công vào file dự phòng: {fallback_path}")
-    except Exception as e:
-        print(f"[ERROR] Không thể lưu file: {e}")
+    print(f"\nTotal tables in generated report: {len(doc.tables)}")
+    print(f"Total sections in generated report: {len(doc.sections)}")
+    
+    # 5. Save documents strictly to the requested new file: Final - V1.docx
+    print("\n--- SAVING REFINED DOCUMENT TO FINAL - V1 ---")
+    targets = [output_v1_path, output_root_path, output_legacy_path]
+    for target in targets:
+        try:
+            doc.save(target)
+            print(f"[SUCCESS] Đã lưu file kết quả tinh chỉnh tại: {target}")
+        except PermissionError:
+            fallback = target.replace(".docx", "_new.docx")
+            print(f"[WARN] File đang mở trong Word: {target}. Lưu vào file dự phòng: {fallback}")
+            doc.save(fallback)
+            print(f"[SUCCESS] Đã lưu thành công vào: {fallback}")
+        except Exception as e:
+            print(f"[ERROR] Không thể lưu file {target}: {e}")
     
     print("\nAll tasks completed successfully!")
 

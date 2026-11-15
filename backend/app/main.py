@@ -30,7 +30,11 @@ from app.services.llm_explain import generate_explanation, chat_with_mercy
 from app.services.personalized import get_for_you
 
 # Khởi tạo app FastAPI
-app = FastAPI(title="The Inkwell AI Backend", version="1.0")
+app = FastAPI(
+    title="The Inkwell Recommender System & AI Literary Advisor API",
+    description="Hệ thống API gợi ý sách cá nhân hóa thông minh đa thuật toán (Content-Based, Collaborative, Hybrid Borda Count) & Cố vấn văn học Mercy AI (Google Gemini 2.5 Flash) – Khóa luận Tốt nghiệp Ngành Hệ thống Thông tin Quản lý (MIS), Trường Đại học Ngân hàng TP. Hồ Chí Minh.",
+    version="2.0.0"
+)
 
 # Bật CORS để cho phép Website (Frontend) gọi được API mà không bị chặn
 app.add_middleware(
