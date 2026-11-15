@@ -224,7 +224,7 @@ const PROFILES_BY_USER_ID: Record<number, ProfileMetadata> = {
         id: 12,
         title: "Angels & Demons",
         author: "Dan Brown",
-        img: "https://images.gr-assets.com/books/1584633425l/960.jpg",
+        img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg",
         status: "Đã đọc xong",
         progress: 100,
         rating: 4.5,
@@ -537,7 +537,16 @@ export default function ProfilePage() {
                   <div key={b.id} className="bg-white rounded-[4px] p-4 border border-stone-300/80 flex flex-col justify-between">
                     <div>
                       <div className="aspect-[2/3] rounded-[2px] overflow-hidden mb-3 bg-stone-100">
-                        <img src={b.img} alt={b.title} className="w-full h-full object-cover" />
+                        <img 
+                          src={b.img} 
+                          alt={b.title} 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            if (!e.currentTarget.src.includes("weserv.nl")) {
+                              e.currentTarget.src = `https://images.weserv.nl/?url=${encodeURIComponent(b.img)}&w=400&fit=cover&q=90`;
+                            }
+                          }}
+                        />
                       </div>
                       <span className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] inline-block mb-2 border ${
                         b.status === "Đang đọc" 

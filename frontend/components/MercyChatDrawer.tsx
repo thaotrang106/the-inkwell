@@ -95,6 +95,21 @@ function MercyBookItem({
             author: first.author || authorFromTitle,
             image_url: first.image_url,
           });
+        } else if (!isCancelled) {
+          // Nếu tác phẩm do AI gợi ý nằm ngoài kho 10k cuốn (ví dụ sách mới như The Silent Patient), tìm bìa từ Open Library
+          fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(cleanEnglishTitle)}&fields=cover_i,author_name&limit=1`)
+            .then((r) => r.json())
+            .then((olJson) => {
+              if (!isCancelled && olJson.docs && olJson.docs[0]?.cover_i) {
+                setBook({
+                  book_id: 0,
+                  title: cleanEnglishTitle,
+                  author: olJson.docs[0].author_name?.[0] || authorFromTitle || "Tác giả",
+                  image_url: `https://covers.openlibrary.org/b/id/${olJson.docs[0].cover_i}-M.jpg`,
+                });
+              }
+            })
+            .catch(() => {});
         }
       })
       .catch(() => {});
@@ -158,14 +173,16 @@ function MercyBookItem({
                   const cleanIsbn = String(book.isbn).trim();
                   const padded = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
                   e.currentTarget.src = `https://covers.openlibrary.org/b/isbn/${padded}-L.jpg`;
-                } else {
-                  e.currentTarget.style.display = 'none';
+                } else if (!e.currentTarget.src.includes("weserv.nl") && !e.currentTarget.src.includes("openlibrary.org")) {
+                  e.currentTarget.src = `https://images.weserv.nl/?url=${encodeURIComponent(e.currentTarget.src)}&w=150&fit=cover&q=90`;
                 }
               }}
             />
           ) : (
-            <div className="w-8 h-12 rounded-[3px] bg-[#1C1917] text-amber-200 flex items-center justify-center font-mono text-[8px] shrink-0 border border-stone-200">
-              INK
+            <div className="w-8 h-12 rounded-[3px] bg-gradient-to-br from-[#1C1917] to-[#292524] text-amber-200/90 flex flex-col justify-between items-center p-1 font-mono text-[8px] shrink-0 border border-stone-300 shadow-2xs select-none">
+              <span className="text-[6px] tracking-widest text-amber-400/80 font-bold">INK</span>
+              <BookOpen size={11} className="text-amber-200/90" />
+              <span className="text-[5px] text-stone-400 uppercase tracking-tighter">CANON</span>
             </div>
           )}
           <div className="min-w-0">
