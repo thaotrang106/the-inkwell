@@ -1,0 +1,227 @@
+"use client";
+
+import { useState, useEffect, MouseEvent } from "react";
+import { Star, ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
+import { getBookPricing, formatPriceVND } from "@/lib/bookPricing";
+
+// Hàm làm sạch tên sách
+const cleanTitle = (title: string) => {
+  if (!title) return "";
+  return title.replace(/\s*\([^)]*#\d+[^)]*\)/g, "").trim();
+};
+
+// Định dạng URL ảnh sách chuẩn CDN độ nét cao HD (Large Cover) & tự động dự phòng sang Open Library qua ISBN
+const formatImageUrl = (url?: string, isbn?: string) => {
+  if (!url || url.includes("nophoto")) {
+    if (isbn) {
+      const cleanIsbn = String(isbn).trim().replace(/^0+/, "");
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      if (paddedIsbn.length >= 10) {
+        return `https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`;
+      }
+    }
+    return "";
+  }
+  let clean = url.trim();
+  clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("openlibrary.org")) return clean;
+  clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
+  // Tự động nâng cấp thumbnail mờ (m/ hoặc s/) thành ảnh gốc độ phân giải cao HD (l/)
+  clean = clean.replace(/(\d+)[ms]\//i, "$1l/");
+  return clean;
+};
+
+// Bảng màu sang trọng cho bìa sách thay thế (Luxury Hardcover Jackets)
+const COVER_THEMES = [
+  { bg: "from-[#1A2A3A] via-[#0D1B2A] to-[#050D1A]", text: "text-amber-200", border: "border-amber-400/30" },
+  { bg: "from-[#3D1418] via-[#260A0D] to-[#140406]", text: "text-rose-200", border: "border-rose-400/30" },
+  { bg: "from-[#122A1E] via-[#0A1A12] to-[#040D09]", text: "text-emerald-200", border: "border-emerald-400/30" },
+  { bg: "from-[#2B1B3A] via-[#1A0E26] to-[#0D0614]", text: "text-purple-200", border: "border-purple-400/30" },
+  { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
+];
+
+export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: number; isHybrid?: boolean }) {
+  const { addToCart } = useCart();
+  const { user } = useAuth();
+
+  const initialUrl = formatImageUrl(book.image_url, book.isbn);
+  const [imgSrc, setImgSrc] = useState<string>(initialUrl);
+  const [retryStep, setRetryStep] = useState(0); // 0: initial, 1: weserv proxy, 2: open library, 3: failed
+  const [imgFailed, setImgFailed] = useState(!initialUrl);
+
+  const theme = COVER_THEMES[Math.abs(Number(book.book_id) || 1) % COVER_THEMES.length];
+
+  useEffect(() => {
+    const formatted = formatImageUrl(book.image_url, book.isbn);
+    setImgSrc(formatted);
+    setRetryStep(0);
+    setImgFailed(!formatted);
+  }, [book.image_url, book.isbn]);
+
+  const handleImageError = () => {
+    if (retryStep === 0 && imgSrc && !imgSrc.includes("weserv.nl")) {
+      // Tầng 1: Chuyển sang weserv proxy
+      setRetryStep(1);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(imgSrc)}&w=450&fit=cover&q=90`);
+    } else if (retryStep <= 1 && book.isbn) {
+      // Tầng 2: Tra cứu Open Library Cover qua ISBN
+      setRetryStep(2);
+      const cleanIsbn = String(book.isbn).trim();
+      const paddedIsbn = cleanIsbn.length === 9 ? "0" + cleanIsbn : cleanIsbn;
+      setImgSrc(`https://covers.openlibrary.org/b/isbn/${paddedIsbn}-L.jpg`);
+    } else {
+      // Tầng 3: Nếu ảnh thật sự không tồn tại ở bất kỳ đâu, render bìa hardcover sang trọng
+      setImgFailed(true);
+    }
+  };
+
+  // Nguồn dữ liệu giá duy nhất và đồng bộ toàn hệ thống
+  const pricing = getBookPricing(book.book_id, book.price);
+  book.price = pricing.price;
+  book.original_price = pricing.originalPrice;
+
+  const handleAddToCart = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(book, 1);
+
+    // Ghi nhận hành vi add_to_cart vào backend (Giai đoạn C)
+    const currentUserId = user?.user_id || 1;
+    fetch(`${API_BASE_URL}/api/interactions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: currentUserId,
+        book_id: book.book_id,
+        interaction_type: "add_to_cart",
+      }),
+    }).catch((err) => console.log("Lỗi ghi nhận tương tác:", err));
+  };
+
+  const handleSaveToSession = () => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify(book));
+      } catch {}
+    }
+  };
+
+  const authorName = book.author || book.authors || "Nhiều tác giả";
+
+  return (
+    <Link
+      href={`/books/${book.book_id}`}
+      onClick={handleSaveToSession}
+      onMouseEnter={handleSaveToSession}
+      onMouseDown={handleSaveToSession}
+      className="group cursor-pointer flex flex-col h-full w-full relative"
+    >
+      {/* 1. Phần Bìa sách: Aspect ratio 2:3, bo góc nhẹ 4px */}
+      <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden rounded-[4px] border border-stone-200/70 bg-stone-100 shadow-2xs transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md flex items-center justify-center p-0">
+        {/* Badge Rank: Không nền, text in hoa nhỏ, đặt ở góc trên cùng bên trái của ảnh bìa */}
+        {rank && !isHybrid && (
+          <div className="absolute top-2 left-2 z-20 font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.16em] text-[#881337] drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] select-none">
+            #{rank} THỊNH HÀNH
+          </div>
+        )}
+
+        {/* Tag thể loại tinh giản chuẩn Editorial (không dùng nền trắng bo góc, không phần trăm) */}
+        {isHybrid && (book.explanation || book.because) && (
+          <div className="absolute top-2 left-2 z-20 pointer-events-none select-none max-w-[85%]">
+            <span className="inline-block font-mono text-[8.5px] sm:text-[9px] uppercase tracking-[0.14em] text-[#FAF7F2] bg-[#1C1917]/70 backdrop-blur-xs px-2 py-0.5 border border-white/25 rounded-none shadow-xs truncate">
+              {book.explanation || book.because}
+            </span>
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors z-10 pointer-events-none"></div>
+
+        {!imgFailed && imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={`Bìa sách ${cleanTitle(book.title)} - ${authorName}`}
+            referrerPolicy="no-referrer"
+            onError={handleImageError}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103 rounded-[4px]"
+          />
+        ) : (
+          /* Bìa sách bìa cứng mạ vàng kim cổ điển thay thế nếu sách không có ảnh thật */
+          <div
+            className={`w-full h-full bg-gradient-to-br ${theme.bg} p-4 flex flex-col justify-between items-center text-center relative select-none rounded-[4px]`}
+          >
+            <div className={`absolute inset-2 border ${theme.border} rounded-[2px] pointer-events-none`}></div>
+            <div className="w-full text-[10px] uppercase tracking-[0.26em] text-amber-300/80 font-cormorant font-bold mt-1">
+              THE INKWELL
+            </div>
+
+            <div className="my-auto px-2 z-10">
+              <p className={`font-serif font-bold text-sm leading-snug line-clamp-3 ${theme.text}`}>
+                {cleanTitle(book.title)}
+              </p>
+              <div className="w-8 h-[1px] bg-amber-400/40 mx-auto my-2"></div>
+              <p className="text-[11px] text-stone-300 line-clamp-1 italic font-sans">
+                {authorName}
+              </p>
+            </div>
+
+            <div className="text-[9px] text-amber-300/70 uppercase tracking-[0.2em] font-cormorant font-semibold mb-1">
+              Collector's Pick
+            </div>
+          </div>
+        )}
+
+        {/* Nút Thêm vào giỏ thanh lịch hiện ra khi hover */}
+        <button
+          onClick={handleAddToCart}
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 z-20 bg-[#1C1917] text-white px-3.5 py-1.5 rounded-[4px] font-sans font-medium text-xs shadow-md hover:bg-stone-800 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+        >
+          <ShoppingBag size={13} /> <span>Thêm vào giỏ</span>
+        </button>
+      </div>
+
+      {/* 2. Phần Thông tin sách: Cấu trúc CSS Grid/Flexbox đảm bảo thẳng hàng tuyệt đối */}
+      <div className="flex flex-col flex-1 pt-3 pb-1">
+        {/* Hàng 1: Tiêu đề sách (Font Serif, cố định h-[2.6rem] để luôn thẳng hàng) */}
+        <h3 className="font-serif font-bold text-[#1C1917] text-sm sm:text-[15px] leading-snug line-clamp-2 h-[2.6rem] group-hover:text-stone-600 transition-colors">
+          {cleanTitle(book.title)}
+        </h3>
+
+        {/* Hàng 2: Tên tác giả (Font Sans-serif nhỏ, màu xám, cố định h-4) */}
+        <p className="text-xs font-sans text-stone-500 line-clamp-1 h-4 mt-1">
+          {authorName}
+        </p>
+
+        {/* Hàng 3: Đánh giá sao (Màu vàng đất Gold #C5A059, kích thước nhỏ 10px, cố định h-4) */}
+        <div className="flex items-center gap-1.5 mt-2 h-4">
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star key={s} className="fill-[#C5A059] text-[#C5A059]" size={10} />
+            ))}
+          </div>
+          <span className="text-[10px] font-mono text-stone-400 font-medium">
+            ({book.rating ? Number(book.rating).toFixed(1) : "4.5"})
+          </span>
+        </div>
+
+        {/* Hàng 4: Giá bán & Giá niêm yết gạch ngang + % giảm giá (Đẩy sát đáy bằng mt-auto) */}
+        <div className="mt-auto pt-2.5 flex items-baseline justify-between gap-1 flex-wrap">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-sm sm:text-[15px] font-bold text-[#1C1917] font-sans tracking-tight">
+              {formatPriceVND(pricing.price)}
+            </span>
+            <span className="text-[11px] text-stone-400 line-through decoration-stone-300 font-sans">
+              {formatPriceVND(pricing.originalPrice)}
+            </span>
+          </div>
+          <span className="text-[10px] font-bold font-mono text-[#881337] bg-rose-50 px-1 py-0.5 rounded-[3px]">
+            -{pricing.discountPercent}%
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
