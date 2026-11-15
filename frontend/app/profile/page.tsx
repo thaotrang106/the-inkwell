@@ -224,7 +224,7 @@ const PROFILES_BY_USER_ID: Record<number, ProfileMetadata> = {
         id: 12,
         title: "Angels & Demons",
         author: "Dan Brown",
-        img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg",
+        img: "https://covers.openlibrary.org/b/isbn/9780743493468-L.jpg",
         status: "Đã đọc xong",
         progress: 100,
         rating: 4.5,
@@ -322,6 +322,89 @@ const DEFAULT_GUEST_PROFILE: ProfileMetadata = {
   savedBooks: [],
   orders: []
 };
+
+// Bảng màu bìa sách cổ điển sang trọng khi ảnh CDN bên ngoài không khả dụng
+const PROFILE_COVER_THEMES = [
+  { bg: "from-[#1A2A3A] via-[#0D1B2A] to-[#050D1A]", text: "text-amber-200", border: "border-amber-400/30" },
+  { bg: "from-[#3D1418] via-[#260A0D] to-[#140406]", text: "text-rose-200", border: "border-rose-400/30" },
+  { bg: "from-[#122A1E] via-[#0A1A12] to-[#040D09]", text: "text-emerald-200", border: "border-emerald-400/30" },
+  { bg: "from-[#2B1B3A] via-[#1A0E26] to-[#0D0614]", text: "text-purple-200", border: "border-purple-400/30" },
+  { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
+];
+
+function ProfileSavedBookItem({ book }: { book: SavedBook }) {
+  const [imgSrc, setImgSrc] = useState(book.img);
+  const [retryStep, setRetryStep] = useState(0);
+  const [imgFailed, setImgFailed] = useState(!book.img);
+
+  useEffect(() => {
+    setImgSrc(book.img);
+    setRetryStep(0);
+    setImgFailed(!book.img);
+  }, [book.img]);
+
+  const handleImageError = () => {
+    if (retryStep === 0 && imgSrc && !imgSrc.includes("weserv.nl")) {
+      setRetryStep(1);
+      setImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(book.img)}&w=400&fit=cover&q=90`);
+    } else {
+      setImgFailed(true);
+    }
+  };
+
+  const theme = PROFILE_COVER_THEMES[Math.abs(book.id || 1) % PROFILE_COVER_THEMES.length];
+
+  return (
+    <div className="bg-white rounded-[4px] p-4 border border-stone-300/80 flex flex-col justify-between">
+      <div>
+        <div className="aspect-[2/3] rounded-[2px] overflow-hidden mb-3 bg-stone-100 relative">
+          {!imgFailed && imgSrc ? (
+            <img 
+              src={imgSrc} 
+              alt={book.title} 
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${theme.bg} p-3 flex flex-col justify-between items-center text-center relative select-none`}>
+              <div className={`absolute inset-1.5 border ${theme.border} rounded-[2px] pointer-events-none`}></div>
+              <div className="text-[8px] uppercase tracking-widest text-amber-300/80 font-mono mt-1">THE INKWELL</div>
+              <div className="my-auto px-1 z-10">
+                <p className={`font-serif font-bold text-xs leading-snug line-clamp-3 ${theme.text}`}>{book.title}</p>
+                <div className="w-6 h-[1px] bg-amber-400/40 mx-auto my-1.5"></div>
+                <p className="text-[10px] text-stone-300 line-clamp-1 italic font-sans">{book.author}</p>
+              </div>
+              <div className="text-[7px] text-amber-300/60 uppercase tracking-widest font-mono mb-1">Thư viện cá nhân</div>
+            </div>
+          )}
+        </div>
+        <span className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] inline-block mb-2 border ${
+          book.status === "Đang đọc" 
+            ? "bg-blue-50 text-blue-800 border-blue-200" 
+            : book.status === "Đã đọc xong" 
+            ? "bg-emerald-50 text-emerald-800 border-emerald-200" 
+            : "bg-stone-100 text-stone-700 border-stone-200"
+        }`}>
+          {book.status}
+        </span>
+        <h4 className="font-serif font-bold text-[#1C1917] text-sm line-clamp-1">{book.title}</h4>
+        <p className="text-xs text-stone-500 line-clamp-1 mt-0.5">{book.author}</p>
+      </div>
+
+      <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+        <div className="flex gap-0.5 text-amber-500">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} size={11} className="fill-amber-400 stroke-amber-400" />
+          ))}
+        </div>
+        <Link href={`/books/${book.id}`} className="text-[#881337] hover:underline font-medium text-xs">
+          Chi tiết &rarr;
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   const { user, isLoggedIn, login, logout } = useAuth();
@@ -534,44 +617,7 @@ export default function ProfilePage() {
             {currentProfileData.savedBooks.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {currentProfileData.savedBooks.map((b) => (
-                  <div key={b.id} className="bg-white rounded-[4px] p-4 border border-stone-300/80 flex flex-col justify-between">
-                    <div>
-                      <div className="aspect-[2/3] rounded-[2px] overflow-hidden mb-3 bg-stone-100">
-                        <img 
-                          src={b.img} 
-                          alt={b.title} 
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            if (!e.currentTarget.src.includes("weserv.nl")) {
-                              e.currentTarget.src = `https://images.weserv.nl/?url=${encodeURIComponent(b.img)}&w=400&fit=cover&q=90`;
-                            }
-                          }}
-                        />
-                      </div>
-                      <span className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] inline-block mb-2 border ${
-                        b.status === "Đang đọc" 
-                          ? "bg-blue-50 text-blue-800 border-blue-200" 
-                          : b.status === "Đã đọc xong" 
-                          ? "bg-emerald-50 text-emerald-800 border-emerald-200" 
-                          : "bg-stone-100 text-stone-700 border-stone-200"
-                      }`}>
-                        {b.status}
-                      </span>
-                      <h4 className="font-serif font-bold text-[#1C1917] text-sm line-clamp-1">{b.title}</h4>
-                      <p className="text-xs text-stone-500 line-clamp-1 mt-0.5">{b.author}</p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <div className="flex gap-0.5 text-amber-500">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={11} className="fill-amber-400 stroke-amber-400" />
-                        ))}
-                      </div>
-                      <Link href={`/books/${b.id}`} className="text-[#881337] hover:underline font-medium text-xs">
-                        Chi tiết &rarr;
-                      </Link>
-                    </div>
-                  </div>
+                  <ProfileSavedBookItem key={b.id} book={b} />
                 ))}
               </div>
             ) : (

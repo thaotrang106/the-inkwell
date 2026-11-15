@@ -66,6 +66,7 @@ function MercyBookItem({
   onClose: () => void;
 }) {
   const [book, setBook] = useState<BookRecommendation | null>(matchedBook || null);
+  const [imgFailed, setImgFailed] = useState(false);
 
   // Tách tên tiếng Anh để làm từ khóa tìm kiếm nếu chưa có matchedBook
   const cleanEnglishTitle = rawTitle.replace(/\(.*?\)/g, "").replace(/[-—].*$/, "").replace(/\*/g, "").trim();
@@ -78,6 +79,7 @@ function MercyBookItem({
   useEffect(() => {
     if (matchedBook) {
       setBook(matchedBook);
+      setImgFailed(false);
       return;
     }
     if (!cleanEnglishTitle || cleanEnglishTitle.length < 2) return;
@@ -95,6 +97,7 @@ function MercyBookItem({
             author: first.author || authorFromTitle,
             image_url: first.image_url,
           });
+          setImgFailed(false);
         } else if (!isCancelled) {
           // Nếu tác phẩm do AI gợi ý nằm ngoài kho 10k cuốn (ví dụ sách mới như The Silent Patient), tìm bìa từ Open Library
           fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(cleanEnglishTitle)}&fields=cover_i,author_name&limit=1`)
@@ -107,6 +110,7 @@ function MercyBookItem({
                   author: olJson.docs[0].author_name?.[0] || authorFromTitle || "Tác giả",
                   image_url: `https://covers.openlibrary.org/b/id/${olJson.docs[0].cover_i}-M.jpg`,
                 });
+                setImgFailed(false);
               }
             })
             .catch(() => {});
@@ -163,10 +167,11 @@ function MercyBookItem({
         className="mt-3 flex items-center justify-between p-2.5 sm:p-3 rounded-[6px] bg-[#FAF9F6] hover:bg-white border border-stone-200 hover:border-stone-400 hover:shadow-xs transition-all group cursor-pointer"
       >
         <div className="flex items-center gap-3 min-w-0">
-          {book?.image_url || book?.isbn ? (
+          {!imgFailed && (book?.image_url || book?.isbn) ? (
             <img
               src={formatImageUrl(book.image_url, book.isbn)}
               alt={book.title || rawTitle}
+              referrerPolicy="no-referrer"
               className="w-8 h-12 object-cover rounded-[3px] shadow-2xs shrink-0 bg-stone-100 border border-stone-200/80"
               onError={(e) => {
                 if (book.isbn && !e.currentTarget.src.includes("openlibrary.org")) {
@@ -175,6 +180,8 @@ function MercyBookItem({
                   e.currentTarget.src = `https://covers.openlibrary.org/b/isbn/${padded}-L.jpg`;
                 } else if (!e.currentTarget.src.includes("weserv.nl") && !e.currentTarget.src.includes("openlibrary.org")) {
                   e.currentTarget.src = `https://images.weserv.nl/?url=${encodeURIComponent(e.currentTarget.src)}&w=150&fit=cover&q=90`;
+                } else {
+                  setImgFailed(true);
                 }
               }}
             />
