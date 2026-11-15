@@ -11,6 +11,7 @@ import { useMercy } from "@/context/MercyContext";
 import { API_BASE_URL as BACKEND_URL } from "@/lib/api";
 import { CURATED_BOOKS } from "@/lib/curatedBooks";
 import { DEMO_READERS } from "@/lib/demoReaders";
+import { GENRE_PERSONALIZED_MAP } from "@/lib/genrePersonalized";
 
 // Hàm làm sạch tên sách: loại bỏ phần (Harry Potter, #1) thô của dataset
 const cleanTitle = (title: string) => {
@@ -102,12 +103,25 @@ const DEFAULT_POPULAR_BOOKS = [
   },
 ];
 
+// Danh sách các Gu đọc & Thể loại cá nhân hóa (Taste & Mood Pills)
+const TASTE_GENRES = [
+  { id: "all", label: "Theo hành vi tương tác" },
+  { id: "fantasy", label: "Kỳ ảo & Giả tưởng" },
+  { id: "classics", label: "Kinh điển & Triết học" },
+  { id: "mystery", label: "Trinh thám & Giật gân" },
+  { id: "romance", label: "Lãng mạn & Tuổi trẻ" },
+  { id: "psychology", label: "Tâm lý & Tư duy" },
+];
+
 export default function Home() {
   const { user, isLoggedIn, login, logout } = useAuth();
   const [popularBooks, setPopularBooks] = useState<any[]>(DEFAULT_POPULAR_BOOKS);
   const [hybridBooks, setHybridBooks] = useState<any[]>([]);
   const [personalizedBooks, setPersonalizedBooks] = useState<any[]>([]);
   const [isPersonalizedLoading, setIsPersonalizedLoading] = useState(false);
+  const [selectedTasteGenre, setSelectedTasteGenre] = useState<string>("all");
+  const [behaviorSeed, setBehaviorSeed] = useState<{ book_id: number; title: string } | null>(null);
+  const [behaviorSubtitle, setBehaviorSubtitle] = useState<string>("Tuyển tập sách đề xuất khởi đầu • Dựa trên gu đọc và tâm trạng của bạn");
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -271,48 +285,118 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (user && user.user_id) {
-      fetchPersonalized(user.user_id);
-    } else {
-      setPersonalizedBooks([]);
-    }
+    fetchPersonalized(user?.user_id, selectedTasteGenre);
   }, [user]);
 
-  const fetchPersonalized = async (userId: number) => {
-    // 1. Nếu là Độc giả mẫu trong Báo cáo Đồ án (User #35, #1, #75) VÀ tên khớp với độc giả mẫu:
-    // Khóa vào danh mục sách may đo riêng chuẩn theo kịch bản đồ án
-    const demoReader = DEMO_READERS.find((r) => r.user_id === userId);
-    if (demoReader && user?.name && (user.name.includes(demoReader.shortName) || user.name === demoReader.name)) {
-      setPersonalizedBooks(demoReader.books);
+  // Tự động cập nhật gợi ý theo hành vi khi độc giả quay lại trang chủ
+  useEffect(() => {
+    const handleFocus = () => {
+      if (selectedTasteGenre === "all") {
+        fetchPersonalized(user?.user_id, "all");
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [user, selectedTasteGenre]);
+
+  const fetchPersonalized = async (userId?: number | null, tasteGenre: string = "all") => {
+    // 1. Nếu người dùng chọn một Thể loại / Gu đọc cụ thể qua Taste Pills
+    if (tasteGenre !== "all" && GENRE_PERSONALIZED_MAP[tasteGenre]) {
+      setIsPersonalizedLoading(true);
+      const genreObj = TASTE_GENRES.find((g) => g.id === tasteGenre);
+      setPersonalizedBooks(GENRE_PERSONALIZED_MAP[tasteGenre].slice(0, 5));
+      setBehaviorSubtitle(`Gu ${genreObj?.label || tasteGenre} • Đề xuất chọn lọc theo chủ đề bạn đang quan tâm`);
+      setBehaviorSeed(null);
       setIsPersonalizedLoading(false);
       return;
     }
 
-    // 2. Với user mới đăng ký hoặc user thông thường khác, gọi API backend
-    setIsPersonalizedLoading(true);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`, {
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      if (res.ok) {
-        const json = await res.json();
-        const books = json.data || json.items || [];
-        if (books && books.length > 0) {
-          setPersonalizedBooks(books);
-          return;
-        }
-      }
-      // Cold-start fallback: độc giả mới chưa có tương tác -> đề xuất sách phổ biến theo chuẩn Bayesian
-      setPersonalizedBooks(DEFAULT_POPULAR_BOOKS.slice(0, 5));
-    } catch (err) {
-      setPersonalizedBooks(DEFAULT_POPULAR_BOOKS.slice(0, 5));
-    } finally {
+    // 2. Nếu là Độc giả mẫu trong Báo cáo Đồ án (User #35 Minh Anh, User #1 Hoàng Nam):
+    // Giữ nguyên bộ sách may đo chuẩn kịch bản đồ án khi chọn tab "Theo hành vi tương tác"
+    const demoReader = DEMO_READERS.find((r) => r.user_id === userId);
+    if (demoReader && user?.name && (user.name.includes(demoReader.shortName) || user.name === demoReader.name)) {
+      setPersonalizedBooks(demoReader.books);
+      setBehaviorSubtitle(`${demoReader.genre} • May đo theo dữ liệu thực nghiệm đồ án`);
+      setBehaviorSeed(null);
       setIsPersonalizedLoading(false);
+      return;
     }
+
+    // 3. Phân tích Hành vi người dùng theo thời gian thực (Real-time Session Behavioral Adaptation)
+    // Ưu tiên hạt giống từ sách người dùng vừa xem hoặc thêm giỏ hàng gần nhất
+    let recentSeed: any = null;
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("inkwell_recent_books");
+        if (stored) {
+          const list = JSON.parse(stored);
+          if (Array.isArray(list) && list.length > 0) {
+            recentSeed = list[0];
+          }
+        }
+      } catch {}
+    }
+
+    if (recentSeed && recentSeed.book_id) {
+      setIsPersonalizedLoading(true);
+      setBehaviorSeed({ book_id: recentSeed.book_id, title: recentSeed.title || "" });
+      try {
+        let res = await fetch(`/api/recommendations/hybrid/${recentSeed.book_id}`);
+        if (!res.ok) {
+          res = await fetch(`${API_BASE_URL}/hybrid/${recentSeed.book_id}`);
+        }
+        if (res.ok) {
+          const json = await res.json();
+          const books = json.data || [];
+          if (books && books.length > 0) {
+            setPersonalizedBooks(books.slice(0, 5));
+            setBehaviorSubtitle(`Dựa trên hành vi tương tác với cuốn "${cleanTitle(recentSeed.title || "")}"`);
+            setIsPersonalizedLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.log("Lỗi phân tích hành vi:", err);
+      }
+    }
+
+    // 4. Nếu chưa có tương tác phiên, truy vấn Backend CF & Content-based theo user_id
+    if (userId) {
+      setIsPersonalizedLoading(true);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/recommendations/foryou/${userId}`, {
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const json = await res.json();
+          const books = json.data || json.items || [];
+          if (books && books.length > 0) {
+            setPersonalizedBooks(books.slice(0, 5));
+            setBehaviorSubtitle("Mô hình CF & Content-Based phân tích từ lịch sử tương tác");
+            setBehaviorSeed(null);
+            setIsPersonalizedLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.log("Lỗi foryou backend:", err);
+      }
+    }
+
+    // 5. Cold-start fallback: Độc giả mới tinh chưa có hành vi -> hiển thị tuyển tập khởi đầu
+    setPersonalizedBooks(DEFAULT_POPULAR_BOOKS.slice(0, 5));
+    setBehaviorSubtitle("Tuyển tập khởi đầu • Khám phá bằng cách chọn gu đọc hoặc nhấp vào bất kỳ cuốn sách nào");
+    setBehaviorSeed(null);
+    setIsPersonalizedLoading(false);
+  };
+
+  const handleTasteGenreChange = (genreId: string) => {
+    setSelectedTasteGenre(genreId);
+    fetchPersonalized(user?.user_id, genreId);
   };
 
   useEffect(() => {
@@ -882,7 +966,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Gợi ý Cá nhân hóa theo Lịch sử Đọc của User Đăng nhập */}
+      {/* Gợi ý Cá nhân hóa theo Lịch sử Đọc & Hành vi của Người dùng */}
       {personalizedBooks.length > 0 && (
         <section id="personalized-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10 mb-16 scroll-mt-24">
           <motion.div 
@@ -891,8 +975,14 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-ink/5"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-ink/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-ink/5">
               <div>
+                {behaviorSeed && selectedTasteGenre === "all" && (
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-[11px] font-medium text-amber-900 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span>Hạt giống hành vi: <strong className="font-semibold">{cleanTitle(behaviorSeed.title)}</strong></span>
+                  </div>
+                )}
                 <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
                   Dành Riêng Cho {
                     (user?.name 
@@ -901,13 +991,7 @@ export default function Home() {
                   }
                 </h2>
                 <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
-                  {(() => {
-                    const matchedDemo = DEMO_READERS.find(r => r.user_id === user?.user_id && user?.name && (user.name.includes(r.shortName) || user.name === r.name));
-                    if (matchedDemo) {
-                      return `${matchedDemo.genre} • Dựa trên gu đọc và tâm trạng của bạn`;
-                    }
-                    return "Tuyển tập sách đề xuất khởi đầu • Dựa trên gu đọc và tâm trạng của bạn";
-                  })()}
+                  {behaviorSubtitle}
                 </p>
               </div>
 
@@ -919,14 +1003,39 @@ export default function Home() {
                 <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
+
+            {/* Bộ chuyển đổi Gu đọc & Tâm trạng (Taste & Mood Pills) */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
+              <span className="text-[11px] font-mono text-stone-400 uppercase tracking-wider shrink-0 mr-1">
+                Bộ lọc gu đọc:
+              </span>
+              {TASTE_GENRES.map((taste) => {
+                const isActive = selectedTasteGenre === taste.id;
+                return (
+                  <button
+                    key={taste.id}
+                    type="button"
+                    onClick={() => handleTasteGenreChange(taste.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                      isActive
+                        ? "bg-[#1C1917] text-white shadow-xs scale-102"
+                        : "bg-stone-100/90 hover:bg-stone-200/80 text-stone-700 border border-stone-200/60"
+                    }`}
+                  >
+                    {taste.id === "all" && <Sparkles size={12} className={isActive ? "text-amber-300" : "text-stone-400"} />}
+                    <span>{taste.label}</span>
+                  </button>
+                );
+              })}
+            </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-6 lg:gap-8">
+            <div className={`grid grid-cols-2 md:grid-cols-5 gap-6 lg:gap-8 transition-opacity duration-300 ${isPersonalizedLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
               {personalizedBooks.map((book, i) => (
                 <motion.div
-                  key={book.book_id}
-                  initial={{ opacity: 0, y: 20 }}
+                  key={`${selectedTasteGenre}-${book.book_id}-${i}`}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  transition={{ delay: i * 0.06, duration: 0.35 }}
                 >
                   <BookCard book={book} isHybrid={true} />
                 </motion.div>

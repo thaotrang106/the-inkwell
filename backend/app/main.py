@@ -830,6 +830,17 @@ def log_interaction(body: InteractionIn):
     """
     session = SessionLocal()
     try:
+        # Tự động đảm bảo user_id tồn tại trong bảng users (tránh lỗi foreign key constraint khi người dùng mới đăng ký)
+        session.execute(text("""
+            INSERT INTO users (user_id, username, email)
+            VALUES (:u, :uname, :uemail)
+            ON CONFLICT (user_id) DO NOTHING
+        """), {
+            "u": body.user_id,
+            "uname": f"reader_{body.user_id}",
+            "uemail": f"reader_{body.user_id}@theinkwell.vn"
+        })
+
         session.execute(text("""
             INSERT INTO interactions (user_id, book_id, interaction_type, created_at)
             VALUES (:u, :b, :t, NOW())

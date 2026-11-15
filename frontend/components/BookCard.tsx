@@ -127,6 +127,23 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
     e.stopPropagation();
     addToCart(book, 1);
 
+    // Lưu tương tác hành vi client-side vào localStorage (inkwell_recent_books) phục vụ cá nhân hóa tức thì
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("inkwell_recent_books");
+        const list = stored ? JSON.parse(stored) : [];
+        const currentItem = {
+          book_id: book.book_id,
+          title: book.title,
+          author: book.author || book.authors,
+          image_url: book.image_url,
+          price: book.price
+        };
+        const filtered = [currentItem, ...list.filter((b: any) => b.book_id !== book.book_id)].slice(0, 10);
+        localStorage.setItem("inkwell_recent_books", JSON.stringify(filtered));
+      } catch {}
+    }
+
     // Ghi nhận hành vi add_to_cart vào backend (Giai đoạn C)
     const currentUserId = user?.user_id || 1;
     fetch(`${API_BASE_URL}/api/interactions`, {
@@ -144,6 +161,17 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
     if (typeof window !== "undefined") {
       try {
         sessionStorage.setItem(`inkwell_book_${book.book_id}`, JSON.stringify(book));
+        const stored = localStorage.getItem("inkwell_recent_books");
+        const list = stored ? JSON.parse(stored) : [];
+        const currentItem = {
+          book_id: book.book_id,
+          title: book.title,
+          author: book.author || book.authors,
+          image_url: book.image_url,
+          price: book.price
+        };
+        const filtered = [currentItem, ...list.filter((b: any) => b.book_id !== book.book_id)].slice(0, 10);
+        localStorage.setItem("inkwell_recent_books", JSON.stringify(filtered));
       } catch {}
     }
   };

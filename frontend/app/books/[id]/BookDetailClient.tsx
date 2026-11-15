@@ -152,6 +152,31 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     setHasRequestedMercy(false);
     setMercyMessage("");
 
+    // Ghi nhận hành vi xem sách (Implicit Feedback - View) phục vụ giải thuật cá nhân hóa theo hành vi
+    const targetBookId = Number(id) || initialBook?.book_id;
+    if (targetBookId) {
+      const currentUserId = user?.user_id || 1;
+      fetch(`${API_BASE_URL}/api/interactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: currentUserId,
+          book_id: targetBookId,
+          interaction_type: "view",
+        }),
+      }).catch(() => {});
+
+      if (typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem("inkwell_recent_books");
+          const list = stored ? JSON.parse(stored) : [];
+          const currentItem = initialBook || { book_id: targetBookId };
+          const filtered = [currentItem, ...list.filter((b: any) => b.book_id !== targetBookId)].slice(0, 10);
+          localStorage.setItem("inkwell_recent_books", JSON.stringify(filtered));
+        } catch {}
+      }
+    }
+
     // 1. Kiểm tra cache phiên client cho thông tin sách
     if (typeof window !== "undefined") {
       try {

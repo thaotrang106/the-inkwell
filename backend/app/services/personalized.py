@@ -56,8 +56,11 @@ def get_for_you(user_id: int, limit: int = 10, n_seeds: int = 5):
                                 WHEN 'purchase' THEN 5 
                                 WHEN 'add_to_cart' THEN 4 
                                 WHEN 'wishlist' THEN 3 
+                                WHEN 'click' THEN 2
+                                WHEN 'view' THEN 2
+                                ELSE 1
                             END AS w
-                        FROM interactions WHERE user_id = :u AND interaction_type IN ('purchase', 'add_to_cart', 'wishlist')
+                        FROM interactions WHERE user_id = :u AND interaction_type IN ('purchase', 'add_to_cart', 'wishlist', 'click', 'view')
                     ) t
                     JOIN books b ON t.book_id = b.book_id
                     GROUP BY t.book_id, b.title
@@ -111,9 +114,12 @@ def get_for_you(user_id: int, limit: int = 10, n_seeds: int = 5):
                         WHEN 'purchase' THEN 5 
                         WHEN 'add_to_cart' THEN 4 
                         WHEN 'wishlist' THEN 3 
+                        WHEN 'click' THEN 2
+                        WHEN 'view' THEN 2
+                        ELSE 1
                     END AS w
                 FROM interactions 
-                WHERE user_id = :u AND interaction_type IN ('purchase', 'add_to_cart', 'wishlist')
+                WHERE user_id = :u AND interaction_type IN ('purchase', 'add_to_cart', 'wishlist', 'click', 'view')
             ) t
             JOIN books b ON t.book_id = b.book_id
             GROUP BY t.book_id, b.title
