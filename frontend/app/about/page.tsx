@@ -108,19 +108,6 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Lời trích mộc mạc & Chữ ký */}
-            <div className="border-t border-b border-stone-200 py-3.5 my-2">
-              <p className="text-xs italic text-stone-600 leading-[1.7] font-serif">
-                “Mỗi tác phẩm kinh điển là một cuộc đối thoại tư tưởng vượt thời gian.”
-              </p>
-            </div>
-
-            <div className="text-right pt-1">
-              <p className="font-serif italic text-xs text-stone-500">
-                — Ban Biên Tập & Giám Tuyển The Inkwell
-              </p>
-            </div>
-
           </div>
 
         </section>
