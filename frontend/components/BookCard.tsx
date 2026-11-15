@@ -129,23 +129,12 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
           </div>
         )}
 
-        {/* Huy hiệu giải thích đề xuất (Explanation Badge cho Cá nhân hóa / Hybrid AI) */}
-        {isHybrid && (book.explanation || book.because || book.hybrid_score) && (
-          <div className="absolute top-2 left-2 right-2 z-20 flex items-center justify-between gap-1 pointer-events-none select-none">
-            {book.explanation ? (
-              <span className="font-sans text-[9px] font-semibold tracking-wide text-[#881337] bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[3px] shadow-xs border border-[#881337]/20 truncate">
-                {book.explanation}
-              </span>
-            ) : book.because ? (
-              <span className="font-sans text-[9px] font-semibold tracking-wide text-[#881337] bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[3px] shadow-xs border border-[#881337]/20 truncate">
-                Vì thích {book.because}
-              </span>
-            ) : null}
-            {book.hybrid_score && (
-              <span className="font-mono text-[9px] font-bold tracking-wider text-stone-800 bg-white/95 backdrop-blur-xs px-1.5 py-0.5 rounded-[3px] shadow-xs border border-stone-200 ml-auto shrink-0">
-                {book.hybrid_score}%
-              </span>
-            )}
+        {/* Tag thể loại tinh giản chuẩn Editorial (không dùng nền trắng bo góc, không phần trăm) */}
+        {isHybrid && (book.explanation || book.because) && (
+          <div className="absolute top-2 left-2 z-20 pointer-events-none select-none max-w-[85%]">
+            <span className="inline-block font-mono text-[8.5px] sm:text-[9px] uppercase tracking-[0.14em] text-[#FAF7F2] bg-[#1C1917]/70 backdrop-blur-xs px-2 py-0.5 border border-white/25 rounded-none shadow-xs truncate">
+              {book.explanation || book.because}
+            </span>
           </div>
         )}
 

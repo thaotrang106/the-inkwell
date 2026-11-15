@@ -15,7 +15,8 @@ import {
   Sparkles,
   Users,
   ChevronDown,
-  Check
+  Check,
+  ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BookCard from "@/components/BookCard";
@@ -553,28 +554,27 @@ function TrendingPageContent() {
 
         {/* GỢI Ý RIÊNG CHO ĐỘC GIẢ ĐĂNG NHẬP (TRÊN TRANG TRENDING) */}
         {currentDemoReader && (
-          <div className="bg-white rounded-[6px] p-6 sm:p-8 border border-[#881337]/25 shadow-xs mb-10">
+          <div className="bg-white rounded-[6px] p-6 sm:p-8 border border-stone-200/90 shadow-2xs mb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-rose-50 text-[#881337] flex items-center justify-center shrink-0">
-                  <Sparkles size={20} />
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-full border border-stone-200 bg-white flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
+                  <Compass size={22} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                      Dành Riêng Cho {currentDemoReader.shortName}
-                    </h2>
-                    <span className="text-[10px] font-mono font-bold bg-rose-50 text-[#881337] px-2 py-0.5 rounded-[3px] border border-[#881337]/20">
-                      #{currentDemoReader.user_id}
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#881337] font-medium mt-0.5">
-                    {currentDemoReader.genre} • May đo theo lịch sử đánh giá thực tế (Thuật toán Hybrid AI)
+                  <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
+                    Dành Riêng Cho {currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "")}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
+                    {currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn
                   </p>
                 </div>
               </div>
-              <Link href="/" className="text-xs font-semibold text-[#881337] hover:underline flex items-center gap-1 self-start sm:self-auto font-sans">
-                Về Trang chủ xem đầy đủ →
+              <Link 
+                href="/" 
+                className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-[#881337] transition-colors flex items-center gap-1.5 self-start sm:self-auto group cursor-pointer"
+              >
+                <span>Về Trang chủ xem đầy đủ</span>
+                <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
 

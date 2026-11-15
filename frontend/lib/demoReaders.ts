@@ -31,8 +31,8 @@ export interface DemoReader {
 export const DEMO_READERS: DemoReader[] = [
   {
     user_id: 35,
-    name: "Độc giả Minh Anh (User #35)",
-    shortName: "Minh Anh (#35)",
+    name: "Độc giả Minh Anh",
+    shortName: "Minh Anh",
     genre: "Gu Kỳ ảo & Giả tưởng",
     tagline: "112 đánh giá • Yêu thích Harry Potter & Thế giới phép thuật",
     email: "minhanh@theinkwell.vn",
@@ -102,8 +102,8 @@ export const DEMO_READERS: DemoReader[] = [
   },
   {
     user_id: 1,
-    name: "Độc giả Hoàng Nam (User #1)",
-    shortName: "Hoàng Nam (#1)",
+    name: "Độc giả Hoàng Nam",
+    shortName: "Hoàng Nam",
     genre: "Gu Kinh điển & Triết học",
     tagline: "53 đánh giá • Yêu thích Văn học Kinh điển & Chiêm nghiệm",
     email: "hoangnam@theinkwell.vn",
@@ -173,8 +173,8 @@ export const DEMO_READERS: DemoReader[] = [
   },
   {
     user_id: 75,
-    name: "Độc giả Thu Trang (User #75)",
-    shortName: "Thu Trang (#75)",
+    name: "Độc giả Thu Trang",
+    shortName: "Thu Trang",
     genre: "Gu Trinh thám & Bí ẩn",
     tagline: "84 đánh giá • Yêu thích Mật mã, Ly kỳ & Tội phạm",
     email: "thutrang@theinkwell.vn",

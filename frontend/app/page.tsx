@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Sparkles, Search, BookOpen, ArrowRight, Clock, X, Trash2, TrendingUp, ChevronLeft, ChevronRight, Users, ChevronDown, Check } from "lucide-react";
+import { Loader2, Sparkles, Search, BookOpen, Compass, ArrowRight, Clock, X, Trash2, TrendingUp, ChevronLeft, ChevronRight, Users, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
 import BookCard from "@/components/BookCard";
 import RecommendedReadsCarousel from "@/components/RecommendedReadsCarousel";
@@ -844,11 +844,17 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-2xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-ink/5"
           >
-            <div className="flex items-center gap-3 mb-10">
-              <div className="bg-[#FFF5F2] p-3 rounded-full text-[#B12704]"><Sparkles size={24} /></div>
+            <div className="flex items-center gap-3.5 mb-10 pb-6 border-b border-ink/5">
+              <div className="w-11 h-11 rounded-full border border-stone-200 bg-white flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
+                <Compass size={22} strokeWidth={1.5} />
+              </div>
               <div>
-                <h2 className="font-serif text-2xl font-bold text-ink">Dành Riêng Cho Bạn</h2>
-                <p className="text-ink/50 text-sm mt-1">Được tuyển chọn bởi thuật toán AI Hybrid (Nội dung & Cộng đồng)</p>
+                <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
+                  Dành Riêng Cho Bạn
+                </h2>
+                <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
+                  Dựa trên gu đọc và tâm trạng của bạn
+                </p>
               </div>
             </div>
             
@@ -878,31 +884,33 @@ export default function Home() {
             className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-ink/5"
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-ink/5">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#FFF5F2] p-3 rounded-full text-[#B12704]"><Sparkles size={24} /></div>
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-full border border-stone-200 bg-white flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
+                  <Compass size={22} strokeWidth={1.5} />
+                </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-serif text-2xl font-bold text-ink">
-                      Dành Riêng Cho {DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || `Độc giả #${user?.user_id}`}
-                    </h2>
-                    <span className="text-xs bg-ink/5 px-2.5 py-0.5 rounded-full font-mono text-ink/60">
-                      User #{user?.user_id}
-                    </span>
-                  </div>
-                  <p className="text-ink/60 text-sm mt-1">
-                    {DEMO_READERS.find(r => r.user_id === user?.user_id)
-                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Đề xuất theo thuật toán Hybrid Borda Fusion & Centroid`
-                      : "Được đề xuất riêng dựa trên lịch sử đánh giá thực tế của bạn (Thuật toán Borda Fusion + Centroid)"}
+                  <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
+                    Dành Riêng Cho {
+                      (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || "Bạn")
+                        .replace(/\s*\(\s*#\d+\s*\)/g, "")
+                        .replace(/^Độc giả\s+/i, "")
+                        .trim()
+                    }
+                  </h2>
+                  <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
+                    {DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre 
+                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Dựa trên gu đọc và tâm trạng của bạn`
+                      : "Dựa trên gu đọc và tâm trạng của bạn"}
                   </p>
                 </div>
               </div>
 
               <Link 
                 href="/profile"
-                className="text-xs font-semibold text-[#B12704] hover:underline flex items-center gap-1 self-start sm:self-auto"
+                className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-[#881337] transition-colors flex items-center gap-1.5 self-start sm:self-auto group cursor-pointer"
               >
                 <span>Xem hồ sơ gu đọc của tôi</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
             

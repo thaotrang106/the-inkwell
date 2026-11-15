@@ -36,7 +36,7 @@ export default function LoginPage() {
   const demoUsers = [
     {
       id: 35,
-      name: "Độc giả Minh Anh (User #35)",
+      name: "Độc giả Minh Anh",
       email: "minhanh@theinkwell.vn",
       tier: "Độc giả Uyên Bác",
       ratings: "112 đánh giá",
@@ -44,7 +44,7 @@ export default function LoginPage() {
     },
     {
       id: 1,
-      name: "Độc giả Hoàng Nam (User #1)",
+      name: "Độc giả Hoàng Nam",
       email: "hoangnam@theinkwell.vn",
       tier: "Thành viên Thân thiết",
       ratings: "53 đánh giá",
@@ -52,7 +52,7 @@ export default function LoginPage() {
     },
     {
       id: 75,
-      name: "Độc giả Thu Trang (User #75)",
+      name: "Độc giả Thu Trang",
       email: "thutrang@theinkwell.vn",
       tier: "Độc giả Tinh hoa",
       ratings: "84 đánh giá",
@@ -60,7 +60,7 @@ export default function LoginPage() {
     },
     {
       id: 102,
-      name: "Độc giả Tuấn Kiệt (User #102)",
+      name: "Độc giả Tuấn Kiệt",
       email: "tuankiet@theinkwell.vn",
       tier: "Thành viên Mới",
       ratings: "45 đánh giá",
