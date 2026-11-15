@@ -38,6 +38,7 @@ import { BookDetailData } from "@/lib/serverBooks";
 import { getBookPricing, formatPriceVND } from "@/lib/bookPricing";
 import { getKnownAuthorBooks } from "@/lib/authorBooksMap";
 import { DEMO_READERS } from "@/lib/demoReaders";
+import { BOOK_DESCRIPTIONS } from "@/lib/bookDescriptions";
 
 const cleanTitle = (title: string) => {
   if (!title) return "";
@@ -83,9 +84,16 @@ const COVER_THEMES = [
   { bg: "from-[#2C2416] via-[#1E170D] to-[#0E0A05]", text: "text-amber-100", border: "border-amber-300/30" },
 ];
 
-const renderCleanMercyText = (raw: string) => {
+const renderCleanMercyText = (raw: string, bookTitle?: string, authorName?: string) => {
   if (!raw) return null;
-  const tokens = raw.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|"[^"]+"|[“”][^“”]+[“”])/g);
+  let sanitized = raw;
+  if (bookTitle) {
+    sanitized = sanitized.replace(/[“"]?Tác phẩm \d+[”"]?/g, `“${bookTitle}”`);
+  }
+  if (authorName) {
+    sanitized = sanitized.replace(/tác giả văn học/gi, authorName);
+  }
+  const tokens = sanitized.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|"[^"]+"|[“”][^“”]+[“”])/g);
 
   return (
     <span className="leading-relaxed">
@@ -387,12 +395,17 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const askMercy = async () => {
     setHasRequestedMercy(true);
 
+    const targetTitle = cleanTitle(book.title) || "Tác phẩm";
+    const targetAuthor = authorName || "Tác giả";
+
     if (typeof window !== "undefined") {
       try {
         const cached = sessionStorage.getItem(`inkwell_mercy_${id}`);
-        if (cached) {
+        if (cached && !cached.includes("Tác phẩm #") && !cached.includes(`Tác phẩm ${id}`) && !cached.toLowerCase().includes("tác giả văn học")) {
           setMercyMessage(cached);
           return;
+        } else if (cached) {
+          sessionStorage.removeItem(`inkwell_mercy_${id}`);
         }
       } catch {}
     }
@@ -401,9 +414,19 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     setMercyMessage("");
     
     try {
-      const res = await fetch(`${API_BASE_URL}/api/recommendations/explain/${id}`);
+      const queryParams = new URLSearchParams({
+        title: targetTitle,
+        author: targetAuthor,
+        description: (book.description || BOOK_DESCRIPTIONS[Number(id)] || "").slice(0, 300)
+      });
+      const res = await fetch(`${API_BASE_URL}/api/recommendations/explain/${id}?${queryParams.toString()}`);
       const json = await res.json();
-      const text = json.data || "";
+      let text = json.data || "";
+      // Làm sạch triệt để nếu còn dính chuỗi kỹ thuật cũ
+      text = text
+        .replace(/[“"]?Tác phẩm \d+[”"]?/g, `“${targetTitle}”`)
+        .replace(/tác giả văn học/gi, targetAuthor);
+
       setMercyMessage(text);
       if (text && typeof window !== "undefined") {
         try {
@@ -411,7 +434,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
         } catch {}
       }
     } catch {
-      setMercyMessage(`Tác phẩm "${cleanTitle(book.title)}" của ${authorName} là một áng văn giàu tính triết lý và chiều sâu nhân bản sâu sắc, rất xứng đáng để bạn đón đọc.`);
+      setMercyMessage(`Tác phẩm "${targetTitle}" của ${targetAuthor} là một áng văn giàu tính triết lý và chiều sâu nhân bản sâu sắc, rất xứng đáng để bạn đón đọc.`);
     } finally {
       setIsMercyThinking(false);
     }
@@ -763,8 +786,8 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-stone-500">
               TÓM TẮT NỘI DUNG TÁC PHẨM
             </h3>
-            <p className="text-stone-800 text-sm sm:text-[14.5px] leading-relaxed font-sans">
-              {book.description || `"${cleanTitle(book.title)}" là một trong những tác phẩm tiêu biểu của ${authorName}, đưa người đọc qua những trải nghiệm cảm xúc phong phú và bài học nhân sinh giá trị. Tác phẩm được chuẩn hóa từ kho dữ liệu văn học Goodreads-10k.`}
+            <p className="text-stone-800 text-sm sm:text-[14.5px] leading-relaxed font-sans text-justify">
+              {BOOK_DESCRIPTIONS[Number(id)] || (book.description && !book.description.includes("Goodreads-10k") ? book.description : `"${cleanTitle(book.title)}" là một trong những tác phẩm tiêu biểu của ${authorName}, đưa người đọc qua những trải nghiệm cảm xúc phong phú và bài học nhân sinh giá trị.`)}
             </p>
           </div>
 
@@ -814,7 +837,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
                 ) : mercyMessage ? (
                   <div className="space-y-3">
                     <div className="text-xs sm:text-sm text-stone-800 leading-relaxed font-sans">
-                      {renderCleanMercyText(mercyMessage)}
+                      {renderCleanMercyText(mercyMessage, cleanTitle(book.title), authorName)}
                     </div>
                     <div className="flex justify-end">
                       <button

@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "./api";
 import { getBookPricing } from "./bookPricing";
 import { CURATED_BOOKS } from "./curatedBooks";
+import { BOOK_DESCRIPTIONS } from "./bookDescriptions";
 
 export interface BookDetailData {
   book_id: number;
@@ -220,6 +221,7 @@ export async function fetchServerBook(id: string | number): Promise<BookDetailDa
       price: pricing.price,
       original_price: pricing.originalPrice,
       discount_percent: pricing.discountPercent,
+      description: BOOK_DESCRIPTIONS[numericId] || "",
     };
   }
 
