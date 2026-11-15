@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { DEMO_READERS } from "@/lib/demoReaders";
 
 interface GenreDistribution {
   name: string;
@@ -480,26 +479,6 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Chuyển nhanh giữa các tài khoản mẫu */}
-              <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-2 text-xs text-stone-500">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-stone-400">Tài khoản mẫu:</span>
-                {DEMO_READERS.map((r) => {
-                  const isCurrent = user?.user_id === r.user_id;
-                  return (
-                    <button
-                      key={r.user_id}
-                      onClick={() => login({ user_id: r.user_id, name: r.name, email: r.email, tier: r.tier })}
-                      className={`px-2.5 py-0.5 rounded-[3px] text-[11px] font-medium transition-all cursor-pointer ${
-                        isCurrent 
-                          ? "bg-[#1C1917] text-white" 
-                          : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                      }`}
-                    >
-                      {r.shortName}
-                    </button>
-                  );
-                })}
-              </div>
 
             </div>
           </div>
