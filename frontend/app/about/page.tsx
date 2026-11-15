@@ -33,18 +33,18 @@ export default function AboutPage() {
 
             {/* Tiêu đề chính font Serif, giảm độ đậm (font-light), margin-bottom 16px (mb-4) */}
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.65rem] font-light text-[#1C1917] leading-[1.2] tracking-tight mb-4">
-              Sách Hay Vẹn Nguyên Nơi Tâm Thức
+              Không Gian Văn Học Khai Phóng & Tri Thức
             </h1>
             
             {/* Phụ đề quote tiếng Anh font Serif Italic */}
             <p className="font-serif italic text-lg sm:text-xl text-stone-600 font-normal leading-relaxed mb-7">
-              “Good Books Are Truly in the Heart”
+              “Curated Literature & Intelligent Discovery”
             </p>
 
             {/* Khối trích dẫn phong cách tạp chí biên tập (Serif Italic, padding-left 20px, border-left đỏ dày) */}
             <blockquote className="border-l-4 border-[#881337] pl-[20px] py-1 my-7">
               <p className="font-serif italic text-base sm:text-[17px] text-stone-800 leading-[1.8]">
-                “Đọc chậm giữa một thế giới luôn vội vã — đó không phải là sự thụt lùi, mà là sự trở về với những chiều sâu vĩnh cửu của tâm hồn.”
+                “Một tác phẩm thực sự giá trị không chỉ cung cấp thông tin, mà mở ra những chiều kích tư duy mới và nuôi dưỡng góc nhìn độc lập của người đọc.”
               </p>
               <footer className="text-xs uppercase tracking-[0.12em] text-stone-400 font-sans font-medium mt-3.5 not-italic">
                 — TRIẾT LÝ THE INKWELL
@@ -101,29 +101,28 @@ export default function AboutPage() {
                 <span className="float-left text-5xl sm:text-6xl font-serif font-normal text-[#881337] mr-3 mt-1 leading-none select-none">
                   T
                 </span>
-                rong một chuyến tàu chiều ngập nắng, một người bạn từng ngập ngừng hỏi chúng tôi: 
-                <em className="text-stone-900 font-normal"> “Giữa thời đại của những đoạn video vài giây và tin tức lướt vội, liệu còn ai đủ kiên nhẫn để lật giở từng trang của một cuốn tiểu thuyết dày?”</em>
+                he Inkwell được thành lập với mục tiêu xây dựng một không gian sách chất lượng cao, phục vụ độc giả quan tâm đến các tác phẩm văn học tư tưởng, triết học và các ấn phẩm học thuật có giá trị bền vững qua thời gian.
               </p>
               
               <p>
-                Câu hỏi ấy chính là lý do <strong>The Inkwell</strong> ra đời. Chúng tôi không xem sách như những món hàng tiêu thụ nhanh, mà là những chiếc cầu nối kỳ diệu giữa các thế hệ — nơi tư tưởng của những bậc hiền triết và đại thi hào vẫn âm thầm soi sáng tâm hồn con người.
+                Chúng tôi áp dụng quy trình chọn lọc nghiêm ngặt đối với từng tựa sách: từ việc thẩm định độ chính xác của bản dịch, tính toàn vẹn của nguyên tác cho đến tiêu chuẩn in ấn và thẩm mỹ bìa sách. Mỗi cuốn sách trên kệ đều phản ánh cam kết của chúng tôi về chất lượng nội dung.
               </p>
               
               <p>
-                Từ giọt mực đầu tiên rơi trên đầu ngòi bút đến khi trang sách được mở ra, mỗi tác phẩm tại The Inkwell đều được chọn lọc bằng tất cả sự kính trọng. Bạn sẽ tìm thấy ở đây không chỉ là sách kinh điển, mà còn là người bạn đồng hành <strong>Mercy AI</strong> — thủ thư số tận tâm lắng nghe cảm xúc để dẫn lối bạn đến đúng cuốn sách bạn cần trong đời.
+                Bên cạnh danh mục sách truyền thống, The Inkwell tích hợp trợ lý đề xuất <strong>Mercy AI</strong> ứng dụng mô hình lai (Hybrid Recommendation System). Hệ thống phân tích sâu ngữ nghĩa và sở thích đọc cá nhân để hỗ trợ bạn tiếp cận nhanh chóng những tác phẩm phù hợp nhất với nhu cầu tìm hiểu của mình.
               </p>
             </div>
 
             {/* Lời trích mộc mạc & Chữ ký */}
             <div className="border-t border-b border-stone-200 py-3.5 my-2">
               <p className="text-xs italic text-stone-600 leading-[1.7] font-serif">
-                “Mỗi cuốn sách bạn cầm trên tay là một cuộc hội ngộ đã được định sẵn qua nhiều thế kỷ.”
+                “Mỗi tác phẩm kinh điển là một cuộc đối thoại tư tưởng vượt thời gian.”
               </p>
             </div>
 
             <div className="text-right pt-1">
               <p className="font-serif italic text-xs text-stone-500">
-                — Đội ngũ Giám tuyển The Inkwell
+                — Ban Biên Tập & Giám Tuyển The Inkwell
               </p>
             </div>
 
@@ -199,13 +198,13 @@ export default function AboutPage() {
         <section className="py-16 border-b border-stone-200">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[#881337] text-xs font-semibold uppercase tracking-[0.15em] font-sans">
-              GIÁ TRỊ CỐT LÕI
+              TIÊU CHUẨN VẬN HÀNH
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#1C1917] tracking-tight mt-2">
-              Ba Trụ Cột Định Hình The Inkwell
+              Ba Tiêu Chuẩn Nền Tảng Tại The Inkwell
             </h2>
             <p className="text-xs sm:text-sm text-stone-500 font-serif italic mt-2.5 max-w-xl mx-auto leading-relaxed">
-              Chúng tôi không chỉ bán sách, chúng tôi kiến tạo một ốc đảo tri thức tĩnh lặng cho độc giả hiện đại.
+              Định hình trải nghiệm tiếp cận tri thức thông qua tuyển chọn khắt khe, công nghệ đề xuất thông minh và dịch vụ hoàn thiện ấn phẩm chuyên nghiệp.
             </p>
           </div>
 
@@ -216,17 +215,17 @@ export default function AboutPage() {
               <div>
                 <BookOpen size={30} strokeWidth={1.25} className="text-[#1C1917] mb-5" />
                 <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
-                  TRỤ CỘT I
+                  TIÊU CHUẨN I
                 </p>
                 <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
-                  Giám Tuyển Khắt Khe
+                  Giám Tuyển Tiêu Chuẩn Cao
                 </h3>
                 <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
-                  Không chạy theo thị hiếu nhất thời. Mỗi tác phẩm nằm trên kệ của The Inkwell đều trải qua quy trình thẩm định nghiêm ngặt về giá trị tư tưởng, phẩm giá nghệ thuật và chất lượng dịch thuật.
+                  Mỗi tác phẩm trong danh mục The Inkwell đều trải qua quy trình đánh giá nghiêm ngặt về giá trị học thuật, tính nguyên bản và chất lượng dịch thuật. Chúng tôi ưu tiên các ấn bản có giá trị lâu dài thay vì chạy theo xu hướng nhất thời.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
-                Thẩm định dịch thuật <span className="text-stone-300 mx-1.5">•</span> Bảo tồn nguyên tác
+                Thẩm định bản quyền <span className="text-stone-300 mx-1.5">•</span> Tôn trọng nguyên tác
               </div>
             </div>
 
@@ -235,17 +234,17 @@ export default function AboutPage() {
               <div>
                 <Sparkles size={30} strokeWidth={1.25} className="text-[#881337] mb-5" />
                 <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
-                  TRỤ CỘT II
+                  TIÊU CHUẨN II
                 </p>
                 <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
-                  Thủ Thư Tri Âm
+                  Đề Xuất Cá Nhân Hóa (Mercy AI)
                 </h3>
                 <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
-                  Không chỉ là công cụ tìm kiếm từ khóa khô cứng. Mercy AI là vị thủ thư tri âm có khả năng thấu cảm tâm trạng, phong cách đọc và chiều sâu tư tưởng để dẫn lối bạn đến đúng cuốn sách bạn cần.
+                  Vượt lên các công cụ tìm kiếm từ khóa thông thường, Mercy AI ứng dụng mô hình lai (Hybrid Recommender) phân tích ngữ nghĩa và lịch sử tương tác để đề xuất chính xác các tựa sách phù hợp với phong cách đọc và nhu cầu nghiên cứu của bạn.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
-                Thấu cảm cảm xúc <span className="text-stone-300 mx-1.5">•</span> Dẫn lối văn chương
+                Mô hình Hybrid AI <span className="text-stone-300 mx-1.5">•</span> Phân tích ngữ nghĩa
               </div>
             </div>
 
@@ -254,17 +253,17 @@ export default function AboutPage() {
               <div>
                 <Package size={30} strokeWidth={1.25} className="text-[#1C1917] mb-5" />
                 <p className="text-[11px] font-sans font-medium text-stone-400 uppercase tracking-[0.1em] mb-1.5">
-                  TRỤ CỘT III
+                  TIÊU CHUẨN III
                 </p>
                 <h3 className="font-serif font-bold text-lg sm:text-xl text-[#1C1917] mb-3">
-                  Mỹ Học Xúc Giác & Đóng Gói
+                  Quy Chuẩn Đóng Gói & Bảo Quản
                 </h3>
                 <p className="text-xs sm:text-sm text-stone-600 leading-[1.7] font-sans">
-                  Chúng tôi tin rằng lật giở một trang sách là một nghi thức thiêng liêng. Từng ấn bản đều được đóng gói tỉ mỉ bằng giấy mộc, chống sốc đa tầng và gửi kèm chiếc bookmark độc quyền của The Inkwell.
+                  Mỗi ấn bản khi xuất kho đều tuân thủ quy trình kiểm định ngoại quan, bọc chống sốc đa tầng và đóng gói hộp cứng chuyên dụng kèm thẻ đánh dấu sách (bookmark) The Inkwell, đảm bảo sách đến tay bạn trong tình trạng hoàn hảo.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-stone-200/80 text-[11px] text-stone-500 font-sans tracking-wide">
-                Bookmark lụa <span className="text-stone-300 mx-1.5">•</span> Hộp bảo vệ quà tặng
+                Chống sốc đa tầng <span className="text-stone-300 mx-1.5">•</span> Hộp bảo vệ chuyên dụng
               </div>
             </div>
 
@@ -287,13 +286,13 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* 6. CALL TO ACTION (Lời Mời Gọi Bước Vào Thế Giới Tri Thức) */}
+        {/* 6. CALL TO ACTION (Khám phá danh mục) */}
         <section className="pt-14 pb-8 text-center max-w-xl mx-auto space-y-4">
           <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink">
-            Bắt Đầu Chuyến Du Hành Cùng The Inkwell
+            Khám Phá Danh Mục Sách Tuyển Chọn
           </h3>
           <p className="text-xs sm:text-sm text-ink/70 leading-relaxed">
-            Dù bạn đang tìm kiếm một cuốn sách để lắng đọng tâm tư hay muốn lắng nghe sự tư vấn từ Thủ thư số Mercy AI, cánh cửa The Inkwell luôn rộng mở chào đón bạn.
+            Dù bạn đang tìm kiếm tài liệu nghiên cứu chuyên sâu hay một tác phẩm kinh điển để thưởng thức, The Inkwell luôn sẵn sàng đồng hành cùng bạn.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-3">
             <Link 

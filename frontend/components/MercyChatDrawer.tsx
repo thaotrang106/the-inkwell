@@ -450,9 +450,9 @@ export default function MercyChatDrawer({ isOpen, onClose }: MercyChatDrawerProp
   // Các câu hỏi mẫu gợi ý
   const samplePrompts = [
     "Một cuốn tiểu thuyết trinh thám gay cấn có plot twist bất ngờ",
+    "Tác phẩm văn học kinh điển về tư tưởng và triết học phương Tây",
     "Một tác phẩm sinh tồn kịch tính giống The Hunger Games",
-    "Sách chữa lành tâm hồn, câu chữ nhẹ nhàng và sâu lắng",
-    "Một câu chuyện tình yêu kinh điển nhưng đầy trắc trở",
+    "Sách phát triển tư duy logic và tâm lý học hành vi",
   ];
 
   return (
