@@ -21,6 +21,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { DEMO_READERS } from "@/lib/demoReaders";
 import { GENRE_METADATA_MAP } from "@/lib/serverBooks";
+import { getPersonalizedBooksForGenre } from "@/lib/genrePersonalized";
 
 // Danh sách các thể loại hiển thị trên thanh chọn nhanh (Pills)
 const QUICK_GENRE_PILLS = [
@@ -60,8 +61,13 @@ export default function TrendingClient({
   const router = useRouter();
   const { user, isLoggedIn, login, logout } = useAuth();
   const [showUserSwitcher, setShowUserSwitcher] = useState(false);
-  const currentDemoReader = DEMO_READERS.find((r) => r.user_id === user?.user_id);
+  const currentDemoReader = DEMO_READERS.find((r) => r.user_id === user?.user_id) || (!isLoggedIn && !user ? DEMO_READERS[0] : null);
+  const readerDisplayName = currentDemoReader
+    ? currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
+    : "Bạn";
 
+  // Quản lý thể loại đang chọn đồng bộ URL và phản hồi lập tức 0ms
+  const [selectedGenre, setSelectedGenre] = useState<string>(genreParam);
   const [books, setBooks] = useState<any[]>(initialBooks || []);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,17 +75,22 @@ export default function TrendingClient({
     filterParam === "top10" ? "top10" : filterParam === "top25" ? "top25" : "all"
   );
   const [activeGenreMeta, setActiveGenreMeta] = useState<{ title: string; desc: string } | null>(
-    initialGenreMeta
+    initialGenreMeta || (genreParam ? (GENRE_METADATA_MAP[genreParam.toLowerCase()] || null) : null)
   );
 
-  // Cập nhật khi URL searchParams thay đổi
+  // Đồng bộ khi URL thay đổi từ bên ngoài (e.g. back/forward hoặc query param)
+  useEffect(() => {
+    setSelectedGenre(genreParam);
+  }, [genreParam]);
+
+  // Cập nhật khi selectedGenre thay đổi
   useEffect(() => {
     let isCancelled = false;
 
-    if (genreParam) {
-      const localMeta = GENRE_METADATA_MAP[genreParam.toLowerCase()] || {
-        title: genreParam.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-        desc: `Tuyển tập những tác phẩm văn học chọn lọc thuộc thể loại ${genreParam} từ kho tàng 10.000 cuốn sách The Inkwell.`
+    if (selectedGenre) {
+      const localMeta = GENRE_METADATA_MAP[selectedGenre.toLowerCase()] || {
+        title: selectedGenre.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        desc: `Tuyển tập những tác phẩm văn học chọn lọc thuộc thể loại ${selectedGenre} từ kho tàng 10.000 cuốn sách The Inkwell.`
       };
       setActiveGenreMeta(localMeta);
     } else {
@@ -91,8 +102,8 @@ export default function TrendingClient({
       setLoading(true);
 
       try {
-        if (genreParam) {
-          const res = await fetch(`${API_BASE_URL}/api/books/by-genre/${genreParam}?limit=60`);
+        if (selectedGenre) {
+          const res = await fetch(`${API_BASE_URL}/api/books/by-genre/${selectedGenre}?limit=60`);
           if (!res.ok) throw new Error("API call failed");
           const json = await res.json();
           if (!isCancelled && json.data) {
@@ -113,8 +124,7 @@ export default function TrendingClient({
       }
     };
 
-    // Nếu dữ liệu ban đầu không khớp với genreParam, fetch lại
-    if (genreParam || filterParam) {
+    if (selectedGenre || filterParam) {
       fetchBooks();
     } else {
       setBooks(initialBooks);
@@ -123,7 +133,12 @@ export default function TrendingClient({
     return () => {
       isCancelled = true;
     };
-  }, [genreParam, filterParam, initialBooks]);
+  }, [selectedGenre, filterParam, initialBooks]);
+
+  // Danh mục 5 tác phẩm đề xuất riêng may đo theo thể loại đang chọn
+  const personalizedGenreBooks = useMemo(() => {
+    return getPersonalizedBooksForGenre(selectedGenre, currentDemoReader, books);
+  }, [selectedGenre, currentDemoReader, books]);
 
   // Lọc sách theo từ khóa tìm kiếm (Tựa sách hoặc Tác giả)
   const filteredBooks = useMemo(() => {
@@ -135,20 +150,30 @@ export default function TrendingClient({
         if (!titleMatch && !authorMatch) return false;
       }
 
-      if (!genreParam) {
+      if (!selectedGenre) {
         if (rankFilter === "top10") return book.rank && book.rank <= 10;
         if (rankFilter === "top25") return book.rank && book.rank <= 25;
       }
 
       return true;
     });
-  }, [books, searchQuery, rankFilter, genreParam]);
+  }, [books, searchQuery, rankFilter, selectedGenre]);
 
   const handleSelectGenrePill = (slug: string) => {
-    if (slug === "all") {
-      router.push("/trending");
+    const nextSlug = slug === "all" ? "" : slug;
+    setSelectedGenre(nextSlug);
+    setSearchQuery("");
+
+    if (nextSlug) {
+      const localMeta = GENRE_METADATA_MAP[nextSlug.toLowerCase()] || {
+        title: nextSlug.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        desc: `Tuyển tập những tác phẩm văn học chọn lọc thuộc thể loại ${nextSlug} từ kho tàng 10.000 cuốn sách The Inkwell.`
+      };
+      setActiveGenreMeta(localMeta);
+      router.push(`/trending?genre=${nextSlug}`, { scroll: false });
     } else {
-      router.push(`/trending?genre=${slug}`);
+      setActiveGenreMeta(null);
+      router.push("/trending", { scroll: false });
     }
   };
 
@@ -276,7 +301,7 @@ export default function TrendingClient({
           
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-2 text-stone-500 font-cormorant text-sm sm:text-base uppercase tracking-[0.24em] font-semibold">
-              {genreParam ? (
+              {selectedGenre ? (
                 <>
                   <BookOpen size={13} className="text-[#881337]" />
                   <span>THE INKWELL ARCHIVE • THỂ LOẠI SÁCH</span>
@@ -316,7 +341,7 @@ export default function TrendingClient({
             </p>
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-sans">
               {QUICK_GENRE_PILLS.map((pill) => {
-                const isActive = (pill.slug === "all" && !genreParam) || (genreParam === pill.slug);
+                const isActive = (pill.slug === "all" && !selectedGenre) || (selectedGenre === pill.slug);
                 return (
                   <button
                     key={pill.slug}
@@ -361,7 +386,7 @@ export default function TrendingClient({
               )}
             </div>
 
-            {!genreParam && (
+            {!selectedGenre && (
               <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 shrink-0">
                 <button
                   onClick={() => setRankFilter("all")}
@@ -402,28 +427,52 @@ export default function TrendingClient({
 
         {/* GỢI Ý RIÊNG CHO ĐỘC GIẢ ĐĂNG NHẬP */}
         {currentDemoReader && (
-          <div className="bg-white rounded-[4px] p-6 sm:p-8 border border-stone-200/90 shadow-2xs mb-10">
+          <div className="bg-white rounded-[4px] p-6 sm:p-8 border border-stone-200/90 shadow-2xs mb-10 transition-all">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
               <div>
-                <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
-                  Dành Riêng Cho {currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "")}
+                <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                  <span>Dành Riêng Cho {readerDisplayName}</span>
+                  {selectedGenre && activeGenreMeta && (
+                    <>
+                      <span className="text-stone-300 font-light hidden sm:inline">•</span>
+                      <span className="text-[#881337] font-normal">{activeGenreMeta.title}</span>
+                    </>
+                  )}
                 </h2>
                 <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
-                  {currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn
+                  {selectedGenre && activeGenreMeta ? (
+                    <>
+                      Tuyển chọn 5 tác phẩm <strong className="font-semibold text-stone-700">{activeGenreMeta.title}</strong> tương thích nhất với gu đọc của {readerDisplayName} • Lọc kết hợp Hybrid
+                    </>
+                  ) : (
+                    <>{currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn</>
+                  )}
                 </p>
               </div>
-              <Link 
-                href="/" 
-                className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-[#881337] transition-colors flex items-center gap-1.5 self-start sm:self-auto group cursor-pointer"
-              >
-                <span>Về Trang chủ xem đầy đủ</span>
-                <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
-              </Link>
+
+              {selectedGenre ? (
+                <button
+                  type="button"
+                  onClick={() => handleSelectGenrePill("all")}
+                  className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-[#881337] transition-colors flex items-center gap-1.5 self-start sm:self-auto group cursor-pointer"
+                >
+                  <span>Xem tất cả thể loại</span>
+                  <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
+                </button>
+              ) : (
+                <Link 
+                  href="/" 
+                  className="text-xs sm:text-sm font-sans font-medium text-[#1C1917] hover:text-[#881337] transition-colors flex items-center gap-1.5 self-start sm:self-auto group cursor-pointer"
+                >
+                  <span>Về Trang chủ xem đầy đủ</span>
+                  <ArrowRight size={14} strokeWidth={1.5} className="text-[#1C1917]/70 group-hover:text-[#881337] group-hover:translate-x-1 transition-all" />
+                </Link>
+              )}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6">
-              {currentDemoReader.books.map((b) => (
-                <BookCard key={b.book_id} book={b} isHybrid={true} />
+              {personalizedGenreBooks.map((b) => (
+                <BookCard key={`personalized-${selectedGenre || 'all'}-${b.book_id}`} book={b} isHybrid={true} />
               ))}
             </div>
           </div>
