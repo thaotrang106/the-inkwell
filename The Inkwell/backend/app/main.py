@@ -310,6 +310,28 @@ preload_popular_and_genres()
 def read_root():
     return {"message": "Chào mừng đến với hệ thống AI của The Inkwell!"}
 
+@app.get("/api/health")
+def health_check(db: Session = Depends(get_db)):
+    """
+    API 16: Kiểm tra trạng thái hoạt động của Backend, kết nối Database và bộ nhớ đệm RAM.
+    """
+    db_status = "connected"
+    try:
+        db.execute(text("SELECT 1"))
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+    
+    return {
+        "status": "healthy" if db_status == "connected" else "degraded",
+        "timestamp": datetime.utcnow().isoformat(),
+        "database": db_status,
+        "cache": {
+            "popular_books": len(POPULAR_BOOKS_CACHE.get("default", [])),
+            "genres": len(GENRE_BOOKS_CACHE),
+            "total_books_in_ram": len(BOOK_DETAILS_CACHE)
+        }
+    }
+
 @app.get("/api/recommendations/popular")
 def get_popular_books(limit: int = 20, response: Response = None, db: Session = Depends(get_db)):
     """
@@ -455,32 +477,7 @@ def get_hybrid_api(book_id: int, alpha: float = 0.5, limit: int = 5):
         "data": books
     }
 
-# ----------------- API THỰC NGHIỆM ĐÁNH GIÁ (LUẬN VĂN TỐT NGHIỆP) -----------------
-@app.get("/api/benchmark")
-def get_benchmark_report():
-    """
-    API trả về kết quả thực nghiệm đánh giá 4 mô hình đề xuất trên tập dữ liệu Goodbooks-10k.
-    """
-    benchmark_json_path = Path(__file__).resolve().parent.parent / "evaluation" / "benchmark_results.json"
-    if not benchmark_json_path.exists():
-        benchmark_json_path = Path("evaluation/benchmark_results.json")
-        
-    if benchmark_json_path.exists():
-        with open(benchmark_json_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-            
-    return {
-        "status": "success",
-        "dataset": "Goodbooks-10k (10,000 books, 981,756 ratings)",
-        "results": [
-            {"model": "Popularity (Baseline)", "precision_5": 0.1328, "recall_5": 0.1567, "ndcg_5": 0.1478, "precision_10": 0.1287, "recall_10": 0.3048, "ndcg_10": 0.2228, "catalog_coverage": 0.23, "diversity": 1.1008, "avg_latency_ms": 0.03},
-            {"model": "Content-Based (Vector/Metadata)", "precision_5": 0.0590, "recall_5": 0.0699, "ndcg_5": 0.0589, "precision_10": 0.0500, "recall_10": 0.1186, "ndcg_10": 0.0836, "catalog_coverage": 1.54, "diversity": 0.4861, "avg_latency_ms": 9.23},
-            {"model": "Collaborative Filtering (Ochiai)", "precision_5": 0.2361, "recall_5": 0.2734, "ndcg_5": 0.2827, "precision_10": 0.1730, "recall_10": 0.4053, "ndcg_10": 0.3488, "catalog_coverage": 0.61, "diversity": 1.2434, "avg_latency_ms": 0.09},
-            {"model": "Hybrid Recommendation (Borda Count)", "precision_5": 0.1508, "recall_5": 0.1779, "ndcg_5": 0.1752, "precision_10": 0.1377, "recall_10": 0.3187, "ndcg_10": 0.2471, "catalog_coverage": 1.28, "diversity": 0.9025, "avg_latency_ms": 9.27}
-        ]
-    }
-
-# ----------------- API THỨ 5 (TÌM KIẾM TÊN SÁCH) -----------------
+# ----------------- API TÌM KIẾM TÊN SÁCH (SEARCH) -----------------
 @app.get("/api/books/search")
 def search_books(q: str, limit: int = 5, db: Session = Depends(get_db)):
     """API tìm kiếm sách siêu tốc theo tên và tác giả (dành cho thanh Search Autocomplete - phản hồi 0.1ms qua RAM)"""
@@ -610,10 +607,11 @@ def get_book_details(book_id: int, response: Response = None, db: Session = Depe
 
     raise HTTPException(status_code=404, detail="Không tìm thấy cuốn sách này")
 
-# ----------------- API DANH SÁCH THỂ LOẠI (GENRES) -----------------
+# ----------------- API DANH SÁCH THỂ LOẠI (GENRES / CATEGORIES) -----------------
 @app.get("/api/genres")
+@app.get("/api/categories")
 def get_all_genres(response: Response = None):
-    """Lấy danh mục các thể loại sách chuẩn hóa từ Dataset kèm tên tiếng Việt và mô tả"""
+    """API 8: Lấy danh mục các thể loại sách chuẩn hóa từ Dataset kèm tên tiếng Việt và mô tả"""
     if response:
         response.headers["Cache-Control"] = "public, max-age=86400, s-maxage=86400"
     data = []
@@ -625,8 +623,9 @@ def get_all_genres(response: Response = None):
         })
     return {"status": "success", "data": data}
 
-# ----------------- API LẤY SÁCH THEO THỂ LOẠI (BY GENRE) -----------------
+# ----------------- API LẤY SÁCH THEO THỂ LOẠI (BY GENRE / CATEGORY) -----------------
 @app.get("/api/books/by-genre/{genre}")
+@app.get("/api/categories/{genre}/books")
 def get_books_by_genre(genre: str, limit: int = 50, response: Response = None, db: Session = Depends(get_db)):
     """
     API lấy danh sách sách theo thể loại (Genre/Tag) chuẩn xác từ Dataset.
@@ -854,11 +853,45 @@ def log_interaction(body: InteractionIn):
     finally:
         session.close()
 
-# ----------------- API THỨ 9 (CÁ NHÂN HÓA THEO USER) -----------------
+# ----------------- API LỊCH SỬ TƯƠNG TÁC ĐỘC GIẢ -----------------
+@app.get("/api/users/{user_id}/interactions")
+def get_user_interactions(user_id: int, limit: int = 20, db: Session = Depends(get_db)):
+    """
+    API 13: Lấy lịch sử các hành vi tương tác gần nhất của một độc giả (view, click, add_to_cart...).
+    """
+    try:
+        rows = db.execute(
+            text("""
+                SELECT i.interaction_id, i.book_id, b.title, b.author, i.interaction_type, i.created_at
+                FROM interactions i
+                LEFT JOIN books b ON b.book_id = i.book_id
+                WHERE i.user_id = :uid
+                ORDER BY i.created_at DESC
+                LIMIT :limit
+            """),
+            {"uid": user_id, "limit": limit}
+        ).fetchall()
+        
+        interactions = []
+        for r in rows:
+            interactions.append({
+                "interaction_id": r[0],
+                "book_id": r[1],
+                "title": r[2] or "Tác phẩm văn học",
+                "author": r[3] or "The Inkwell",
+                "interaction_type": r[4],
+                "created_at": r[5].isoformat() if r[5] else None
+            })
+        return {"user_id": user_id, "total": len(interactions), "data": interactions}
+    except Exception as e:
+        return {"user_id": user_id, "total": 0, "data": [], "error": str(e)}
+
+# ----------------- API CÁ NHÂN HÓA THEO USER (FOR-YOU) -----------------
 @app.get("/api/recommendations/foryou/{user_id}")
+@app.get("/api/recommendations/for-you/{user_id}")
 def for_you(user_id: int, limit: int = 10):
     """
-    API gợi ý cá nhân hóa thật sự theo user_id.
+    API 5: Gợi ý cá nhân hóa độc quyền theo user_id.
     Sử dụng Borda Fusion kết hợp Content-Based (centroid vector)
     và Collaborative Filtering (tổng hợp Ochiai từ nhiều hạt giống).
     """
@@ -970,35 +1003,6 @@ def chat_mercy_endpoint(payload: ChatRequest, db: Session = Depends(get_db)):
     MERCY_ENDPOINT_CACHE[cache_key] = result
 
     return result
-
-# ----------------- API THỨ 10 (DANH SÁCH USER CÓ SẴN ĐỂ DEMO) -----------------
-@app.get("/api/users/active")
-def get_active_users(limit: int = 20, db: Session = Depends(get_db)):
-    """
-    API lấy danh sách user_id có nhiều đánh giá nhất (dùng cho dropdown demo).
-    Không cần hệ thống đăng nhập — chỉ cần chọn user_id từ dropdown.
-    """
-    active_users = db.query(
-        Rating.user_id,
-        func.count(Rating.rating_id).label("total_ratings"),
-        func.round(func.avg(Rating.rating), 1).label("avg_rating")
-    ).filter(
-        Rating.rating >= 4
-    ).group_by(
-        Rating.user_id
-    ).order_by(
-        func.count(Rating.rating_id).desc()
-    ).limit(limit).all()
-    
-    result = []
-    for u in active_users:
-        result.append({
-            "user_id": u[0],
-            "total_ratings": u[1],
-            "avg_rating": float(u[2])
-        })
-    
-    return {"data": result}
 
 # ----------------- CÁC ENDPOINT ĐÁNH GIÁ & NHẬN XÉT (REVIEWS) -----------------
 VIETNAMESE_NAMES = [
