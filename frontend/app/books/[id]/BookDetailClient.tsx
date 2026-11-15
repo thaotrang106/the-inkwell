@@ -32,11 +32,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import BookCard from "@/components/BookCard";
 import RecommendedReadsCarousel from "@/components/RecommendedReadsCarousel";
 import ProductReviews from "@/components/ProductReviews";
 import { BookDetailData } from "@/lib/serverBooks";
 import { getBookPricing, formatPriceVND } from "@/lib/bookPricing";
+import { getKnownAuthorBooks } from "@/lib/authorBooksMap";
 
 const cleanTitle = (title: string) => {
   if (!title) return "";
@@ -124,7 +124,12 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [similarBooks, setSimilarBooks] = useState<any[]>([]);
-  const [authorBooks, setAuthorBooks] = useState<any[]>([]);
+  const [authorBooks, setAuthorBooks] = useState<any[]>(() => {
+    const rawAuth = typeof initialBook?.author === "string" 
+      ? initialBook.author 
+      : (initialBook?.authors || "");
+    return getKnownAuthorBooks(rawAuth, Number(initialBook?.book_id || 0));
+  });
   const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
 
   useEffect(() => {
@@ -185,7 +190,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     
     fetchBook();
 
-    // Tải sách tương tự
+    // 1. Tải gợi ý tương tự (3 tầng fallback an toàn: Similar -> Hybrid -> Popular)
     fetch(`${API_BASE_URL}/api/recommendations/similar/${id}?limit=10`)
       .then((res) => res.json())
       .then((json) => {
@@ -195,22 +200,53 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
           fetch(`${API_BASE_URL}/api/recommendations/hybrid/${id}`)
             .then((r) => r.json())
             .then((hj) => {
-              if (hj.data && hj.data.length > 0) setSimilarBooks(hj.data);
+              if (hj.data && hj.data.length > 0) {
+                setSimilarBooks(hj.data);
+              } else {
+                fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+                  .then((pr) => pr.json())
+                  .then((pj) => {
+                    if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+                  })
+                  .catch(() => {});
+              }
             })
-            .catch(() => {});
+            .catch(() => {
+              fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+                .then((pr) => pr.json())
+                .then((pj) => {
+                  if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+                })
+                .catch(() => {});
+            });
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        fetch(`${API_BASE_URL}/api/recommendations/popular?limit=10`)
+          .then((pr) => pr.json())
+          .then((pj) => {
+            if (pj.data && pj.data.length > 0) setSimilarBooks(pj.data);
+          })
+          .catch(() => {});
+      });
 
-    // Tải sách cùng tác giả
+    // 2. Tải sách khác cùng tác giả (Also By This Author)
     fetch(`${API_BASE_URL}/api/books/by-author/${id}?limit=10`)
       .then((res) => res.json())
       .then((json) => {
         if (json.data && json.data.length > 0) {
           setAuthorBooks(json.data);
+        } else {
+          const auth = typeof initialBook?.author === "string" ? initialBook.author : (initialBook?.authors || "");
+          const fallback = getKnownAuthorBooks(auth, Number(id));
+          if (fallback.length > 0) setAuthorBooks(fallback);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        const auth = typeof initialBook?.author === "string" ? initialBook.author : (initialBook?.authors || "");
+        const fallback = getKnownAuthorBooks(auth, Number(id));
+        if (fallback.length > 0) setAuthorBooks(fallback);
+      });
   }, [id, initialBook]);
 
   useEffect(() => {
@@ -618,20 +654,6 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             </p>
           </div>
 
-          {/* Sách tương tự cùng gu */}
-          {similarBooks.length > 0 && (
-            <div className="pt-6 border-t border-stone-200">
-              <h3 className="font-serif text-xl font-bold text-[#1C1917] mb-4">
-                Độc giả yêu thích tác phẩm này cũng đọc
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {similarBooks.slice(0, 4).map((b) => (
-                  <BookCard key={b.book_id} book={b} />
-                ))}
-              </div>
-            </div>
-          )}
-
         </div>
 
         {/* RIGHT COLUMN: Buy Box (col-span-3) */}
@@ -735,6 +757,27 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
       {/* Tabs Đánh giá của độc giả */}
       <div className="mt-12 bg-white rounded-[4px] p-6 sm:p-10 border border-stone-200/90 shadow-2xs">
         <ProductReviews bookId={Number(id) || initialBook.book_id} bookTitle={cleanTitle(book.title)} />
+      </div>
+
+      {/* 1. Phần Sách cùng tác giả (Also By This Author) */}
+      {authorBooks && authorBooks.length > 0 && (
+        <div className="mt-14 border-t border-stone-200/80 pt-10">
+          <RecommendedReadsCarousel 
+            title="Cùng tác giả"
+            subtitle={`Các tác phẩm tiêu biểu khác của cùng tác giả ${authorName}`}
+            initialBooks={authorBooks}
+            emptyHide={true}
+          />
+        </div>
+      )}
+
+      {/* 2. Phần Sách tương tự bạn có thể thích (You may also like) */}
+      <div className="mt-14 border-t border-stone-200/80 pt-10">
+        <RecommendedReadsCarousel 
+          title="Có thể bạn cũng thích"
+          subtitle="Những tác phẩm tương đồng về phong cách nghệ thuật, bối cảnh và cảm xúc"
+          initialBooks={similarBooks.length > 0 ? similarBooks : undefined}
+        />
       </div>
 
     </div>
