@@ -16,7 +16,7 @@ const inter = Inter({
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
-  variable: "--font-playfair",
+  variable: "--font-playfair-display",
   display: "swap"
 });
 
@@ -38,6 +38,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className={`${inter.variable} ${playfair.variable} ${lora.variable} font-sans antialiased bg-[#FAF7F2] text-[#1C1917] min-h-screen flex flex-col relative`}>
         <div className="fixed inset-0 pointer-events-none paper-texture opacity-30 mix-blend-multiply z-[-1]"></div>
         <AuthProvider>
