@@ -125,6 +125,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isFollowingAuthor, setIsFollowingAuthor] = useState(false);
   const [similarBooks, setSimilarBooks] = useState<any[]>([]);
   const [authorBooks, setAuthorBooks] = useState<any[]>(() => {
     const rawAuth = typeof initialBook?.author === "string" 
@@ -545,21 +546,30 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
           
           {/* Tác giả */}
           <div className="w-full pt-5 border-t border-stone-200 text-left">
-            <h4 className="font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500 mb-3.5">
+            <h4 className="font-sans text-[11px] font-bold uppercase tracking-[0.16em] text-stone-500 mb-3">
               Tác giả ấn phẩm
             </h4>
-            <div className="flex items-center gap-3.5 p-3 rounded-[4px] bg-[#FAF7F2] border border-stone-200/80">
-              <div className="w-10 h-10 rounded-full bg-[#1C1917] text-[#FAF7F2] flex items-center justify-center font-serif text-base font-bold shadow-xs shrink-0 select-none">
-                {authorName ? authorName.trim().charAt(0) : "A"}
+            <div className="p-3.5 rounded-[4px] bg-white border border-stone-200 shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#1C1917] text-[#FAF7F2] flex items-center justify-center font-serif text-base font-bold shadow-xs shrink-0 select-none">
+                  {authorName ? authorName.trim().charAt(0) : "A"}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-serif font-bold text-sm text-stone-900 truncate">
+                    {authorName}
+                  </p>
+                  <p className="text-[11px] text-stone-500 font-sans mt-0.5">
+                    Tác giả văn học
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-serif font-bold text-sm text-stone-900 truncate">
-                  {authorName}
-                </p>
-                <p className="text-[11px] text-stone-500 font-sans mt-0.5">
-                  Tác giả văn học
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsFollowingAuthor(!isFollowingAuthor)}
+                className="w-full mt-3 py-1.5 border border-stone-200 hover:border-stone-400 rounded-[3px] text-xs font-medium text-stone-700 bg-stone-50/60 hover:bg-white transition-colors cursor-pointer flex items-center justify-center gap-1"
+              >
+                {isFollowingAuthor ? "✓ Đã theo dõi" : "+ Theo dõi tác giả"}
+              </button>
             </div>
           </div>
 
@@ -599,8 +609,8 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
         </div>
         
         {/* CENTER COLUMN: Details & Description (col-span-6) */}
-        <div className="lg:col-span-6 flex flex-col">
-          <div className="flex justify-between items-start mb-2">
+        <div className="lg:col-span-6 flex flex-col text-left">
+          <div className="flex justify-between items-start mb-1.5">
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#1C1917] leading-[1.18] tracking-tight pr-6">
               {cleanTitle(book.title)}
             </h1>
@@ -609,73 +619,77 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
             </button>
           </div>
           
-          <div className="text-sm font-sans text-stone-600 mb-3 flex flex-wrap items-center gap-1.5">
-            <span>Tác giả:</span> 
-            <strong className="text-stone-900 font-medium">{authorName}</strong>
-            {book.genre && (
-              <>
-                <span className="text-stone-300">•</span>
-                <span className="text-[#881337] font-medium">{book.genre}</span>
-              </>
-            )}
+          <div className="text-sm font-sans text-stone-600 mb-2.5 flex flex-wrap items-center gap-2">
+            <span>Tác giả: <strong className="text-stone-900 font-medium">{authorName}</strong></span>
+            <span className="text-stone-300">|</span>
+            <span>Định dạng: <strong className="text-stone-900 font-medium">{selectedFormatLabel}</strong></span>
           </div>
           
           {/* Đánh giá sao */}
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-100 text-sm">
+          <div className="flex items-center gap-2 mb-3 text-sm">
+            <span className="font-bold text-stone-900">{book.rating || "4.34"}</span>
             <div className="flex text-amber-500 items-center">
               {[...Array(5)].map((_, i) => (
                 <Star 
                   key={i} 
                   size={15} 
-                  fill={i < Math.floor(book.rating || 4.2) ? "currentColor" : "none"} 
-                  className={i < Math.floor(book.rating || 4.2) ? "" : "text-stone-300"} 
+                  fill={i < Math.floor(book.rating || 4.34) ? "currentColor" : "none"} 
+                  className={i < Math.floor(book.rating || 4.34) ? "" : "text-stone-300"} 
                 />
               ))}
             </div>
-            <span className="font-bold text-stone-900">{book.rating || "4.2"}</span>
-            <span className="text-stone-400">•</span>
             <span className="text-stone-500 text-xs">
-              {(book.ratings_count || 1280).toLocaleString()} lượt bình chọn
+              ({(book.ratings_count || 4942365).toLocaleString()} đánh giá Goodreads)
             </span>
           </div>
 
-          {/* Chọn định dạng sách */}
-          <div className="mb-6">
-            <p className="text-sm font-cormorant font-semibold uppercase tracking-[0.22em] text-stone-500 mb-2">
-              ĐỊNH DẠNG ẤN BẢN
-            </p>
-            <div className="grid grid-cols-3 gap-3">
-              {formatsList.map((f) => {
-                const isSelected = selectedFormat === f.id;
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setSelectedFormat(f.id)}
-                    className={`p-3 rounded-[4px] border text-left transition-all cursor-pointer ${
-                      isSelected 
-                        ? "border-[#1C1917] bg-[#FAF7F2] ring-1 ring-[#1C1917]" 
-                        : "border-stone-200 hover:border-stone-400 bg-white"
-                    }`}
-                  >
-                    <p className={`text-xs font-bold ${isSelected ? "text-[#1C1917]" : "text-stone-800"}`}>
-                      {f.name.split(" ")[0]} {f.name.split(" ")[1]}
-                    </p>
-                    <p className="text-xs font-semibold text-[#881337] mt-1">
-                      {formatPriceVND(f.price)}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Dòng Badge & Xem tất cả phiên bản */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-stone-100">
+            <span className="bg-[#1C1917] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-[2px] tracking-wide uppercase">
+              Tuyển tập chọn lọc #{Math.abs(Number(book.book_id) || 1)}
+            </span>
+            <a href="#formats" className="text-xs text-stone-500 hover:text-stone-900 underline transition-colors">
+              Xem tất cả phiên bản
+            </a>
           </div>
 
-          {/* 1. Giới thiệu nội dung: Tóm tắt tác phẩm (lên trên) */}
-          <div className="space-y-3 mb-8">
-            <h3 className="font-serif text-xl font-bold text-[#1C1917]">
-              Tóm tắt tác phẩm
+          {/* 3 thẻ chọn định dạng */}
+          <div id="formats" className="grid grid-cols-3 gap-3 mb-6">
+            {formatsList.map((f) => {
+              const isSelected = selectedFormat === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setSelectedFormat(f.id)}
+                  className={`relative p-3 sm:p-3.5 rounded-[4px] border text-center transition-all cursor-pointer ${
+                    isSelected 
+                      ? "border-[#1C1917] bg-white ring-1 ring-[#1C1917]" 
+                      : "border-stone-200 hover:border-stone-400 bg-white"
+                  }`}
+                >
+                  {isSelected && (
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#1C1917] text-white text-[9px] font-bold px-2 py-0.5 rounded-[2px] tracking-wider uppercase whitespace-nowrap shadow-xs">
+                      ĐÃ CHỌN
+                    </span>
+                  )}
+                  <p className="text-xs font-medium text-stone-800">
+                    {f.name}
+                  </p>
+                  <p className="text-xs font-bold text-stone-900 mt-1">
+                    {formatPriceVND(f.price)}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 1. Giới thiệu nội dung: Tóm tắt tác phẩm */}
+          <div className="space-y-2.5 mb-6">
+            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-stone-500">
+              TÓM TẮT NỘI DUNG TÁC PHẨM
             </h3>
-            <p className="text-stone-700 text-sm sm:text-base leading-relaxed font-sans">
+            <p className="text-stone-800 text-sm sm:text-[14.5px] leading-relaxed font-sans">
               {book.description || `"${cleanTitle(book.title)}" là một trong những tác phẩm tiêu biểu của ${authorName}, đưa người đọc qua những trải nghiệm cảm xúc phong phú và bài học nhân sinh giá trị. Tác phẩm được chuẩn hóa từ kho dữ liệu văn học Goodreads-10k.`}
             </p>
           </div>
@@ -747,36 +761,72 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
 
         {/* RIGHT COLUMN: Buy Box (col-span-3) */}
         <div className="lg:col-span-3">
-          <div className="sticky top-24 p-5 sm:p-6 rounded-[4px] border border-stone-200/90 bg-[#FAF7F2] space-y-5 shadow-2xs">
+          <div className="sticky top-24 p-5 sm:p-6 rounded-[4px] border border-stone-200/90 bg-white space-y-4 shadow-2xs text-left">
+            {/* Giá tiền & Tiết kiệm */}
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">
-                GIÁ NIÊM YẾT CHÍNH HÃNG
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl sm:text-3xl font-bold font-sans text-[#881337]">
+              <div className="flex items-center justify-between">
+                <span className="text-2xl sm:text-3xl font-bold font-sans text-stone-900">
                   {formatPriceVND(currentPrice)}
                 </span>
-                {selectedFormat === "paperback" && book.original_price > book.price && (
-                  <span className="text-xs text-stone-400 line-through">
-                    {formatPriceVND(book.original_price)}
-                  </span>
-                )}
+                <span className="text-xs font-semibold px-2 py-0.5 bg-stone-100 text-stone-700 rounded-[3px] border border-stone-200/80">
+                  Tiết kiệm 20%
+                </span>
               </div>
-              <p className="text-[11px] text-emerald-800 font-medium mt-1">
-                ✓ Còn hàng trong kho • Giao hàng tiêu chuẩn 2-3 ngày
+              <p className="text-xs text-stone-400 line-through mt-0.5">
+                Giá gốc: {formatPriceVND(Math.round((currentPrice * 1.25) / 1000) * 1000)}
               </p>
+              <div className="mt-2.5 text-xs text-stone-600 flex items-center justify-between">
+                <span>Định dạng đã chọn:</span>
+                <span className="font-medium text-stone-900 underline cursor-pointer">
+                  {selectedFormatLabel} ▾
+                </span>
+              </div>
+            </div>
+
+            {/* Trạng thái kho */}
+            <div className="flex items-center justify-between text-xs py-1 border-t border-stone-100">
+              <span className="text-emerald-700 font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block"></span>
+                Còn hàng sẵn sàng giao
+              </span>
+              <span className="text-stone-400">Kho The Inkwell</span>
+            </div>
+
+            {/* Hộp thông tin giao hàng */}
+            <div className="border border-stone-200 rounded-[4px] p-3 space-y-2 text-xs text-stone-600 bg-stone-50/50">
+              <div className="flex items-start gap-2">
+                <Truck size={14} className="text-stone-700 mt-0.5 shrink-0" />
+                <div>
+                  <span>Giao tiêu chuẩn: </span>
+                  <strong className="text-stone-900 font-medium">Miễn phí vào Ngày mai</strong>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Clock size={14} className="text-stone-700 mt-0.5 shrink-0" />
+                <div>
+                  <span>Đặt trước trong </span>
+                  <strong className="text-stone-900 font-medium">5 giờ 30 phút</strong>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-stone-200/60 text-[11px]">
+                <div className="flex items-center gap-1 text-stone-600">
+                  <MapPin size={12} className="text-stone-500" />
+                  <span>Giao tới: <strong className="text-stone-900">Việt Nam</strong></span>
+                </div>
+                <span className="text-stone-500">Miễn phí đổi trả</span>
+              </div>
             </div>
 
             {/* Điều chỉnh số lượng */}
-            <div className="flex items-center justify-between border-y border-stone-200/80 py-3">
+            <div className="flex items-center justify-between py-1">
               <span className="text-xs font-medium text-stone-700">Số lượng:</span>
-              <div className="flex items-center border border-stone-300 rounded-[4px] bg-white">
+              <div className="flex items-center border border-stone-300 rounded-[3px] bg-white">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-2.5 py-1 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
                 >
-                  <Minus size={13} />
+                  <Minus size={12} />
                 </button>
                 <span className="px-3 text-xs font-bold text-stone-900">{quantity}</span>
                 <button
@@ -784,60 +834,61 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-2.5 py-1 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
                 >
-                  <Plus size={13} />
+                  <Plus size={12} />
                 </button>
               </div>
             </div>
 
             {/* Nút hành động */}
-            <div className="space-y-2.5">
+            <div className="space-y-2 pt-1">
               <button
                 type="button"
                 onClick={handleAddToCartDetail}
-                className="w-full py-3 px-4 rounded-[4px] bg-[#1C1917] hover:bg-stone-800 text-white font-sans text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                className="w-full py-2.5 px-4 rounded-[4px] bg-[#1C1917] hover:bg-stone-800 text-white font-sans text-xs font-bold tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
               >
                 <ShoppingCart size={15} />
-                <span>{isAddedToCart ? "ĐÃ THÊM VÀO GIỎ" : "THÊM VÀO GIỎ HÀNG"}</span>
+                <span>{isAddedToCart ? "ĐÃ THÊM VÀO GIỎ" : "Thêm vào giỏ hàng"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePurchaseDetail}
-                className="w-full py-3 px-4 rounded-[4px] bg-[#881337] hover:bg-[#700f2d] text-white font-sans text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer shadow-2xs"
+                className="w-full py-2.5 px-4 rounded-[4px] bg-white hover:bg-stone-50 text-stone-900 border border-stone-300 font-sans text-xs font-bold tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
-                MUA NGAY
-              </button>
-
-              <button
-                type="button"
-                onClick={handleWishlistDetail}
-                className={`w-full py-2 px-3 rounded-[4px] border transition-colors flex items-center justify-center gap-2 text-xs font-medium cursor-pointer ${
-                  isWishlisted 
-                    ? "border-rose-300 bg-rose-50 text-[#881337]" 
-                    : "border-stone-300 bg-white text-stone-700 hover:border-stone-900 hover:text-stone-900"
-                }`}
-              >
-                <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} />
-                <span>{isWishlisted ? "Đã lưu vào danh sách ước" : "Lưu vào danh sách ước"}</span>
+                <Zap size={14} className="fill-current text-stone-900" />
+                <span>Mua ngay</span>
               </button>
             </div>
 
-            {/* Cam kết của The Inkwell */}
-            <div className="pt-3 border-t border-stone-200/80 space-y-2 text-[11px] text-stone-600 font-sans">
-              <div className="flex items-center gap-2">
-                <Truck size={14} className="text-[#881337] shrink-0" />
-                <span>Miễn phí vận chuyển đơn từ 300.000₫</span>
+            {/* Cam kết / Nhà cung cấp */}
+            <div className="pt-2.5 border-t border-stone-100 space-y-1.5 text-xs text-stone-600 font-sans">
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-stone-500">
+                  <ShieldCheck size={13} className="text-stone-500" /> Cung cấp bởi
+                </span>
+                <span className="font-medium text-stone-900">The Inkwell Official</span>
               </div>
-              <div className="flex items-center gap-2">
-                <RotateCcw size={14} className="text-[#881337] shrink-0" />
-                <span>Đổi trả 7 ngày không cần lý do</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={14} className="text-[#881337] shrink-0" />
-                <span>Ấn bản chuẩn mực, nguyên seal màng co</span>
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-stone-500">
+                  <RotateCcw size={13} className="text-stone-500" /> Đổi trả an tâm
+                </span>
+                <span className="font-medium text-stone-900">30 ngày miễn phí</span>
               </div>
             </div>
 
+            {/* Thêm vào danh sách yêu thích */}
+            <button
+              type="button"
+              onClick={handleWishlistDetail}
+              className={`w-full py-2 px-3 rounded-[4px] border transition-colors flex items-center justify-center gap-2 text-xs font-medium cursor-pointer shadow-2xs ${
+                isWishlisted 
+                  ? "border-rose-300 bg-rose-50 text-[#881337]" 
+                  : "border-stone-300 bg-white text-stone-700 hover:border-stone-500 hover:text-stone-900"
+              }`}
+            >
+              <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} className={isWishlisted ? "text-[#881337]" : ""} />
+              <span>{isWishlisted ? "Đã lưu vào danh sách yêu thích" : "Thêm vào danh sách yêu thích"}</span>
+            </button>
           </div>
         </div>
 
