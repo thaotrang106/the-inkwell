@@ -155,7 +155,7 @@ export default function Home() {
       tag: "TUYỂN TẬP VĂN HỌC & TRI THỨC",
       titleLine1: "Good Books",
       titleLine2: "Better Days",
-      description: "Không gian hội tụ các tác phẩm kinh điển và công nghệ đề xuất thông minh. Khám phá những ấn phẩm giá trị được may đo riêng theo gu đọc của bạn.",
+      description: "Không gian hội tụ các tác phẩm kinh điển và công nghệ đề xuất thông minh. Khám phá những ấn phẩm giá trị được gợi ý theo gu đọc của bạn.",
       desktopImg: "/hero banner_desktop.png",
       mobileImg: "/hero banner_mobile.jpg",
       objectPosition: "object-bottom md:object-[right_bottom]",
@@ -780,13 +780,13 @@ export default function Home() {
                   }}
                   className="text-[#881337] hover:underline font-medium inline-flex items-center gap-0.5 cursor-pointer"
                 >
-                  Gợi ý may đo cho bạn <ArrowRight size={11} />
+                  Gợi ý theo gu đọc của bạn <ArrowRight size={11} />
                 </a>
               </div>
             ) : (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/80 shadow-2xs text-xs text-stone-600 font-sans">
                 <Sparkles size={13} className="text-[#881337]" />
-                <span>Muốn nhận gợi ý may đo theo gu đọc của bạn?</span>
+                <span>Muốn nhận gợi ý theo gu đọc của bạn?</span>
                 <Link
                   href="/login"
                   className="text-[#881337] hover:underline font-semibold inline-flex items-center gap-0.5 ml-1"
@@ -891,7 +891,7 @@ export default function Home() {
                   </div>
                   <p className="text-ink/60 text-sm mt-1">
                     {DEMO_READERS.find(r => r.user_id === user?.user_id)
-                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • May đo theo thuật toán Hybrid Borda Fusion & Centroid`
+                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Đề xuất theo thuật toán Hybrid Borda Fusion & Centroid`
                       : "Được đề xuất riêng dựa trên lịch sử đánh giá thực tế của bạn (Thuật toán Borda Fusion + Centroid)"}
                   </p>
                 </div>
