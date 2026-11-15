@@ -194,6 +194,19 @@ export async function fetchServerBook(id: string | number): Promise<BookDetailDa
     8: { title: "The Catcher in the Rye", author: "J.D. Salinger", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300i/5107.jpg", rating: 3.81 },
     9: { title: "Angels & Demons", author: "Dan Brown", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg", rating: 3.91 },
     10: { title: "Pride and Prejudice", author: "Jane Austen", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351i/1885.jpg", rating: 4.26 },
+    11: { title: "The Kite Runner", author: "Khaled Hosseini", img: "https://images.gr-assets.com/books/1484565687l/77203.jpg", rating: 4.26 },
+    13: { title: "1984", author: "George Orwell", img: "https://images.gr-assets.com/books/1657781256l/5470.jpg", rating: 4.19 },
+    14: { title: "Animal Farm", author: "George Orwell", img: "https://images.gr-assets.com/books/1424037542l/7613.jpg", rating: 3.95 },
+    15: { title: "The Diary of a Young Girl", author: "Anne Frank", img: "https://images.gr-assets.com/books/1358276407l/48855.jpg", rating: 4.10 },
+    16: { title: "The Girl with the Dragon Tattoo", author: "Stieg Larsson", img: "https://images.gr-assets.com/books/1684638853l/2429135.jpg", rating: 4.14 },
+    18: { title: "Harry Potter and the Prisoner of Azkaban", author: "J.K. Rowling", img: "https://images.gr-assets.com/books/1630547330l/5.jpg", rating: 4.56 },
+    19: { title: "The Fellowship of the Ring", author: "J.R.R. Tolkien", img: "https://images.gr-assets.com/books/1298411339l/34.jpg", rating: 4.36 },
+    26: { title: "The Da Vinci Code", author: "Dan Brown", img: "https://images.gr-assets.com/books/1579621267l/968.jpg", rating: 3.84 },
+    28: { title: "Lord of the Flies", author: "William Golding", img: "https://images.gr-assets.com/books/1327869409l/7624.jpg", rating: 3.64 },
+    30: { title: "Gone Girl", author: "Gillian Flynn", img: "https://images.gr-assets.com/books/1554086139l/19288043.jpg", rating: 4.07 },
+    62: { title: "The Golden Compass", author: "Philip Pullman", img: "https://images.gr-assets.com/books/1342493368l/119322.jpg", rating: 3.99 },
+    200: { title: "And Then There Were None", author: "Agatha Christie", img: "https://images.gr-assets.com/books/1638425885l/16299.jpg", rating: 4.26 },
+    514: { title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", img: "https://images.gr-assets.com/books/1356570991l/3590.jpg", rating: 4.30 },
   };
 
   const defaultItem = DEFAULT_MAP[numericId];

@@ -61,10 +61,12 @@ export default function TrendingClient({
   const router = useRouter();
   const { user, isLoggedIn, login, logout } = useAuth();
   const [showUserSwitcher, setShowUserSwitcher] = useState(false);
-  const currentDemoReader = DEMO_READERS.find((r) => r.user_id === user?.user_id) || (!isLoggedIn && !user ? DEMO_READERS[0] : null);
+  const currentDemoReader = (isLoggedIn && user)
+    ? DEMO_READERS.find((r) => r.user_id === user.user_id) || null
+    : null;
   const readerDisplayName = currentDemoReader
     ? currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "").trim()
-    : "Bạn";
+    : (user?.name ? user.name.replace(/^Độc giả\s+/i, "").trim() : "Bạn");
 
   // Quản lý thể loại đang chọn đồng bộ URL và phản hồi lập tức 0ms
   const [selectedGenre, setSelectedGenre] = useState<string>(genreParam);
@@ -425,13 +427,13 @@ export default function TrendingClient({
 
         </div>
 
-        {/* GỢI Ý RIÊNG CHO ĐỘC GIẢ ĐĂNG NHẬP */}
-        {currentDemoReader && (
+        {/* GỢI Ý RIÊNG CHO ĐỘC GIẢ HOẶC TUYỂN CHỌN THỂ LOẠI CHO KHÁCH */}
+        {personalizedGenreBooks.length > 0 && (
           <div className="bg-white rounded-[4px] p-6 sm:p-8 border border-stone-200/90 shadow-2xs mb-10 transition-all">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
               <div>
                 <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                  <span>Dành Riêng Cho {readerDisplayName}</span>
+                  <span>{currentDemoReader ? `Dành Riêng Cho ${readerDisplayName}` : "Tuyển Chọn Nổi Bật"}</span>
                   {selectedGenre && activeGenreMeta && (
                     <>
                       <span className="text-stone-300 font-light hidden sm:inline">•</span>
@@ -440,12 +442,22 @@ export default function TrendingClient({
                   )}
                 </h2>
                 <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
-                  {selectedGenre && activeGenreMeta ? (
-                    <>
-                      Tuyển chọn 5 tác phẩm <strong className="font-semibold text-stone-700">{activeGenreMeta.title}</strong> tương thích nhất với gu đọc của {readerDisplayName} • Lọc kết hợp Hybrid
-                    </>
+                  {currentDemoReader ? (
+                    selectedGenre && activeGenreMeta ? (
+                      <>
+                        Tuyển chọn 5 tác phẩm <strong className="font-semibold text-stone-700">{activeGenreMeta.title}</strong> tương thích nhất với gu đọc của {readerDisplayName} • Lọc kết hợp Hybrid
+                      </>
+                    ) : (
+                      <>{currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn</>
+                    )
                   ) : (
-                    <>{currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn</>
+                    selectedGenre && activeGenreMeta ? (
+                      <>
+                        Tuyển chọn 5 tác phẩm tiêu biểu thuộc thể loại <strong className="font-semibold text-stone-700">{activeGenreMeta.title}</strong> • Đăng nhập để cá nhân hóa theo gu đọc
+                      </>
+                    ) : (
+                      <>Những tác phẩm văn học chọn lọc được bạn đọc đánh giá cao nhất • The Inkwell Editorial</>
+                    )
                   )}
                 </p>
               </div>

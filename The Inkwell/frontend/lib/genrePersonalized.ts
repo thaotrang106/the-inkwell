@@ -48,7 +48,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Nhịp độ dồn dập",
     },
     {
-      book_id: 12,
+      book_id: 9,
       title: "Angels & Demons",
       author: "Dan Brown",
       image_url: "https://images.gr-assets.com/books/1303390735l/968.jpg",
@@ -76,7 +76,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 2. Trinh Thám & Phá Án (Mystery)
   mystery: [
     {
-      book_id: 11,
+      book_id: 26,
       title: "The Da Vinci Code",
       author: "Dan Brown",
       image_url: "https://images.gr-assets.com/books/1579621267l/968.jpg",
@@ -88,7 +88,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Đỉnh cao phá án",
     },
     {
-      book_id: 15,
+      book_id: 200,
       title: "And Then There Were None",
       author: "Agatha Christie",
       image_url: "https://images.gr-assets.com/books/1638425885l/16299.jpg",
@@ -100,7 +100,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Vụ án phòng kín",
     },
     {
-      book_id: 13,
+      book_id: 16,
       title: "The Girl with the Dragon Tattoo",
       author: "Stieg Larsson",
       image_url: "https://images.gr-assets.com/books/1684638853l/2429135.jpg",
@@ -112,7 +112,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Nút thắt bất ngờ",
     },
     {
-      book_id: 12,
+      book_id: 9,
       title: "Angels & Demons",
       author: "Dan Brown",
       image_url: "https://images.gr-assets.com/books/1303390735l/968.jpg",
@@ -124,7 +124,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Bí ẩn hội kín",
     },
     {
-      book_id: 14,
+      book_id: 30,
       title: "Gone Girl",
       author: "Gillian Flynn",
       image_url: "https://images.gr-assets.com/books/1554086139l/19288043.jpg",
@@ -140,7 +140,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 3. Triết Học & Đạo Đức (Philosophy)
   philosophy: [
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -152,7 +152,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Tư tưởng nhân sinh",
     },
     {
-      book_id: 6,
+      book_id: 4,
       title: "To Kill a Mockingbird",
       author: "Harper Lee",
       image_url: "https://images.gr-assets.com/books/1553383690l/2657.jpg",
@@ -164,7 +164,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Văn học nhân văn",
     },
     {
-      book_id: 8,
+      book_id: 5,
       title: "The Great Gatsby",
       author: "F. Scott Fitzgerald",
       image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
@@ -176,7 +176,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Bi kịch thời đại",
     },
     {
-      book_id: 10,
+      book_id: 8,
       title: "The Catcher in the Rye",
       author: "J.D. Salinger",
       image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
@@ -204,7 +204,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 4. Tác Phẩm Kinh Điển (Classics)
   classics: [
     {
-      book_id: 6,
+      book_id: 4,
       title: "To Kill a Mockingbird",
       author: "Harper Lee",
       image_url: "https://images.gr-assets.com/books/1553383690l/2657.jpg",
@@ -216,7 +216,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Kinh điển vượt thời gian",
     },
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -228,7 +228,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Di sản văn học thế giới",
     },
     {
-      book_id: 8,
+      book_id: 5,
       title: "The Great Gatsby",
       author: "F. Scott Fitzgerald",
       image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
@@ -240,7 +240,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Áng văn chương mẫu mực",
     },
     {
-      book_id: 9,
+      book_id: 10,
       title: "Pride and Prejudice",
       author: "Jane Austen",
       image_url: "https://images.gr-assets.com/books/1320399351l/1885.jpg",
@@ -252,7 +252,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Văn phong tinh tế",
     },
     {
-      book_id: 10,
+      book_id: 8,
       title: "The Catcher in the Rye",
       author: "J.D. Salinger",
       image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
@@ -268,7 +268,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 5. Kỳ Ảo & Giả Tưởng (Fantasy)
   fantasy: [
     {
-      book_id: 1,
+      book_id: 2,
       title: "Harry Potter and the Sorcerer's Stone",
       author: "J.K. Rowling",
       image_url: "https://images.gr-assets.com/books/1474154022l/3.jpg",
@@ -280,7 +280,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Thế giới phép thuật",
     },
     {
-      book_id: 2,
+      book_id: 18,
       title: "Harry Potter and the Prisoner of Azkaban",
       author: "J.K. Rowling",
       image_url: "https://images.gr-assets.com/books/1630547330l/5.jpg",
@@ -292,7 +292,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Harry Potter",
     },
     {
-      book_id: 3,
+      book_id: 7,
       title: "The Hobbit",
       author: "J.R.R. Tolkien",
       image_url: "https://images.gr-assets.com/books/1546071216l/5907.jpg",
@@ -304,7 +304,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Trung Địa huyền thoại",
     },
     {
-      book_id: 4,
+      book_id: 19,
       title: "The Fellowship of the Ring",
       author: "J.R.R. Tolkien",
       image_url: "https://images.gr-assets.com/books/1298411339l/34.jpg",
@@ -316,7 +316,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Chúa Nhẫn",
     },
     {
-      book_id: 5,
+      book_id: 62,
       title: "The Golden Compass",
       author: "Philip Pullman",
       image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
@@ -344,7 +344,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Tình bạn & sự chuộc tội",
     },
     {
-      book_id: 8,
+      book_id: 5,
       title: "The Great Gatsby",
       author: "F. Scott Fitzgerald",
       image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
@@ -356,7 +356,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Bi kịch tình yêu & danh vọng",
     },
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -380,7 +380,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Bản năng con người",
     },
     {
-      book_id: 10,
+      book_id: 8,
       title: "The Catcher in the Rye",
       author: "J.D. Salinger",
       image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
@@ -420,7 +420,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Chân thành & Day dứt",
     },
     {
-      book_id: 1,
+      book_id: 2,
       title: "Harry Potter and the Sorcerer's Stone",
       author: "J.K. Rowling",
       image_url: "https://images.gr-assets.com/books/1474154022l/3.jpg",
@@ -432,7 +432,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Tình bạn diệu kỳ",
     },
     {
-      book_id: 3,
+      book_id: 7,
       title: "The Hobbit",
       author: "J.R.R. Tolkien",
       image_url: "https://images.gr-assets.com/books/1546071216l/5907.jpg",
@@ -444,7 +444,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Lòng dũng cảm",
     },
     {
-      book_id: 5,
+      book_id: 62,
       title: "The Golden Compass",
       author: "Philip Pullman",
       image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
@@ -460,7 +460,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 8. Tiểu Thuyết Lãng Mạn (Romance)
   romance: [
     {
-      book_id: 9,
+      book_id: 10,
       title: "Pride and Prejudice",
       author: "Jane Austen",
       image_url: "https://images.gr-assets.com/books/1320399351l/1885.jpg",
@@ -484,7 +484,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Cung bậc cảm xúc",
     },
     {
-      book_id: 8,
+      book_id: 5,
       title: "The Great Gatsby",
       author: "F. Scott Fitzgerald",
       image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
@@ -524,7 +524,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 9. Khoa Học Viễn Tưởng (Science Fiction)
   "science-fiction": [
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -548,7 +548,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Tương lai phân khu",
     },
     {
-      book_id: 5,
+      book_id: 62,
       title: "The Golden Compass",
       author: "Philip Pullman",
       image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
@@ -572,7 +572,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Cảnh báo nhân loại",
     },
     {
-      book_id: 4,
+      book_id: 19,
       title: "The Fellowship of the Ring",
       author: "J.R.R. Tolkien",
       image_url: "https://images.gr-assets.com/books/1298411339l/34.jpg",
@@ -588,7 +588,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
   // 10. Tâm Lý Học Ứng Dụng (Psychology)
   psychology: [
     {
-      book_id: 10,
+      book_id: 8,
       title: "The Catcher in the Rye",
       author: "J.D. Salinger",
       image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
@@ -636,7 +636,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Bí mật im lặng",
     },
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -676,7 +676,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Lát cắt nhân văn",
     },
     {
-      book_id: 6,
+      book_id: 4,
       title: "To Kill a Mockingbird",
       author: "Harper Lee",
       image_url: "https://images.gr-assets.com/books/1553383690l/2657.jpg",
@@ -688,7 +688,7 @@ export const GENRE_PERSONALIZED_MAP: Record<string, DemoBook[]> = {
       because: "Hiện thực bất công",
     },
     {
-      book_id: 7,
+      book_id: 13,
       title: "1984",
       author: "George Orwell",
       image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -723,12 +723,12 @@ export function getPersonalizedBooksForGenre(
   currentReader: DemoReader | null | undefined,
   fetchedBooks?: any[]
 ): DemoBook[] {
-  // 1. Nếu không chọn thể loại nào (Tất cả Thịnh hành) -> Dùng danh sách cá nhân hóa mặc định của độc giả
+  // 1. Nếu không chọn thể loại nào (Tất cả Thịnh hành) -> Dùng danh sách cá nhân hóa mặc định của độc giả đăng nhập
   if (!genreSlug || genreSlug === "all") {
     if (currentReader && currentReader.books && currentReader.books.length > 0) {
       return currentReader.books;
     }
-    return DEMO_READERS[0].books;
+    return currentReader ? (DEMO_READERS.find(r => r.user_id === currentReader.user_id)?.books || []) : [];
   }
 
   const cleanSlug = genreSlug.toLowerCase().trim();
@@ -766,10 +766,13 @@ export function getPersonalizedBooksForGenre(
     }));
   }
 
-  // 4. Fallback an toàn: nếu thể loại trùng với sở trường của reader nào thì dùng
-  if (cleanSlug === "fantasy") return DEMO_READERS[0].books;
-  if (cleanSlug === "philosophy" || cleanSlug === "classics") return DEMO_READERS[1].books;
-  if (cleanSlug === "mystery" || cleanSlug === "thriller") return DEMO_READERS[2].books;
+  // 4. Fallback an toàn: nếu độc giả đã đăng nhập, ưu tiên gu sở trường
+  if (currentReader) {
+    if (cleanSlug === "fantasy") return DEMO_READERS[0].books;
+    if (cleanSlug === "philosophy" || cleanSlug === "classics") return DEMO_READERS[1].books;
+    if (cleanSlug === "mystery" || cleanSlug === "thriller") return DEMO_READERS[2].books;
+    return currentReader.books;
+  }
 
-  return currentReader?.books || DEMO_READERS[0].books;
+  return [];
 }

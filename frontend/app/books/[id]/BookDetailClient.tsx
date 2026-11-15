@@ -412,7 +412,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     }).catch(() => {});
   };
 
-  // Xác định hồ sơ độc giả cá nhân hóa (Ưu tiên độc giả đăng nhập hoặc mặc định Độc giả mẫu Minh Anh)
+  // Xác định hồ sơ độc giả cá nhân hóa (Chỉ áp dụng khi độc giả đã đăng nhập)
   const activeReader = (user && DEMO_READERS.find((r) => r.user_id === user.user_id)) || (user ? {
     user_id: user.user_id,
     name: user.name,
@@ -420,11 +420,15 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     genre: "Gu tuyển chọn riêng",
     tagline: "Tuyển chọn theo gu đọc cá nhân",
     books: []
-  } : DEMO_READERS[0]);
+  } : null);
 
   const currentBookTitle = cleanTitle(book?.title || initialBook?.title);
-  const personalizedTitle = `Có Thể ${activeReader.shortName} Cũng Thích`;
-  const personalizedSubtitle = `${activeReader.genre} • May đo riêng theo gu đọc của ${activeReader.shortName} & sự đồng điệu với tác phẩm "${currentBookTitle}"`;
+  const personalizedTitle = activeReader
+    ? `Có Thể ${activeReader.shortName} Cũng Thích`
+    : "Có Thể Bạn Cũng Thích";
+  const personalizedSubtitle = activeReader
+    ? `${activeReader.genre} • May đo riêng theo gu đọc của ${activeReader.shortName} & sự đồng điệu với tác phẩm "${currentBookTitle}"`
+    : `Tuyển chọn tác phẩm tương đồng về nội dung & phong cách với "${currentBookTitle}" • Lọc kết hợp Hybrid`;
 
   // Hợp nhất danh sách đề xuất cá nhân hóa:
   // Ưu tiên các tác phẩm theo gu độc giả (loại trừ cuốn đang xem) + sách tương đồng từ AI Hybrid
@@ -433,7 +437,7 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
     const seenIds = new Set<number>([currentBookId]);
     const merged: any[] = [];
 
-    if (activeReader.books && activeReader.books.length > 0) {
+    if (activeReader && activeReader.books && activeReader.books.length > 0) {
       for (const b of activeReader.books) {
         if (!seenIds.has(b.book_id)) {
           seenIds.add(b.book_id);

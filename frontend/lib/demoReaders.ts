@@ -39,7 +39,7 @@ export const DEMO_READERS: DemoReader[] = [
     tier: "Độc giả Uyên Bác",
     books: [
       {
-        book_id: 1,
+        book_id: 2,
         title: "Harry Potter and the Sorcerer's Stone",
         author: "J.K. Rowling",
         image_url: "https://images.gr-assets.com/books/1474154022l/3.jpg",
@@ -51,7 +51,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Harry Potter",
       },
       {
-        book_id: 2,
+        book_id: 18,
         title: "Harry Potter and the Prisoner of Azkaban",
         author: "J.K. Rowling",
         image_url: "https://images.gr-assets.com/books/1630547330l/5.jpg",
@@ -63,7 +63,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Harry Potter",
       },
       {
-        book_id: 3,
+        book_id: 7,
         title: "The Hobbit",
         author: "J.R.R. Tolkien",
         image_url: "https://images.gr-assets.com/books/1546071216l/5907.jpg",
@@ -75,7 +75,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Harry Potter",
       },
       {
-        book_id: 4,
+        book_id: 19,
         title: "The Fellowship of the Ring",
         author: "J.R.R. Tolkien",
         image_url: "https://images.gr-assets.com/books/1298411339l/34.jpg",
@@ -87,7 +87,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "The Hobbit",
       },
       {
-        book_id: 5,
+        book_id: 62,
         title: "The Golden Compass",
         author: "Philip Pullman",
         image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
@@ -110,7 +110,7 @@ export const DEMO_READERS: DemoReader[] = [
     tier: "Thành viên Thân thiết",
     books: [
       {
-        book_id: 6,
+        book_id: 4,
         title: "To Kill a Mockingbird",
         author: "Harper Lee",
         image_url: "https://images.gr-assets.com/books/1553383690l/2657.jpg",
@@ -122,7 +122,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Goodreads Top",
       },
       {
-        book_id: 7,
+        book_id: 13,
         title: "1984",
         author: "George Orwell",
         image_url: "https://images.gr-assets.com/books/1657781256l/5470.jpg",
@@ -134,7 +134,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "To Kill a Mockingbird",
       },
       {
-        book_id: 8,
+        book_id: 5,
         title: "The Great Gatsby",
         author: "F. Scott Fitzgerald",
         image_url: "https://images.gr-assets.com/books/1490528560l/4671.jpg",
@@ -146,7 +146,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "1984",
       },
       {
-        book_id: 9,
+        book_id: 10,
         title: "Pride and Prejudice",
         author: "Jane Austen",
         image_url: "https://images.gr-assets.com/books/1320399351l/1885.jpg",
@@ -158,7 +158,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Harper Lee",
       },
       {
-        book_id: 10,
+        book_id: 8,
         title: "The Catcher in the Rye",
         author: "J.D. Salinger",
         image_url: "https://images.gr-assets.com/books/1398034300l/5107.jpg",
@@ -181,7 +181,7 @@ export const DEMO_READERS: DemoReader[] = [
     tier: "Độc giả Tinh hoa",
     books: [
       {
-        book_id: 11,
+        book_id: 26,
         title: "The Da Vinci Code",
         author: "Dan Brown",
         image_url: "https://images.gr-assets.com/books/1579621267l/968.jpg",
@@ -193,7 +193,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Angels & Demons",
       },
       {
-        book_id: 12,
+        book_id: 9,
         title: "Angels & Demons",
         author: "Dan Brown",
         image_url: "https://images.gr-assets.com/books/1303390735l/968.jpg",
@@ -205,7 +205,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "The Da Vinci Code",
       },
       {
-        book_id: 13,
+        book_id: 16,
         title: "The Girl with the Dragon Tattoo",
         author: "Stieg Larsson",
         image_url: "https://images.gr-assets.com/books/1684638853l/2429135.jpg",
@@ -217,7 +217,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "The Da Vinci Code",
       },
       {
-        book_id: 14,
+        book_id: 30,
         title: "Gone Girl",
         author: "Gillian Flynn",
         image_url: "https://images.gr-assets.com/books/1554086139l/19288043.jpg",
@@ -229,7 +229,7 @@ export const DEMO_READERS: DemoReader[] = [
         because: "Dragon Tattoo",
       },
       {
-        book_id: 15,
+        book_id: 200,
         title: "And Then There Were None",
         author: "Agatha Christie",
         image_url: "https://images.gr-assets.com/books/1638425885l/16299.jpg",
