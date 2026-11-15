@@ -200,7 +200,7 @@ export default function AlgorithmLabPage() {
             <span>Quay lại Cửa hàng The Inkwell</span>
           </Link>
           <div className="text-[11px] uppercase tracking-[0.2em] font-mono text-stone-500 font-semibold">
-            CHUYÊN ĐỀ NGHIÊN CỨU &amp; SO SÁNH THUẬT TOÁN
+            CHUYÊN ĐỀ BIÊN TẬP • NGHỆ THUẬT TUYỂN CHỌN SÁCH
           </div>
         </div>
 
@@ -209,13 +209,13 @@ export default function AlgorithmLabPage() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-stone-100">
             <div className="max-w-3xl">
               <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#881337] font-semibold mb-2.5 block">
-                KHẢO SÁT CHUYÊN SÂU • GOODBOOKS-10K
+                GÓC NHÌN BIÊN TẬP • KHO SÁCH THE INKWELL
               </span>
               <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#1C1917] tracking-tight leading-tight">
-                So Sánh Đối Chiếu Các Phương Pháp Gợi Ý Sách
+                Nghệ Thuật Tuyển Chọn & Gợi Ý Sách
               </h1>
               <p className="font-serif italic text-sm sm:text-base text-stone-600 mt-3 leading-relaxed">
-                Khám phá trực quan 3 hướng tiếp cận tuyển chọn tác phẩm: từ sự tương đồng về phong cách văn học (Content-Based), sợi dây đồng điệu của cộng đồng bạn đọc (Collaborative), đến mô hình lai ghép cân bằng toàn diện (Hybrid Borda Fusion).
+                Khám phá ba góc nhìn tuyển chọn tác phẩm: tìm kiếm từ sự tương đồng trong văn phong tác giả, lắng nghe những tâm hồn đồng điệu trong cộng đồng bạn đọc, cho đến phương thức dung hòa toàn diện mang dấu ấn riêng của The Inkwell.
               </p>
             </div>
 
@@ -224,7 +224,7 @@ export default function AlgorithmLabPage() {
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
               <input 
                 type="text"
-                placeholder="Tìm tác phẩm bất kỳ để khảo sát..."
+                placeholder="Tìm tác phẩm để khám phá gợi ý..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 pr-4 py-2.5 text-xs rounded-[4px] border border-stone-300 focus:outline-none focus:border-[#1C1917] bg-[#FAF7F2] w-full font-sans transition-colors"
@@ -253,7 +253,7 @@ export default function AlgorithmLabPage() {
           {/* Dải nút chọn nhanh tác phẩm mẫu */}
           <div className="flex items-center gap-2 mt-5 overflow-x-auto pb-1 text-xs">
             <span className="text-stone-500 font-mono uppercase tracking-wider text-[10px] sm:text-[11px] shrink-0 mr-1">
-              Tác phẩm khảo sát mẫu:
+              Tác phẩm tiêu biểu:
             </span>
             {SAMPLE_TEST_BOOKS.map((b) => {
               const isSelected = selectedBookId === b.id;
@@ -287,13 +287,13 @@ export default function AlgorithmLabPage() {
             </div>
             <div className="flex-1 text-center sm:text-left">
               <span className="inline-block text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-[#881337] mb-1">
-                TÁC PHẨM ĐẦU VÀO ĐANG ĐỐI CHIẾU
+                TÁC PHẨM ĐANG CHỌN • BẢN IN THE INKWELL
               </span>
               <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
                 {cleanTitle(currentBook.title)}
               </h2>
               <p className="text-stone-500 font-sans text-xs mt-1">
-                Tác giả: <span className="font-semibold text-stone-800">{currentBook.author || currentBook.authors || "Nhiều tác giả"}</span> • Mã ID: #{currentBook.book_id}
+                Tác giả: <span className="font-semibold text-stone-800">{currentBook.author || currentBook.authors || "Nhiều tác giả"}</span>
               </p>
               <p className="text-stone-600 text-xs sm:text-sm mt-2 line-clamp-2 max-w-4xl font-serif italic leading-relaxed">
                 “{currentBook.description || "Tác phẩm tiêu biểu được trích xuất từ kho tàng văn học The Inkwell."}”
@@ -303,10 +303,10 @@ export default function AlgorithmLabPage() {
               onClick={() => fetchAllAlgorithms(selectedBookId)}
               disabled={isLoading}
               className="px-3.5 py-2 border border-stone-300 hover:border-stone-900 rounded-[4px] text-xs font-medium text-stone-700 hover:text-stone-900 bg-[#FAF7F2] flex items-center gap-1.5 cursor-pointer transition-colors shrink-0"
-              title="Đo lại thời gian phản hồi"
+              title="Làm mới danh sách gợi ý"
             >
               <RotateCcw size={13} className={isLoading ? "animate-spin" : ""} />
-              <span>Chạy lại phép đo</span>
+              <span>Làm mới gợi ý</span>
             </button>
           </section>
         ) : (
@@ -338,16 +338,16 @@ export default function AlgorithmLabPage() {
             <div>
               <div className="pb-4 mb-5 border-b border-stone-100">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 block mb-1.5">
-                  PHƯƠNG PHÁP 01
+                  GÓC NHÌN 01
                 </span>
                 <h3 className="font-serif text-xl font-normal text-[#1C1917] tracking-tight mb-2">
-                  Lọc Theo Phong Cách &amp; Nội Dung
+                  Tuyển Chọn Theo Văn Phong &amp; Cốt Truyện
                 </h3>
                 <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                  Phân tích ngữ nghĩa văn bản, chủ đề cốt truyện và bút pháp tác giả qua vector nhúng 768 chiều (pgvector Cosine).
+                  Lắng nghe giọng văn, chủ đề và cảm xúc cốt lõi của từng trang sách để tìm ra những tác phẩm cùng một mạch nguồn sáng tác.
                 </p>
                 <div className="mt-2 text-[10px] font-mono text-stone-500">
-                  Tốc độ phản hồi: <strong className="text-stone-900">~{cbLatency}ms</strong>
+                  Thời gian phản hồi: <strong className="text-stone-900">Tức thì (~{cbLatency}ms)</strong>
                 </div>
               </div>
 
@@ -355,7 +355,7 @@ export default function AlgorithmLabPage() {
                 {isLoading ? (
                   <div className="py-12 flex flex-col items-center justify-center text-stone-500 text-xs gap-2 font-sans">
                     <Loader2 size={18} className="animate-spin text-[#881337]" /> 
-                    <span>Đang tính toán ma trận Cosine...</span>
+                    <span>Đang tìm những trang sách đồng điệu...</span>
                   </div>
                 ) : (
                   cbBooks.slice(0, 5).map((b, idx) => (
@@ -381,7 +381,7 @@ export default function AlgorithmLabPage() {
                         </p>
                         <div className="mt-1">
                           <span className="font-mono text-[9px] uppercase tracking-wider text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded-[2px]">
-                            Tương đồng: {Math.max(82, Math.round(96 - idx * 3))}%
+                            Độ hòa hợp văn phong: {Math.max(82, Math.round(96 - idx * 3))}%
                           </span>
                         </div>
                       </div>
@@ -392,7 +392,7 @@ export default function AlgorithmLabPage() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-stone-100 text-[11px] text-stone-600 leading-relaxed font-sans bg-[#FAF7F2] p-3.5 rounded-[4px] border border-stone-200">
-              <strong className="text-stone-900 font-serif">Đặc trưng:</strong> Rất nhạy bén với phong cách hành văn; hoạt động xuất sắc ngay cả với <em>sách mới chưa có đánh giá</em>.
+              <strong className="text-stone-900 font-serif">Đặc trưng:</strong> Rất nhạy bén với phong cách hành văn của từng tác giả; gợi ý chính xác ngay cả với những tác phẩm mới lên kệ.
             </div>
           </article>
 
@@ -401,16 +401,16 @@ export default function AlgorithmLabPage() {
             <div>
               <div className="pb-4 mb-5 border-b border-stone-100">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 block mb-1.5">
-                  PHƯƠNG PHÁP 02
+                  GÓC NHÌN 02
                 </span>
                 <h3 className="font-serif text-xl font-normal text-[#1C1917] tracking-tight mb-2">
-                  Đồng Điệu Sở Thích Độc Giả
+                  Lắng Nghe Cộng Đồng Độc Giả
                 </h3>
                 <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                  Khảo sát hành vi cùng đánh giá cao từ cộng đồng bạn đọc theo hệ số đồng xuất hiện chuẩn hóa Ochiai.
+                  Dựa trên những mối liên kết tự nhiên từ thói quen đọc và sự đồng cảm của hàng ngàn bạn đọc có cùng gu thưởng thức.
                 </p>
                 <div className="mt-2 text-[10px] font-mono text-stone-500">
-                  Tốc độ phản hồi: <strong className="text-stone-900">~{cfLatency}ms</strong>
+                  Thời gian phản hồi: <strong className="text-stone-900">Tức thì (~{cfLatency}ms)</strong>
                 </div>
               </div>
 
@@ -418,7 +418,7 @@ export default function AlgorithmLabPage() {
                 {isLoading ? (
                   <div className="py-12 flex flex-col items-center justify-center text-stone-500 text-xs gap-2 font-sans">
                     <Loader2 size={18} className="animate-spin text-[#881337]" /> 
-                    <span>Đang đo lường đồng xuất hiện...</span>
+                    <span>Đang kết nối những tâm hồn đọc sách...</span>
                   </div>
                 ) : (
                   cfBooks.slice(0, 5).map((b, idx) => (
@@ -444,7 +444,7 @@ export default function AlgorithmLabPage() {
                         </p>
                         <div className="mt-1">
                           <span className="font-mono text-[9px] uppercase tracking-wider text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded-[2px]">
-                            Tương đồng gu: {Math.max(78, Math.round(92 - idx * 4))}%
+                            Đồng điệu trải nghiệm: {Math.max(78, Math.round(92 - idx * 4))}%
                           </span>
                         </div>
                       </div>
@@ -455,7 +455,7 @@ export default function AlgorithmLabPage() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-stone-100 text-[11px] text-stone-600 leading-relaxed font-sans bg-[#FAF7F2] p-3.5 rounded-[4px] border border-stone-200">
-              <strong className="text-stone-900 font-serif">Đặc trưng:</strong> Mở ra <em>khả năng khám phá bất ngờ</em> ngoài thể loại quen thuộc; cần dữ liệu cộng đồng tích lũy.
+              <strong className="text-stone-900 font-serif">Đặc trưng:</strong> Mang đến những phát hiện bất ngờ ngoài thể loại quen thuộc, như một lời rỉ tai từ người bạn đọc tri kỷ.
             </div>
           </article>
 
@@ -464,16 +464,16 @@ export default function AlgorithmLabPage() {
             <div>
               <div className="pb-4 mb-5 border-b border-stone-100">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#881337] block mb-1.5">
-                  PHƯƠNG PHÁP 03 • TIÊU CHUẨN THE INKWELL
+                  GÓC NHÌN 03 • PHƯƠNG PHÁP THE INKWELL
                 </span>
                 <h3 className="font-serif text-xl font-normal text-[#1C1917] tracking-tight mb-2">
-                  Mô Hình Lai Ghép Toàn Diện
+                  Phương Pháp Tuyển Chọn Toàn Diện
                 </h3>
                 <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                  Hợp nhất đa chiều giữa nội dung văn bản và tiếng nói độc giả qua phân phối xếp hạng Borda Count Fusion.
+                  Dung hòa giữa chiều sâu phong cách của tác giả và cảm thụ thực tế từ bạn đọc, tạo nên những gợi ý chuẩn mực và trọn vẹn nhất.
                 </p>
                 <div className="mt-2 text-[10px] font-mono text-stone-500">
-                  Tốc độ phản hồi: <strong className="text-[#881337]">~{hybridLatency}ms</strong>
+                  Thời gian phản hồi: <strong className="text-[#881337]">Tức thì (~{hybridLatency}ms)</strong>
                 </div>
               </div>
 
@@ -481,7 +481,7 @@ export default function AlgorithmLabPage() {
                 {isLoading ? (
                   <div className="py-12 flex flex-col items-center justify-center text-stone-500 text-xs gap-2 font-sans">
                     <Loader2 size={18} className="animate-spin text-[#881337]" /> 
-                    <span>Đang hợp nhất thứ hạng Borda...</span>
+                    <span>Đang tuyển chọn những gợi ý trọn vẹn nhất...</span>
                   </div>
                 ) : (
                   hybridBooks.slice(0, 5).map((b, idx) => (
@@ -507,7 +507,7 @@ export default function AlgorithmLabPage() {
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="font-mono text-[9px] uppercase tracking-wider text-[#881337] bg-white border border-[#881337]/30 px-1.5 py-0.5 rounded-[2px] font-semibold">
-                            Điểm hòa hợp: {Math.max(86, Math.round(98 - idx * 3))}/100
+                            Độ tương hợp: {Math.max(86, Math.round(98 - idx * 3))}/100
                           </span>
                         </div>
                       </div>
@@ -518,7 +518,7 @@ export default function AlgorithmLabPage() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-stone-100 text-[11px] text-stone-700 leading-relaxed font-sans bg-rose-50/50 p-3.5 rounded-[4px] border border-rose-200/60">
-              <strong className="text-[#881337] font-serif">Đặc trưng:</strong> Khắc phục triệt để điểm mù thiên vị thể loại hoặc thiếu tương tác sách mới; đạt độ hài lòng người đọc tối ưu.
+              <strong className="text-[#881337] font-serif">Đặc trưng:</strong> Khắc phục hoàn toàn sự thiên lệch thể loại hay thiếu sót về sách mới; mang lại trải nghiệm đọc sách giàu cảm hứng nhất.
             </div>
           </article>
 
@@ -528,13 +528,13 @@ export default function AlgorithmLabPage() {
         <section className="bg-white rounded-[4px] p-6 sm:p-10 border border-stone-200/90 shadow-2xs mb-14">
           <div className="mb-6">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold block mb-1">
-              BẢNG TỔNG HỢP SO SÁNH ĐẶC TÍNH
+              TỔNG KẾT • ĐẶC TRƯNG TỪNG PHƯƠNG THỨC
             </span>
             <h4 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
-              Đối Chiếu Chi Tiết Giữa 3 Phương Pháp Đề Xuất
+              Đối Chiếu Ba Góc Nhìn Tuyển Chọn Sách
             </h4>
             <p className="text-xs sm:text-sm text-stone-500 font-sans mt-1">
-              Bảng so sánh phương thức thu thập, ưu thế cốt lõi và khả năng đáp ứng trải nghiệm độc giả.
+              Bảng so sánh cơ sở tuyển chọn, ưu thế nổi bật và cảm xúc độc giả nhận được từ từng phương thức.
             </p>
           </div>
 
@@ -546,50 +546,50 @@ export default function AlgorithmLabPage() {
                     Tiêu chí đối chiếu
                   </th>
                   <th className="py-4 px-6 font-mono text-[11px] uppercase tracking-wider text-stone-700 font-semibold w-1/4">
-                    Phương pháp 1: Theo Nội dung
+                    Phương pháp 1: Theo Văn Phong
                   </th>
                   <th className="py-4 px-6 font-mono text-[11px] uppercase tracking-wider text-stone-700 font-semibold w-1/4">
-                    Phương pháp 2: Theo Cộng đồng
+                    Phương pháp 2: Theo Cộng Đồng
                   </th>
                   <th className="py-4 px-6 font-mono text-[11px] uppercase tracking-wider text-[#881337] font-bold w-1/4">
-                    Phương pháp 3: Kết hợp Toàn diện
+                    Phương pháp 3: Tuyển Chọn Toàn Diện
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200/80 text-stone-700 font-sans">
                 <tr>
                   <td className="py-4 px-6 font-serif font-semibold text-[#1C1917]">
-                    Bản chất dữ liệu
+                    Cơ sở tuyển chọn
                   </td>
                   <td className="py-4 px-6 leading-relaxed">
-                    Đặc trưng nội dung văn học (tựa đề, cốt truyện, thể loại, từ khóa tác giả)
+                    Đặc trưng nội dung văn học (tựa đề, cốt truyện, thể loại, văn phong tác giả)
                   </td>
                   <td className="py-4 px-6 leading-relaxed">
-                    Hành vi bạn đọc (lịch sử đánh giá tích cực và gu đọc trong cộng đồng)
+                    Cảm thụ từ độc giả (lịch sử đọc, sự đồng cảm và đánh giá cao trong cộng đồng)
                   </td>
                   <td className="py-4 px-6 leading-relaxed font-medium text-stone-900">
-                    Hợp nhất cả chiều sâu văn bản lẫn trải nghiệm thưởng thức từ bạn đọc
+                    Hợp nhất cả chiều sâu tác phẩm lẫn trải nghiệm thưởng thức từ bạn đọc
                   </td>
                 </tr>
 
                 <tr>
                   <td className="py-4 px-6 font-serif font-semibold text-[#1C1917]">
-                    Sách mới chưa có đánh giá
+                    Tác phẩm mới xuất bản
                   </td>
                   <td className="py-4 px-6 leading-relaxed text-stone-800">
-                    Xử lý rất tốt (chỉ cần có bản tóm tắt và thông tin tác phẩm)
+                    Gợi ý rất tốt (chỉ cần có tóm tắt và thông tin tác phẩm là lập tức tìm được bạn đọc phù hợp)
                   </td>
                   <td className="py-4 px-6 leading-relaxed text-stone-500">
-                    Hạn chế (cần thời gian để cộng đồng bạn đọc tiếp cận và đánh giá)
+                    Cần thời gian (chờ cộng đồng tiếp cận, đọc và để lại đánh giá)
                   </td>
                   <td className="py-4 px-6 leading-relaxed font-semibold text-[#881337]">
-                    Rất tốt (nhánh nội dung bù đắp tức thì, sách mới vẫn được gợi ý chính xác)
+                    Tuyệt vời (tự động nhận diện sách mới và gợi ý ngay mà không bị bỏ sót)
                   </td>
                 </tr>
 
                 <tr>
                   <td className="py-4 px-6 font-serif font-semibold text-[#1C1917]">
-                    Khả năng khám phá bất ngờ
+                    Khả năng gợi mở điều mới lạ
                   </td>
                   <td className="py-4 px-6 leading-relaxed text-stone-600">
                     Mức độ vừa phải (tập trung bám sát các tác phẩm cùng thể loại)
@@ -598,22 +598,22 @@ export default function AlgorithmLabPage() {
                     Cao (dễ dàng kết nối bạn đọc với các tác phẩm khác thể loại nhưng chung cảm hứng)
                   </td>
                   <td className="py-4 px-6 leading-relaxed font-semibold text-[#881337]">
-                    Cân bằng hoàn hảo giữa độ chính xác theo gu và những khám phá mới mẻ
+                    Cân bằng hoàn hảo giữa việc đúng gu và mở ra những chân trời đọc mới
                   </td>
                 </tr>
 
                 <tr>
                   <td className="py-4 px-6 font-serif font-semibold text-[#1C1917]">
-                    Tốc độ phản hồi tức thì
+                    Thời gian phản hồi
                   </td>
                   <td className="py-4 px-6 font-mono text-xs text-stone-600">
-                    Phản hồi thực tế: ~{cbLatency}ms
+                    Tức thì (~{cbLatency}ms)
                   </td>
                   <td className="py-4 px-6 font-mono text-xs text-stone-600">
-                    Phản hồi thực tế: ~{cfLatency}ms
+                    Tức thì (~{cfLatency}ms)
                   </td>
                   <td className="py-4 px-6 font-mono text-xs font-semibold text-[#881337]">
-                    Phản hồi thực tế: ~{hybridLatency}ms
+                    Tức thì (~{hybridLatency}ms)
                   </td>
                 </tr>
               </tbody>
@@ -626,7 +626,7 @@ export default function AlgorithmLabPage() {
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-6 pb-4 border-b border-stone-100">
             <div>
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#881337] font-semibold block mb-1">
-                KẾT QUẢ THỰC NGHIỆM ĐỒ ÁN TỐT NGHIỆP
+                NGHIÊN CỨU THỰC NGHIỆM • ĐỒ ÁN TỐT NGHIỆP
               </span>
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1C1917]">
                 Bảng Đánh Giá Hiệu Năng Các Mô Hình (Offline Evaluation Suite)
