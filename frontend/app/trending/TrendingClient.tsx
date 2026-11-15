@@ -404,18 +404,13 @@ export default function TrendingClient({
         {currentDemoReader && (
           <div className="bg-white rounded-[4px] p-6 sm:p-8 border border-stone-200/90 shadow-2xs mb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-full border border-stone-200 bg-[#FAF7F2] flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
-                  <Compass size={22} strokeWidth={1.5} />
-                </div>
-                <div>
-                  <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
-                    Dành Riêng Cho {currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "")}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
-                    {currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn
-                  </p>
-                </div>
+              <div>
+                <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#1C1917] tracking-tight">
+                  Dành Riêng Cho {currentDemoReader.shortName.replace(/\s*\(\s*#\d+\s*\)/g, "").replace(/^Độc giả\s+/i, "")}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
+                  {currentDemoReader.genre} • Dựa trên gu đọc và tâm trạng của bạn
+                </p>
               </div>
               <Link 
                 href="/" 

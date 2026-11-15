@@ -836,18 +836,13 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-2xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-ink/5"
           >
-            <div className="flex items-center gap-3.5 mb-10 pb-6 border-b border-ink/5">
-              <div className="w-11 h-11 rounded-full border border-stone-200 bg-white flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
-                <Compass size={22} strokeWidth={1.5} />
-              </div>
-              <div>
-                <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
-                  Dành Riêng Cho Bạn
-                </h2>
-                <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
-                  Dựa trên gu đọc và tâm trạng của bạn
-                </p>
-              </div>
+            <div className="mb-10 pb-6 border-b border-ink/5">
+              <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
+                Dành Riêng Cho Bạn
+              </h2>
+              <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
+                Dựa trên gu đọc và tâm trạng của bạn
+              </p>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-5 gap-6 lg:gap-8">
@@ -876,25 +871,20 @@ export default function Home() {
             className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-ink/5"
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-ink/5">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-full border border-stone-200 bg-white flex items-center justify-center shrink-0 text-[#881337] shadow-2xs">
-                  <Compass size={22} strokeWidth={1.5} />
-                </div>
-                <div>
-                  <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
-                    Dành Riêng Cho {
-                      (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || "Bạn")
-                        .replace(/\s*\(\s*#\d+\s*\)/g, "")
-                        .replace(/^Độc giả\s+/i, "")
-                        .trim()
-                    }
-                  </h2>
-                  <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
-                    {DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre 
-                      ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Dựa trên gu đọc và tâm trạng của bạn`
-                      : "Dựa trên gu đọc và tâm trạng của bạn"}
-                  </p>
-                </div>
+              <div>
+                <h2 className="font-serif text-2xl sm:text-[26px] font-normal text-[#1C1917] tracking-tight">
+                  Dành Riêng Cho {
+                    (DEMO_READERS.find(r => r.user_id === user?.user_id)?.shortName || user?.name || "Bạn")
+                      .replace(/\s*\(\s*#\d+\s*\)/g, "")
+                      .replace(/^Độc giả\s+/i, "")
+                      .trim()
+                  }
+                </h2>
+                <p className="text-stone-500 font-sans text-xs sm:text-sm mt-1">
+                  {DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre 
+                    ? `${DEMO_READERS.find(r => r.user_id === user?.user_id)?.genre} • Dựa trên gu đọc và tâm trạng của bạn`
+                    : "Dựa trên gu đọc và tâm trạng của bạn"}
+                </p>
               </div>
 
               <Link 
