@@ -21,6 +21,7 @@ def get_collaborative_books(book_id: int, limit: int = 5):
                 JOIN ratings r2 ON u.user_id = r2.user_id
                 WHERE r2.rating >= 4 AND r2.book_id != :book_id
                 GROUP BY r2.book_id
+                HAVING COUNT(r2.user_id) >= 3
                 ORDER BY co_count DESC
                 LIMIT 40
             ),

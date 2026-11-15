@@ -26,7 +26,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "Suzanne Collins",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1447303603i/2767052.jpg",
     rating: 4.34,
-    price: 221000,
     rank: 1,
   },
   {
@@ -35,7 +34,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "J.K. Rowling, Mary GrandPré",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
     rating: 4.47,
-    price: 166000,
     rank: 2,
   },
   {
@@ -44,7 +42,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "Stephenie Meyer",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1361039443i/41865.jpg",
     rating: 3.61,
-    price: 187000,
     rank: 3,
   },
   {
@@ -53,7 +50,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "Harper Lee",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg",
     rating: 4.28,
-    price: 119000,
     rank: 4,
   },
   {
@@ -62,7 +58,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "F. Scott Fitzgerald",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1490528560i/4671.jpg",
     rating: 3.93,
-    price: 243000,
     rank: 5,
   },
   {
@@ -71,7 +66,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "John Green",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1360206420i/11870085.jpg",
     rating: 4.26,
-    price: 195000,
     rank: 6,
   },
   {
@@ -80,7 +74,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "J.R.R. Tolkien",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg",
     rating: 4.27,
-    price: 210000,
     rank: 7,
   },
   {
@@ -89,7 +82,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "J.D. Salinger",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300i/5107.jpg",
     rating: 3.81,
-    price: 175000,
     rank: 8,
   },
   {
@@ -98,7 +90,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "Dan Brown",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg",
     rating: 3.91,
-    price: 180000,
     rank: 9,
   },
   {
@@ -107,7 +98,6 @@ const DEFAULT_POPULAR_BOOKS = [
     author: "Jane Austen",
     image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351i/1885.jpg",
     rating: 4.26,
-    price: 160000,
     rank: 10,
   },
 ];

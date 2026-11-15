@@ -1,0 +1,5 @@
+Model,Precision@5,Recall@5,NDCG@5,Precision@10,Recall@10,NDCG@10,Catalog Coverage (%),Diversity Score,Latency (ms)
+Popularity (Baseline),0.1328,0.1567,0.1478,0.1287,0.3048,0.2228,0.23%,1.1008,0.03
+Content-Based (Vector/Metadata),0.0590,0.0699,0.0589,0.0500,0.1186,0.0836,1.54%,0.4861,9.23
+Collaborative Filtering (Ochiai),0.2361,0.2734,0.2827,0.1730,0.4053,0.3488,0.61%,1.2434,0.09
+Hybrid Recommendation (Borda Count),0.1508,0.1779,0.1752,0.1377,0.3187,0.2471,1.28%,0.9025,9.27

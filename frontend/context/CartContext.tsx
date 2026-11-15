@@ -2,14 +2,17 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { getBookPricing } from "@/lib/bookPricing";
 
 export type CartItem = {
   book_id: number;
   title: string;
   author: string;
+  authors?: string;
   image_url: string;
   price: number;
   quantity: number;
+  selected_format?: string;
 };
 
 type CartContextType = {
@@ -152,7 +155,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             : item
         );
       }
-      const price = book.price || Math.floor(Math.random() * (260 - 80) + 80) * 1000;
+      const price = book.price || getBookPricing(book.book_id).price;
       return [
         ...prev,
         {
@@ -162,6 +165,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           image_url: book.image_url || book.cover_image || "/books/default.jpg",
           price,
           quantity,
+          selected_format: book.selected_format,
         },
       ];
     });

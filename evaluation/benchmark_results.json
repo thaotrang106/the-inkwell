@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-11-15 10:24:21",
+  "dataset": "Goodbooks-10k (10,000 books, 981,756 ratings)",
+  "sample_users": 500,
+  "split_ratio": "80/20 per user",
+  "random_seed": 42,
+  "results": [
+    {
+      "model": "Popularity (Baseline)",
+      "precision_5": 0.13278688524590157,
+      "recall_5": 0.15669398907103826,
+      "ndcg_5": 0.1477926281177577,
+      "precision_10": 0.12868852459016383,
+      "recall_10": 0.30478142076502723,
+      "ndcg_10": 0.22276691731377685,
+      "catalog_coverage": 0.22999999999999998,
+      "diversity": 1.1008196721311476,
+      "avg_latency_ms": 0.027203169025358607
+    },
+    {
+      "model": "Content-Based (Vector/Metadata)",
+      "precision_5": 0.05901639344262298,
+      "recall_5": 0.06994535519125684,
+      "ndcg_5": 0.058882116366606854,
+      "precision_10": 0.04999999999999998,
+      "recall_10": 0.11857923497267757,
+      "ndcg_10": 0.08360076947390276,
+      "catalog_coverage": 1.54,
+      "diversity": 0.4860655737704917,
+      "avg_latency_ms": 9.23208330498367
+    },
+    {
+      "model": "Collaborative Filtering (Ochiai)",
+      "precision_5": 0.23606557377049167,
+      "recall_5": 0.27336065573770485,
+      "ndcg_5": 0.28269930349209504,
+      "precision_10": 0.1729508196721311,
+      "recall_10": 0.405327868852459,
+      "ndcg_10": 0.348778032127456,
+      "catalog_coverage": 0.61,
+      "diversity": 1.2434426229508198,
+      "avg_latency_ms": 0.09081207337926646
+    },
+    {
+      "model": "Hybrid Recommendation (Borda Count)",
+      "precision_5": 0.15081967213114741,
+      "recall_5": 0.17786885245901632,
+      "ndcg_5": 0.17515252364332193,
+      "precision_10": 0.13770491803278687,
+      "recall_10": 0.3187158469945356,
+      "ndcg_10": 0.24705575260735568,
+      "catalog_coverage": 1.28,
+      "diversity": 0.9024590163934424,
+      "avg_latency_ms": 9.27498692371806
+    }
+  ]
+}
