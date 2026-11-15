@@ -41,15 +41,10 @@ export default function AboutPage() {
               “Curated Literature & Intelligent Discovery”
             </p>
 
-            {/* Khối trích dẫn phong cách tạp chí biên tập (Serif Italic, padding-left 20px, border-left đỏ dày) */}
-            <blockquote className="border-l-4 border-[#881337] pl-[20px] py-1 my-7">
-              <p className="font-serif italic text-base sm:text-[17px] text-stone-800 leading-[1.8]">
-                “Một tác phẩm thực sự giá trị không chỉ cung cấp thông tin, mà mở ra những chiều kích tư duy mới và nuôi dưỡng góc nhìn độc lập của người đọc.”
-              </p>
-              <footer className="text-xs uppercase tracking-[0.12em] text-stone-400 font-sans font-medium mt-3.5 not-italic">
-                — TRIẾT LÝ THE INKWELL
-              </footer>
-            </blockquote>
+            {/* Giới thiệu thực tế, không triết lý, không thanh dọc */}
+            <p className="text-sm sm:text-[15px] text-stone-600 leading-relaxed mb-8 font-sans">
+              The Inkwell tập hợp các ấn phẩm chọn lọc từ các nhà xuất bản uy tín, kết hợp cùng hệ thống gợi ý thông minh nhằm giúp bạn nhanh chóng tìm kiếm những đầu sách phù hợp với nhu cầu đọc và nghiên cứu.
+            </p>
 
             {/* Nút hành động dạng Outline viền mảnh đen, bo góc 4px */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
