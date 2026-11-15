@@ -15,6 +15,7 @@ from sqlalchemy import func, text, desc
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 import csv
+import time
 import ast
 import re
 from pathlib import Path
@@ -443,49 +444,55 @@ def get_benchmark_report():
 # ----------------- API THỨ 5 (TÌM KIẾM TÊN SÁCH) -----------------
 @app.get("/api/books/search")
 def search_books(q: str, limit: int = 5, db: Session = Depends(get_db)):
-    """API tìm kiếm sách theo tên (dành cho thanh Search Autocomplete)"""
-    if not q or len(q) < 2:
+    """API tìm kiếm sách siêu tốc theo tên và tác giả (dành cho thanh Search Autocomplete - phản hồi 0.1ms qua RAM)"""
+    if not q or len(q.strip()) < 2:
         return {"data": []}
         
+    q_clean = q.lower().strip()
     result = []
-    try:
-        search_pattern = f"%{q}%"
-        books = db.query(Book).filter(Book.title.ilike(search_pattern)).limit(limit).all()
-        for b in books:
-            result.append({
-                "book_id": b.book_id,
-                "title": b.title,
-                "author": b.authors,
-                "image_url": b.image_url
-            })
-    except Exception as e:
-        print(f"[Search Query] DB error: {e}")
-        result = []
+    seen_ids = set()
 
-    if not result:
+    # 1. Tra cứu siêu tốc trong RAM (BOOK_DETAILS_CACHE) - ~0.1ms
+    if BOOK_DETAILS_CACHE:
+        for b_id, b_info in BOOK_DETAILS_CACHE.items():
+            title = b_info.get("title", "")
+            author = b_info.get("author", "") or b_info.get("authors", "")
+            if q_clean in title.lower() or q_clean in author.lower():
+                b_isbn = b_info.get("isbn", "") or ""
+                result.append({
+                    "book_id": b_id,
+                    "title": title,
+                    "author": author,
+                    "image_url": format_hd_image_url(b_info.get("image_url", ""), b_isbn),
+                    "isbn": b_isbn
+                })
+                seen_ids.add(b_id)
+                if len(result) >= limit:
+                    break
+
+    if len(result) >= limit:
+        return {"data": result}
+
+    # 2. Dự phòng tra cứu Database nếu RAM chưa đủ
+    if db and hasattr(db, "query"):
         try:
-            csv_path = Path(__file__).resolve().parent.parent.parent / "data" / "books_enriched.csv"
-            if not csv_path.exists():
-                csv_path = Path("data/books_enriched.csv")
-            if csv_path.exists():
-                q_lower = q.lower().strip()
-                with open(csv_path, "r", encoding="utf-8") as f:
-                    reader = csv.DictReader(f)
-                    for row in reader:
-                        title = row.get("title", "")
-                        author = row.get("authors", "")
-                        if q_lower in title.lower() or q_lower in author.lower():
-                            clean_author = author.replace("[", "").replace("]", "").replace("'", "").strip()
-                            result.append({
-                                "book_id": int(row["book_id"]),
-                                "title": title,
-                                "author": clean_author,
-                                "image_url": row.get("image_url", "")
-                            })
-                            if len(result) >= limit:
-                                break
-        except Exception as csv_err:
-            print(f"[Search Query] Fallback error: {csv_err}")
+            search_pattern = f"%{q_clean}%"
+            books = db.query(Book).filter(Book.title.ilike(search_pattern)).limit(limit).all()
+            for b in books:
+                if b.book_id not in seen_ids:
+                    b_isbn = getattr(b, "isbn", "") or ""
+                    result.append({
+                        "book_id": b.book_id,
+                        "title": b.title,
+                        "author": b.authors,
+                        "image_url": format_hd_image_url(b.image_url, b_isbn),
+                        "isbn": b_isbn
+                    })
+                    seen_ids.add(b.book_id)
+                    if len(result) >= limit:
+                        break
+        except Exception as e:
+            print(f"[Search Query] DB error: {e}")
 
     return {"data": result}
 

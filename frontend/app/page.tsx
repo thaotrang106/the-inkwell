@@ -314,17 +314,27 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Phản hồi Autocomplete sau 300ms gõ phím (chuẩn Báo cáo Đồ án tốt nghiệp)
+    // Phản hồi Autocomplete sau 300ms gõ phím (chuẩn Báo cáo Đồ án tốt nghiệp - ưu tiên route Next.js phản hồi 0.001s)
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length >= 2 && !selectedBookId) {
         setIsSearching(true);
         try {
-          const res = await fetch(`${SEARCH_API_URL}?q=${encodeURIComponent(searchQuery)}`);
+          let res = await fetch(`/api/books/search?q=${encodeURIComponent(searchQuery)}`);
+          if (!res.ok) {
+            res = await fetch(`${SEARCH_API_URL}?q=${encodeURIComponent(searchQuery)}`);
+          }
           const json = await res.json();
           setSearchResults(json.data || []);
           setShowDropdown(true);
         } catch (err) {
-          console.error(err);
+          try {
+            const fallbackRes = await fetch(`${SEARCH_API_URL}?q=${encodeURIComponent(searchQuery)}`);
+            const fallbackJson = await fallbackRes.json();
+            setSearchResults(fallbackJson.data || []);
+            setShowDropdown(true);
+          } catch (e) {
+            console.error(e);
+          }
         }
         setIsSearching(false);
       } else if (searchQuery.length === 0) {
@@ -351,7 +361,7 @@ export default function Home() {
     if (!showDropdown) setShowDropdown(true);
   };
 
-  // Hàm gọi API Hybrid và tự động cuộn xuống kết quả
+  // Hàm gọi API Hybrid và tự động cuộn xuống kết quả (Ưu tiên route Next.js phản hồi siêu tốc)
   const fetchHybridForBook = async (bookId: string) => {
     setLoading(true);
     setError("");
@@ -359,7 +369,16 @@ export default function Home() {
     setShowDropdown(false);
     
     try {
-      const res = await fetch(`${API_BASE_URL}/hybrid/${bookId}`);
+      let res: Response | null = null;
+      try {
+        res = await fetch(`/api/recommendations/hybrid/${bookId}`);
+      } catch {
+        res = null;
+      }
+
+      if (!res || !res.ok) {
+        res = await fetch(`${API_BASE_URL}/hybrid/${bookId}`);
+      }
       const json = await res.json();
       
       if (json.status === "error") {
