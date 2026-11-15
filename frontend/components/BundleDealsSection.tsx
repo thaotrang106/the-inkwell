@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Check, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -118,17 +119,13 @@ export default function BundleDealsSection() {
 
           {/* Nút Xem tất cả Combo */}
           <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => {
-                const el = document.getElementById("bundle-grid");
-                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
+            <Link
+              href="/combos"
               className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-stone-800 text-white font-sans font-medium text-xs sm:text-sm px-6 py-2.5 rounded-[4px] shadow-sm transition-all hover:scale-102 active:scale-98 cursor-pointer"
             >
               <span>Xem Tất Cả Combo</span>
               <ArrowRight size={15} />
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -143,8 +140,11 @@ export default function BundleDealsSection() {
                 className="group flex flex-col justify-between items-center text-center p-4 sm:p-5 rounded-lg transition-all duration-300 hover:bg-[#FAF8F5]/80 border border-transparent hover:border-stone-200"
               >
                 {/* 1. Hình ảnh Chụp Thực Tế Kệ Sách 3D + Huy hiệu tròn nổi bật */}
-                <div className="relative w-full aspect-[4/3] rounded-[6px] overflow-hidden flex items-center justify-center bg-white group/image p-1">
-                  
+                <Link 
+                  href={`/combos#${bundle.id}`}
+                  className="relative w-full aspect-[4/3] rounded-[6px] overflow-hidden flex items-center justify-center bg-white group/image p-1 cursor-pointer block"
+                  title={`Xem chi tiết ${bundle.title}`}
+                >
                   {/* Huy hiệu tròn nổi bật ở góc trên bên trái */}
                   <div className="absolute top-1 left-2 z-20 w-[58px] h-[58px] sm:w-[62px] sm:h-[62px] rounded-full bg-white/95 backdrop-blur-xs border border-stone-200/90 shadow-[0_4px_14px_rgba(0,0,0,0.14)] flex flex-col items-center justify-center p-1 text-center transition-transform group-hover:scale-108">
                     <span className="text-[8px] sm:text-[9px] font-sans font-medium text-stone-500 leading-tight">
@@ -161,13 +161,19 @@ export default function BundleDealsSection() {
                     alt={bundle.title}
                     className="w-full h-full object-contain object-bottom transition-transform duration-500 group-hover:scale-104 select-none drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
                   />
-                </div>
+                </Link>
 
                 {/* 2. Thông tin Bundle */}
                 <div className="mt-5 w-full flex flex-col items-center flex-1">
-                  <h3 className="font-serif font-bold text-[#1C1917] text-base sm:text-lg group-hover:text-[#881337] transition-colors line-clamp-1">
-                    {bundle.title}
-                  </h3>
+                  <Link 
+                    href={`/combos#${bundle.id}`} 
+                    className="cursor-pointer block"
+                    title={`Xem chi tiết ${bundle.title}`}
+                  >
+                    <h3 className="font-serif font-bold text-[#1C1917] text-base sm:text-lg group-hover:text-[#881337] transition-colors line-clamp-1">
+                      {bundle.title}
+                    </h3>
+                  </Link>
                   
                   <p className="font-sans font-medium text-stone-600 text-xs sm:text-sm mt-1">
                     {bundle.subtitle}

@@ -405,6 +405,12 @@ export default function Navbar() {
                           </Link>
                         </li>
                         <li>
+                          <Link href="/combos" className="hover:text-[#B12704] hover:underline flex items-center justify-between text-[#881337] font-semibold">
+                            <span>Combo Sách Tuyển Chọn</span>
+                            <span className="text-[10px] bg-[#881337]/10 text-[#881337] px-1.5 py-0.5 rounded font-mono font-bold">-40%</span>
+                          </Link>
+                        </li>
+                        <li>
                           <Link href="/profile?tab=taste" className="hover:text-[#B12704] hover:underline text-[#B12704] font-semibold">
                             Khám phá theo Gu đọc AI của bạn
                           </Link>
@@ -553,6 +559,13 @@ export default function Navbar() {
                 className="block py-2 border-b border-ink/5 hover:text-[#B12704]"
               >
                 Sách Thịnh Hành (Top 50)
+              </Link>
+              <Link 
+                href="/combos" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 border-b border-ink/5 hover:text-[#B12704] text-[#881337] font-semibold"
+              >
+                Combo Sách Ưu Đãi (-40%)
               </Link>
               <Link 
                 href="/trending?genre=fiction" 

@@ -81,6 +81,11 @@ export default function Footer() {
                 Phát triển bản thân
               </Link>
             </li>
+            <li>
+              <Link href="/combos" className="hover:text-white hover:underline transition-colors block text-[#FAF7F2] font-medium">
+                Combo sách ưu đãi
+              </Link>
+            </li>
           </ul>
         </div>
 
