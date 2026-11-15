@@ -46,6 +46,9 @@ const formatImageUrl = (url?: string, isbn?: string) => {
     return "";
   }
   let clean = url.trim();
+  if (clean.includes("119322.jpg") || clean.includes("1342493368")) {
+    return "/covers/the_golden_compass.jpg";
+  }
   clean = clean.replace(/^http:\/\//i, "https://");
   if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");

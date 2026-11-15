@@ -204,7 +204,7 @@ export async function fetchServerBook(id: string | number): Promise<BookDetailDa
     26: { title: "The Da Vinci Code", author: "Dan Brown", img: "https://images.gr-assets.com/books/1579621267l/968.jpg", rating: 3.84 },
     28: { title: "Lord of the Flies", author: "William Golding", img: "https://images.gr-assets.com/books/1327869409l/7624.jpg", rating: 3.64 },
     30: { title: "Gone Girl", author: "Gillian Flynn", img: "https://images.gr-assets.com/books/1554086139l/19288043.jpg", rating: 4.07 },
-    62: { title: "The Golden Compass", author: "Philip Pullman", img: "https://images.gr-assets.com/books/1342493368l/119322.jpg", rating: 3.99 },
+    62: { title: "The Golden Compass", author: "Philip Pullman", img: "/covers/the_golden_compass.jpg", rating: 3.99 },
     200: { title: "And Then There Were None", author: "Agatha Christie", img: "https://images.gr-assets.com/books/1638425885l/16299.jpg", rating: 4.26 },
     514: { title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", img: "https://images.gr-assets.com/books/1356570991l/3590.jpg", rating: 4.30 },
   };

@@ -27,6 +27,9 @@ const formatImageUrl = (url?: string, isbn?: string) => {
     return "";
   }
   let clean = url.trim();
+  if (clean.includes("119322.jpg") || clean.includes("1342493368")) {
+    return "/covers/the_golden_compass.jpg";
+  }
   clean = clean.replace(/^http:\/\//i, "https://");
   if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
@@ -63,6 +66,12 @@ export default function BookCard({ book, rank, isHybrid }: { book: any; rank?: n
   }, [book.image_url, book.isbn]);
 
   const handleImageError = () => {
+    if (String(book.book_id) === "62" || (book.title && book.title.includes("Golden Compass"))) {
+      if (imgSrc !== "/covers/the_golden_compass.jpg") {
+        setImgSrc("/covers/the_golden_compass.jpg");
+        return;
+      }
+    }
     if (retryStep === 0 && imgSrc && !imgSrc.includes("weserv.nl")) {
       // Tầng 1: Chuyển sang weserv proxy
       setRetryStep(1);

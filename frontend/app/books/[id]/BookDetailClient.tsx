@@ -56,6 +56,9 @@ const formatImageUrl = (url?: string, isbn?: string) => {
     return "";
   }
   let clean = url.trim();
+  if (clean.includes("119322.jpg") || clean.includes("1342493368")) {
+    return "/covers/the_golden_compass.jpg";
+  }
   clean = clean.replace(/^http:\/\//i, "https://");
   if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
@@ -264,6 +267,12 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   }, [book?.image_url, book?.isbn]);
 
   const handleDetailImageError = () => {
+    if (String(id) === "62" || String(book?.book_id) === "62" || (book?.title && book.title.includes("Golden Compass"))) {
+      if (detailImgSrc !== "/covers/the_golden_compass.jpg") {
+        setDetailImgSrc("/covers/the_golden_compass.jpg");
+        return;
+      }
+    }
     if (detailRetryStep === 0 && detailImgSrc && !detailImgSrc.includes("weserv.nl")) {
       setDetailRetryStep(1);
       setDetailImgSrc(`https://images.weserv.nl/?url=${encodeURIComponent(detailImgSrc)}&w=600&fit=cover&q=90`);

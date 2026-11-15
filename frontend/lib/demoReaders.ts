@@ -9,6 +9,7 @@ export interface DemoBook {
   title: string;
   author: string;
   image_url: string;
+  isbn?: string;
   rating: number;
   price: number;
   original_price: number;
@@ -90,7 +91,8 @@ export const DEMO_READERS: DemoReader[] = [
         book_id: 62,
         title: "The Golden Compass",
         author: "Philip Pullman",
-        image_url: "https://images.gr-assets.com/books/1342493368l/119322.jpg",
+        image_url: "/covers/the_golden_compass.jpg",
+        isbn: "0679879242",
         rating: 3.99,
         price: 170000,
         original_price: 210000,
