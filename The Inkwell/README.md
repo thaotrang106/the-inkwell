@@ -59,12 +59,6 @@ The Inkwell/
 │   ├── benchmark_report.md      # Báo cáo kết quả so sánh định lượng các mô hình gợi ý
 │   ├── benchmark_results.csv    # Bảng số liệu thực nghiệm chi tiết
 │   └── benchmark_results.json   # Dữ liệu JSON phục vụ trực quan hóa
-├── docs/                     # Tài liệu & Biểu đồ Phục vụ Chấm Hội đồng
-│   ├── DEFENSE_NAVIGATOR.md  # Kịch bản demo 3 phút, câu hỏi vấn đáp phản biện & đáp án
-│   ├── ERD_Mermaid.png       # Biểu đồ quan hệ thực thể cơ sở dữ liệu
-│   ├── Sequence_Diagram.png  # Biểu đồ trình tự xử lý gợi ý đa tầng
-│   ├── Hinh_2_Borda_Count_Fusion.png # Sơ đồ thuật toán Borda Count Fusion
-│   └── *.png                 # Toàn bộ ảnh chụp màn hình minh chứng chức năng
 ├── .gitignore                # File loại trừ cache, node_modules, .env bí mật
 ├── README.md                 # Hướng dẫn tổng quan & cài đặt hệ thống (file này)
 └── start_demo.bat            # Script 1-Click mở song song cả Backend và Frontend
