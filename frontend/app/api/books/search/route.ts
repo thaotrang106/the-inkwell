@@ -59,8 +59,8 @@ export async function GET(request: Request) {
     }
   }
 
-  // 2. Nếu đã có kết quả trong local cache, trả về ngay lập tức
-  if (results.length >= limit) {
+  // 2. Nếu đã có kết quả trong local cache, trả về ngay lập tức (phản hồi siêu tốc 0.001s)
+  if (results.length > 0) {
     return NextResponse.json({ data: results });
   }
 

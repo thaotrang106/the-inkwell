@@ -469,11 +469,9 @@ def search_books(q: str, limit: int = 5, db: Session = Depends(get_db)):
                 seen_ids.add(b_id)
                 if len(result) >= limit:
                     break
-
-    if len(result) >= limit:
         return {"data": result}
 
-    # 2. Dự phòng tra cứu Database nếu RAM chưa đủ
+    # 2. Dự phòng tra cứu Database nếu RAM chưa nạp
     if db and hasattr(db, "query"):
         try:
             search_pattern = f"%{q_clean}%"
