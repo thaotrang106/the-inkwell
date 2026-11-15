@@ -820,11 +820,20 @@ def for_you(user_id: int, limit: int = 10):
     """
     return {"user_id": user_id, **get_for_you(user_id, limit)}
 
+SECTION_IGNORE_KEYWORDS = [
+    "nhận định", "tóm tắt", "đề xuất", "chú ý", "lưu ý", 
+    "bối cảnh", "tâm lý", "chiều sâu", "bút pháp", "đánh giá", 
+    "trải nghiệm", "cốt truyện", "nhân vật", "thông điệp", 
+    "nút thắt", "xung đột", "nghệ thuật", "tổng quan", "giới thiệu",
+    "điểm nhấn", "nội dung", "phân tích", "hướng dẫn", "quy tắc",
+    "kết luận", "ưu điểm", "nhược điểm"
+]
+
 # ----------------- HÀM TRÍCH XUẤT VÀ TÌM KIẾM SÁCH TỪ PHẢN HỒI MERCY -----------------
 def extract_and_match_books(reply_text: str, db: Session = None):
     """
     Trích xuất các cuốn sách được Mercy đề xuất từ text (format: **[Tên sách] ([Tiếng Việt]) — [Tác giả]**)
-    và tra cứu trong database hoặc CSV để gắn link trực tiếp đến trang sản phẩm (/books/{id}).
+    và tra cứu siêu tốc trong RAM (hoặc DB) để gắn link trực tiếp đến trang sản phẩm (/books/{id}).
     """
     if not reply_text:
         return []
@@ -836,8 +845,8 @@ def extract_and_match_books(reply_text: str, db: Session = None):
     matches = re.findall(r'\*\*([^*]+)\*\*', reply_text)
     for raw in matches:
         raw_clean = raw.strip()
-        # Bỏ qua nếu là tiêu đề chung
-        if any(kw in raw_clean.lower() for kw in ["nhận định", "tóm tắt", "đề xuất", "chú ý", "lưu ý"]):
+        # Bỏ qua nếu là tiêu đề phân tích (kết thúc bằng dấu : hoặc chứa từ khóa mục phân tích)
+        if raw_clean.endswith(":") or any(kw in raw_clean.lower() for kw in SECTION_IGNORE_KEYWORDS):
             continue
 
         # Tách tên sách tiếng Anh: trước dấu ( hoặc — hoặc -
@@ -850,14 +859,14 @@ def extract_and_match_books(reply_text: str, db: Session = None):
 
         book_data = None
 
-        # 1. Tra cứu siêu tốc trong RAM (BOOK_DETAILS_CACHE) - ~0.1ms
+        # 1. Tra cứu siêu tốc trong RAM (BOOK_DETAILS_CACHE) - ~0.05ms
         if BOOK_DETAILS_CACHE:
             clean_lower = clean_title.lower()
             for b_id, b_info in BOOK_DETAILS_CACHE.items():
                 if b_id in seen_ids:
                     continue
                 row_title = b_info.get("title", "").lower()
-                if clean_lower in row_title:
+                if clean_lower in row_title or (len(clean_lower) >= 4 and row_title in clean_lower):
                     b_isbn = b_info.get("isbn", "") or ""
                     book_data = {
                         "book_id": b_id,
@@ -870,8 +879,8 @@ def extract_and_match_books(reply_text: str, db: Session = None):
                     seen_ids.add(b_id)
                     break
 
-        # 2. Tra cứu Database nếu chưa thấy trong RAM
-        if not book_data and db:
+        # 2. Chỉ tra cứu DB nếu trong RAM không có VÀ đây rõ ràng là định dạng sách (có dấu phân cách — hoặc -)
+        if not book_data and db and ("—" in raw_clean or " - " in raw_clean):
             try:
                 b = db.query(Book).filter(Book.title.ilike(f"%{clean_title}%")).first()
                 if b and b.book_id not in seen_ids:
@@ -887,35 +896,6 @@ def extract_and_match_books(reply_text: str, db: Session = None):
                     seen_ids.add(b.book_id)
             except Exception as e:
                 print(f"[Match Mercy Book DB Error]: {e}")
-
-        # 3. Tra cứu CSV nếu chưa tìm thấy trong RAM và DB
-        if not book_data:
-            try:
-                csv_path = Path(__file__).resolve().parent.parent / "data" / "books_enriched.csv"
-                if not csv_path.exists():
-                    csv_path = Path("data/books_enriched.csv")
-                if csv_path.exists():
-                    clean_lower = clean_title.lower()
-                    with open(csv_path, "r", encoding="utf-8") as f:
-                        reader = csv.DictReader(f)
-                        for row in reader:
-                            row_title = row.get("title", "")
-                            if clean_lower in row_title.lower():
-                                b_id = int(row.get("book_id", 0))
-                                if b_id and b_id not in seen_ids:
-                                    r_isbn = row.get("isbn", "") or ""
-                                    book_data = {
-                                        "book_id": b_id,
-                                        "title": row_title,
-                                        "author": row.get("authors", ""),
-                                        "image_url": format_hd_image_url(row.get("image_url", ""), r_isbn),
-                                        "isbn": r_isbn,
-                                        "matched_text": raw_clean
-                                    }
-                                    seen_ids.add(b_id)
-                                    break
-            except Exception as csv_err:
-                print(f"[Match Mercy Book CSV Error]: {csv_err}")
 
         if book_data:
             matched.append(book_data)

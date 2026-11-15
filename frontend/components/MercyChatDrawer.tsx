@@ -489,11 +489,27 @@ export default function MercyChatDrawer({ isOpen, onClose, initialPrompt }: Merc
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/chat/mercy`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: textToSend }),
-      });
+      // 1. Ưu tiên gọi API Route tối ưu trực tiếp trên Next.js (phản hồi siêu tốc ~1.5 - 2s, không bị trễ Cold Start của Render)
+      let res: Response | null = null;
+      try {
+        res = await fetch("/api/chat/mercy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: textToSend }),
+        });
+      } catch {
+        res = null;
+      }
+
+      // 2. Dự phòng an toàn sang Render Backend nếu route Next.js không phản hồi
+      if (!res || !res.ok) {
+        res = await fetch(`${API_BASE_URL}/api/chat/mercy`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: textToSend }),
+        });
+      }
+
       const data = await res.json();
       const mercyReply = data.reply || "Xin lỗi, tôi chưa thể trả lời lúc này.";
       const mercyBooks: BookRecommendation[] = data.books || [];
