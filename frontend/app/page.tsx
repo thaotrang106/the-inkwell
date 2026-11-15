@@ -472,7 +472,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/80 via-[#FAF8F5]/45 via-40% to-transparent pointer-events-none hidden md:block z-2" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F5]/90 via-[#FAF8F5]/70 to-[#FAF8F5]/30 pointer-events-none md:hidden z-2" />
 
-        <div className={`w-full z-10 py-12 sm:py-16 md:py-20 lg:py-24 px-12 sm:px-14 md:px-16 lg:px-20 max-w-7xl mx-auto flex items-center transition-all duration-300 ${
+        <div className={`w-full z-10 py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl mx-auto flex items-center transition-all duration-300 ${
           isCentered 
             ? "justify-center text-center" 
             : "justify-start text-left"
