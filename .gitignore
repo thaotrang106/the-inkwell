@@ -1,4 +1,4 @@
-# Environment variables (Bảo vệ thông tin bí mật: Supabase, Gemini Key)
+﻿# Environment variables (Bảo vệ thông tin bí mật: Supabase, Gemini Key)
 .env
 .env.*
 !.env.example
@@ -28,6 +28,7 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+!02_Ket_qua_thu_nghiem/api_latency_benchmark.log
 
 # OS & Editor
 .DS_Store
@@ -36,9 +37,20 @@ Thumbs.db
 .idea/
 ~$*
 
-# Large Samples / Temp / Scratch
-Đồ án sample/
-.vercel
+# Old / Redundant local directories
+Final Report/
+The Inkwell/
+batch/
+data/
 scratch/
+Đồ án sample/
 THE_INKWELL_NGO_THAO_TRANG_030239230260/
 THE_INKWELL_NGO_THAO_TRANG_030239230260.zip
+.vercel
+
+# Old Draft Word documents (kept on local disk, not tracked on GitHub)
+Bao cao do án - Final_v1.docx
+Báo cáo.docx
+De cuong chi tiet.docx
+Guideline + Timeline.docx
+HUONG_DAN_NGHIEM_THU_README_CapNhat.docx

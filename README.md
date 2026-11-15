@@ -20,7 +20,7 @@ Toàn bộ mã nguồn, cơ sở dữ liệu và hệ sinh thái dịch vụ c�
 | Tài nguyên | Địa chỉ truy cập trực tuyến | Ghi chú & Trạng thái |
 | :--- | :--- | :--- |
 | **Website Ứng dụng The Inkwell** | [https://the-inkwell.vercel.app/](https://the-inkwell.vercel.app/) | Frontend Next.js 16 / React 19 (Production Live trên Vercel Edge) |
-| **Backend RESTful API & Docs** | [https://the-inkwell-ehoh.onrender.com/docs](https://the-inkwell-ehoh.onrender.com/docs) | FastAPI Swagger UI tài liệu hóa trực quan 16 Endpoints (Render Cloud) |
+| **Backend RESTful API & Docs** | [https://the-inkwell-ehoh.onrender.com/docs](https://the-inkwell-ehoh.onrender.com/docs) | FastAPI Swagger UI tài liệu hóa trực quan 19 Endpoints (Render Cloud) |
 | **Kho lưu trữ mã nguồn (Git)** | [https://github.com/thaotrang106/the-inkwell](https://github.com/thaotrang106/the-inkwell) | GitHub Public Repository đầy đủ lịch sử commit, issue và CI/CD |
 | **Cơ sở dữ liệu Vector Cloud** | Supabase PostgreSQL 16+ | Lưu trữ quan hệ ACID 9 bảng kết hợp chỉ mục pgvector HNSW 768 chiều |
 | **Hồ sơ Độc giả mẫu A** | User #35 (Độc giả Minh Anh) | Gu: Kỳ ảo & Thiếu nhi (Xem hàng *Dành riêng cho Minh Anh*) |
@@ -48,42 +48,19 @@ Toàn bộ mã nguồn, cơ sở dữ liệu và hệ sinh thái dịch vụ c�
 Toàn bộ thư mục nộp Hội đồng được tổ chức khoa học, chuẩn mực và đã được đồng bộ hóa hoàn toàn giữa thư mục làm việc và thư mục nộp Drive:
 
 ```text
-D:\Do An Tot nghiep 2026-2027├── 01_Demo_website/               # Trọn bộ 6 ảnh chụp màn hình độ phân giải cao minh chứng website thực tế
-│   ├── 01_Swagger_UI_16_Endpoints.png
-│   ├── 02_Trang_chu_User_A_MinhAnh.png
-│   ├── 03_Chi_tiet_sach_Mercy_AI.png
-│   ├── 04_Trang_chu_User_B_HoangNam.png
-│   ├── 05_Algorithm_Lab_So_sanh.png
-│   └── 06_Chi_tiet_sach_Bang_chuyen_de_xuat.png
-├── 02_Ket_qua_thu_nghiem/         # Mã nguồn đo lường (.py, .ipynb), log độ trễ và bảng dữ liệu CSV thực nghiệm
-│   ├── api_latency_benchmark.log
-│   ├── bang_xep_hang_bayesian.csv
-│   ├── do_do_tre_api.py
-│   ├── evaluate_models.ipynb
-│   ├── evaluate_models.py
-│   ├── ket_qua_danh_gia_thuc_te.csv
-│   └── tinh_toan_bayesian_ranking.py
-├── 03_So_do_he_thong/             # Trọn bộ 6 sơ đồ kiến trúc chuẩn mực (Hệ phương pháp, Borda, 3-tier, Use Case, ERD, Sequence)
-│   ├── 01_So_do_cac_phuong_phap_goi_y.png
-│   ├── 02_So_do_Borda_Count_Fusion.png
-│   ├── 03_Kien_truc_tong_the_3_tang.png
-│   ├── 04_So_do_Use_Case_tong_the.png
-│   ├── 05_So_do_thuc_the_lien_ket_ERD.png
-│   └── 06_So_do_tuan_tu_Just_For_You.png
-├── backend/                       # Toàn bộ mã nguồn Backend FastAPI (app, batch, tests, .env.example, requirements.txt)
-├── frontend/                      # Toàn bộ mã nguồn Frontend Next.js 16 (app, components, context, lib, public)
-├── database/                      # Mã nguồn DDL schema.sql khởi tạo 9 bảng quan hệ và chỉ mục pgvector HNSW
-├── evaluation/                    # Kịch bản thực nghiệm khoa học (evaluate_recommenders.py, benchmark_results.csv/.json)
-├── docs/                          # Tài liệu đặc tả kỹ thuật, sơ đồ quan hệ và hồ sơ hướng dẫn bảo vệ (DEFENSE_NAVIGATOR.md)
-├── data/                          # Tập dữ liệu chuẩn bị (books.csv, ratings.csv, tags.csv, book_tags.csv, to_read.csv)
-├── Bao_cao_do_an_The_Inkwell_v3.docx # Bản Báo cáo khóa luận chính thức (bản v3 đã cập nhật hình ảnh độ phân giải cao)
-├── Bao_cao.docx                   # Bản Báo cáo khóa luận mở rộng chuyên sâu 5 chương chuẩn học thuật (~78 trang)
-├── README.docx                    # Tài liệu bàn giao kỹ thuật và hướng dẫn nghiệm thu này (định dạng Word chuẩn in ấn)
-├── README.md                      # Tài liệu bàn giao kỹ thuật (định dạng Markdown xem trực tiếp trên GitHub/VS Code)
-├── start_backend.bat              # Kịch bản 1-Click tự động kích hoạt ảo và chạy máy chủ Backend FastAPI
-├── start_frontend.bat             # Kịch bản 1-Click tự động khởi chạy giao diện người dùng Next.js 16
-├── THE_INKWELL_NGO_THAO_TRANG_030239230260/ # Thư mục đóng gói chuẩn hóa đồng bộ sẵn sàng tải lên Google Drive
-└── THE_INKWELL_NGO_THAO_TRANG_030239230260.zip # Tệp nén toàn bộ hồ sơ đồ án bàn giao Hội đồng (~35 MB)
+D:\Do An Tot nghiep 2026-2027\   (hoặc D:\THE_INKWELL_NGO_THAO_TRANG_030239230260\)
+├── 01_Demo_website/          # Ảnh chụp màn hình chất lượng cao minh chứng 6 nhóm chức năng (16 tệp)
+├── 02_Ket_qua_thu_nghiem/    # Mã nguồn đo lường (.py, .ipynb), log độ trễ và file kết quả CSV (7 tệp)
+├── 03_So_do_he_thong/        # Trọn bộ 8 sơ đồ kiến trúc & luồng giải thuật AI (8 tệp)
+├── backend/                  # Mã nguồn Backend FastAPI (app, core, db, models, services, batch)
+├── frontend/                 # Mã nguồn Frontend Next.js 16 (app, components, context, lib, public)
+├── database/                 # Mã nguồn DDL schema.sql khởi tạo 9 bảng và pgvector HNSW index
+├── evaluation/               # Kịch bản thực nghiệm khoa học (evaluate_recommenders.py, benchmark)
+├── docs/                     # Tài liệu đặc tả kỹ thuật, sơ đồ quan hệ và từ điển dữ liệu
+├── Bao_cao.docx              # Bản Báo cáo khóa luận chính thức 5 chương hoàn chỉnh (~78 trang)
+├── README.docx               # Tài liệu bàn giao kỹ thuật và hướng dẫn nghiệm thu này
+├── start_backend.bat         # Kịch bản 1-Click khởi chạy Backend FastAPI tự động
+└── start_frontend.bat        # Kịch bản 1-Click khởi chạy Frontend Next.js tự động
 ```
 
 ### Bảng đối chiếu minh chứng thực nghiệm với các chương trong Báo cáo khóa luận:

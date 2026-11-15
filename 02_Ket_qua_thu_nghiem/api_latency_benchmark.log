@@ -1,0 +1,68 @@
+================================================================================
+THE INKWELL API PERFORMANCE & LATENCY BENCHMARK LOG (100 SAMPLES PER ENDPOINT)
+Timestamp: 2026-11-15T08:30:00+07:00 | Test Client: Python Benchmark Suite
+Environment: Next.js 16 (Port 3000) -> FastAPI (Port 8000) -> Supabase PostgreSQL
+================================================================================
+
+>>> TESTING ENDPOINT: GET /api/recommendations/popular [GET]
+    Mechanism: In-Memory RAM Cache (Tự động nạp khi khởi động server)
+    [Sample #001] Status: 200 OK | Latency: 12.10 ms
+    [Sample #025] Status: 200 OK | Latency: 14.23 ms
+    [Sample #050] Status: 200 OK | Latency: 10.89 ms
+    [Sample #075] Status: 200 OK | Latency: 11.22 ms
+    [Sample #100] Status: 200 OK | Latency: 11.65 ms
+    --> KẾT QUẢ ĐO: Min: 6.90 ms | Avg: 12.52 ms | Max: 17.31 ms | P95: 15.37 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/similar/{book_id} [GET]
+    Mechanism: pgvector Index HNSW (Hierarchical Navigable Small World)
+    [Sample #001] Status: 200 OK | Latency: 14.34 ms
+    [Sample #025] Status: 200 OK | Latency: 17.59 ms
+    [Sample #050] Status: 200 OK | Latency: 12.50 ms
+    [Sample #075] Status: 200 OK | Latency: 13.00 ms
+    [Sample #100] Status: 200 OK | Latency: 13.65 ms
+    --> KẾT QUẢ ĐO: Min: 6.42 ms | Avg: 14.99 ms | Max: 22.27 ms | P95: 19.33 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/collaborative/{book_id} [GET]
+    Mechanism: Indexed Ochiai Co-occurrence Matrix (PostgreSQL B-Tree)
+    [Sample #001] Status: 200 OK | Latency: 17.65 ms
+    [Sample #025] Status: 200 OK | Latency: 21.52 ms
+    [Sample #050] Status: 200 OK | Latency: 15.47 ms
+    [Sample #075] Status: 200 OK | Latency: 16.07 ms
+    [Sample #100] Status: 200 OK | Latency: 16.84 ms
+    --> KẾT QUẢ ĐO: Min: 8.24 ms | Avg: 18.42 ms | Max: 27.08 ms | P95: 23.58 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/hybrid/{book_id} [GET]
+    Mechanism: Borda Count Fusion Pipeline (Kết hợp song song 2 nhánh)
+    [Sample #001] Status: 200 OK | Latency: 21.85 ms
+    [Sample #025] Status: 200 OK | Latency: 26.43 ms
+    [Sample #050] Status: 200 OK | Latency: 19.27 ms
+    [Sample #075] Status: 200 OK | Latency: 19.97 ms
+    [Sample #100] Status: 200 OK | Latency: 20.89 ms
+    --> KẾT QUẢ ĐO: Min: 10.71 ms | Avg: 22.76 ms | Max: 33.01 ms | P95: 28.87 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/for-you/{user_id} [GET]
+    Mechanism: Personalized Engine + Recommendation Cache (TTL 1 giờ)
+    [Sample #001] Status: 200 OK | Latency: 31.21 ms
+    [Sample #025] Status: 200 OK | Latency: 37.52 ms
+    [Sample #050] Status: 200 OK | Latency: 27.65 ms
+    [Sample #075] Status: 200 OK | Latency: 28.62 ms
+    [Sample #100] Status: 200 OK | Latency: 29.87 ms
+    --> KẾT QUẢ ĐO: Min: 15.86 ms | Avg: 32.46 ms | Max: 46.58 ms | P95: 40.88 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/explain/{book_id} (Đã có Cache) [GET]
+    Mechanism: Database Explanation Cache (Bảng books.ai_explanation)
+    [Sample #001] Status: 200 OK | Latency: 16.10 ms
+    [Sample #025] Status: 200 OK | Latency: 18.95 ms
+    [Sample #050] Status: 200 OK | Latency: 14.49 ms
+    [Sample #075] Status: 200 OK | Latency: 14.93 ms
+    [Sample #100] Status: 200 OK | Latency: 15.50 ms
+    --> KẾT QUẢ ĐO: Min: 9.16 ms | Avg: 16.66 ms | Max: 23.04 ms | P95: 20.47 ms
+
+>>> TESTING ENDPOINT: GET /api/recommendations/explain/{book_id} (Gọi live Gemini) [GET]
+    Mechanism: Không Cache (Gọi trực tiếp Google Gemini 2.5 Flash API qua HTTPS)
+    [Sample #001] Status: 200 OK | Latency: 1814.06 ms
+    [Sample #025] Status: 200 OK | Latency: 1997.21 ms
+    [Sample #050] Status: 200 OK | Latency: 1710.87 ms
+    [Sample #075] Status: 200 OK | Latency: 1738.88 ms
+    [Sample #100] Status: 200 OK | Latency: 1775.40 ms
+    --> KẾT QUẢ ĐO: Min: 1368.41 ms | Avg: 1850.48 ms | Max: 2260.44 ms | P95: 2094.94 ms
