@@ -3,7 +3,6 @@ import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import DemoFloatingSwitcher from "@/components/DemoFloatingSwitcher";
 import MercyFloatingButton from "@/components/MercyFloatingButton";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -41,7 +40,6 @@ export default function RootLayout({
               <Navbar />
               <main className="flex-grow">{children}</main>
               <Footer />
-              <DemoFloatingSwitcher />
               <MercyFloatingButton />
             </MercyProvider>
           </CartProvider>
