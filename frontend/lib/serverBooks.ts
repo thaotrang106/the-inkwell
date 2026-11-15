@@ -192,10 +192,10 @@ export async function fetchServerBook(id: string | number): Promise<BookDetailDa
     6: { title: "The Fault in Our Stars", author: "John Green", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1360206420i/11870085.jpg", rating: 4.26 },
     7: { title: "The Hobbit", author: "J.R.R. Tolkien", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg", rating: 4.27 },
     8: { title: "The Catcher in the Rye", author: "J.D. Salinger", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300i/5107.jpg", rating: 3.81 },
-    9: { title: "Angels & Demons", author: "Dan Brown", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg", rating: 3.91 },
+    9: { title: "Angels & Demons", author: "Dan Brown", img: "/covers/angels_and_demons.jpg", rating: 3.91 },
     10: { title: "Pride and Prejudice", author: "Jane Austen", img: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351i/1885.jpg", rating: 4.26 },
     11: { title: "The Kite Runner", author: "Khaled Hosseini", img: "https://images.gr-assets.com/books/1484565687l/77203.jpg", rating: 4.26 },
-    13: { title: "1984", author: "George Orwell", img: "https://images.gr-assets.com/books/1657781256l/5470.jpg", rating: 4.19 },
+    13: { title: "1984", author: "George Orwell", img: "/covers/1984.jpg", rating: 4.19 },
     14: { title: "Animal Farm", author: "George Orwell", img: "https://images.gr-assets.com/books/1424037542l/7613.jpg", rating: 3.95 },
     15: { title: "The Diary of a Young Girl", author: "Anne Frank", img: "https://images.gr-assets.com/books/1358276407l/48855.jpg", rating: 4.10 },
     16: { title: "The Girl with the Dragon Tattoo", author: "Stieg Larsson", img: "https://images.gr-assets.com/books/1684638853l/2429135.jpg", rating: 4.14 },
@@ -206,7 +206,7 @@ export async function fetchServerBook(id: string | number): Promise<BookDetailDa
     30: { title: "Gone Girl", author: "Gillian Flynn", img: "https://images.gr-assets.com/books/1554086139l/19288043.jpg", rating: 4.07 },
     62: { title: "The Golden Compass", author: "Philip Pullman", img: "/covers/the_golden_compass.jpg", rating: 3.99 },
     200: { title: "And Then There Were None", author: "Agatha Christie", img: "https://images.gr-assets.com/books/1638425885l/16299.jpg", rating: 4.26 },
-    514: { title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", img: "https://images.gr-assets.com/books/1356570991l/3590.jpg", rating: 4.30 },
+    514: { title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", img: "/covers/sherlock_holmes.jpg", rating: 4.30 },
   };
 
   const defaultItem = DEFAULT_MAP[numericId];
@@ -282,7 +282,7 @@ export async function fetchServerTrending(genre?: string, limit: number = 30): P
     { book_id: 6, title: "The Fault in Our Stars", author: "John Green", image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1360206420i/11870085.jpg", rating: 4.26, rank: 6 },
     { book_id: 7, title: "The Hobbit", author: "J.R.R. Tolkien", image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg", rating: 4.27, rank: 7 },
     { book_id: 8, title: "The Catcher in the Rye", author: "J.D. Salinger", image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300i/5107.jpg", rating: 3.81, rank: 8 },
-    { book_id: 9, title: "Angels & Demons", author: "Dan Brown", image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1303390735i/968.jpg", rating: 3.91, rank: 9 },
+    { book_id: 9, title: "Angels & Demons", author: "Dan Brown", image_url: "/covers/angels_and_demons.jpg", rating: 3.91, rank: 9 },
     { book_id: 10, title: "Pride and Prejudice", author: "Jane Austen", image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351i/1885.jpg", rating: 4.26, rank: 10 },
   ].map((b) => {
     const pricing = getBookPricing(b.book_id);

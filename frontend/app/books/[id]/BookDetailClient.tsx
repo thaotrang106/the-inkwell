@@ -59,6 +59,15 @@ const formatImageUrl = (url?: string, isbn?: string) => {
   if (clean.includes("119322.jpg") || clean.includes("1342493368")) {
     return "/covers/the_golden_compass.jpg";
   }
+  if (clean.includes("5470.jpg") || clean.includes("1657781256")) {
+    return "/covers/1984.jpg";
+  }
+  if (clean.includes("968.jpg") || clean.includes("1303390735")) {
+    return "/covers/angels_and_demons.jpg";
+  }
+  if (clean.includes("3590.jpg") || clean.includes("1356570991")) {
+    return "/covers/sherlock_holmes.jpg";
+  }
   clean = clean.replace(/^http:\/\//i, "https://");
   if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
@@ -267,9 +276,29 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
   }, [book?.image_url, book?.isbn]);
 
   const handleDetailImageError = () => {
-    if (String(id) === "62" || String(book?.book_id) === "62" || (book?.title && book.title.includes("Golden Compass"))) {
+    const bId = String(id || book?.book_id);
+    const bTitle = (book?.title || "").toLowerCase();
+    if (bId === "62" || bTitle.includes("golden compass")) {
       if (detailImgSrc !== "/covers/the_golden_compass.jpg") {
         setDetailImgSrc("/covers/the_golden_compass.jpg");
+        return;
+      }
+    }
+    if (bId === "13" || bTitle.includes("1984")) {
+      if (detailImgSrc !== "/covers/1984.jpg") {
+        setDetailImgSrc("/covers/1984.jpg");
+        return;
+      }
+    }
+    if (bId === "9" || bId === "26" || bTitle.includes("angels") || bTitle.includes("vinci")) {
+      if (detailImgSrc !== "/covers/angels_and_demons.jpg") {
+        setDetailImgSrc("/covers/angels_and_demons.jpg");
+        return;
+      }
+    }
+    if (bId === "514" || bTitle.includes("sherlock")) {
+      if (detailImgSrc !== "/covers/sherlock_holmes.jpg") {
+        setDetailImgSrc("/covers/sherlock_holmes.jpg");
         return;
       }
     }

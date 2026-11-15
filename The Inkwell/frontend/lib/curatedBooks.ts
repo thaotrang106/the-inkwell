@@ -32,7 +32,7 @@ export const CURATED_BOOKS: CuratedBook[] = [
     book_id: 13,
     title: "1984",
     author: "George Orwell",
-    image_url: "https://images.gr-assets.com/books/1348990566l/5470.jpg",
+    image_url: "/covers/1984.jpg",
     isbn: "451524934",
     rating: 4.14,
     badge: "Kiệt Tác Dystopia",

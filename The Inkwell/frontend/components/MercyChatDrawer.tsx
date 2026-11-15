@@ -49,6 +49,15 @@ const formatImageUrl = (url?: string, isbn?: string) => {
   if (clean.includes("119322.jpg") || clean.includes("1342493368")) {
     return "/covers/the_golden_compass.jpg";
   }
+  if (clean.includes("5470.jpg") || clean.includes("1657781256")) {
+    return "/covers/1984.jpg";
+  }
+  if (clean.includes("968.jpg") || clean.includes("1303390735")) {
+    return "/covers/angels_and_demons.jpg";
+  }
+  if (clean.includes("3590.jpg") || clean.includes("1356570991")) {
+    return "/covers/sherlock_holmes.jpg";
+  }
   clean = clean.replace(/^http:\/\//i, "https://");
   if (clean.includes("openlibrary.org")) return clean;
   clean = clean.replace(/:\/\/(?:imagei|s)\.gr-assets\.com/i, "://images.gr-assets.com");
