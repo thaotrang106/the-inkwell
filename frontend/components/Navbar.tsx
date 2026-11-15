@@ -331,7 +331,7 @@ export default function Navbar() {
             <Link 
               href="/trending" 
               onMouseEnter={() => prefetchGenreData("")}
-              className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors text-[#B12704] font-bold whitespace-nowrap"
+              className="py-2.5 uppercase tracking-wide hover:text-[#B12704] transition-colors whitespace-nowrap"
             >
               Thịnh Hành
             </Link>
@@ -550,7 +550,7 @@ export default function Navbar() {
               <Link 
                 href="/trending" 
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 border-b border-ink/5 hover:text-[#B12704] text-[#B12704]"
+                className="block py-2 border-b border-ink/5 hover:text-[#B12704]"
               >
                 Sách Thịnh Hành (Top 50)
               </Link>
