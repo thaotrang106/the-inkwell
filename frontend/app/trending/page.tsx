@@ -64,7 +64,7 @@ export default async function TrendingPage({ searchParams }: Props) {
       {/* 2. Semantic HTML Static SSR Fallback (cho SEO và khi tắt JavaScript) */}
       <noscript>
         <div style={{ padding: "32px 16px", maxWidth: "1200px", margin: "0 auto", fontFamily: "sans-serif" }}>
-          <h1 style={{ fontFamily: "serif", fontSize: "32px", marginBottom: "8px" }}>
+          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "32px", marginBottom: "8px" }}>
             {initialGenreMeta ? initialGenreMeta.title : "Sách Thịnh Hành Nhất"}
           </h1>
           <p style={{ color: "#555", marginBottom: "24px" }}>

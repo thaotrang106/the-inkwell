@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Lora } from "next/font/google";
+import { Inter, Playfair_Display, Lora } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +11,12 @@ import { MercyProvider } from "@/context/MercyContext";
 const inter = Inter({ 
   subsets: ["latin", "vietnamese"], 
   variable: "--font-inter",
+  display: "swap"
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-playfair",
   display: "swap"
 });
 
@@ -32,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${inter.variable} ${lora.variable} font-sans antialiased bg-[#FAF7F2] text-[#1C1917] min-h-screen flex flex-col relative`}>
+      <body className={`${inter.variable} ${playfair.variable} ${lora.variable} font-sans antialiased bg-[#FAF7F2] text-[#1C1917] min-h-screen flex flex-col relative`}>
         <div className="fixed inset-0 pointer-events-none paper-texture opacity-30 mix-blend-multiply z-[-1]"></div>
         <AuthProvider>
           <CartProvider>

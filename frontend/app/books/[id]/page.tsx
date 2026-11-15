@@ -94,7 +94,7 @@ export default async function BookDetailPage({ params }: Props) {
             </div>
 
             <div style={{ flex: "1 1 500px" }}>
-              <h1 style={{ fontFamily: "serif", fontSize: "36px", margin: "0 0 8px", color: "#1C1917" }}>
+              <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "36px", margin: "0 0 8px", color: "#1C1917" }}>
                 {title}
               </h1>
               <p style={{ fontSize: "16px", color: "#555", margin: "0 0 16px" }}>
@@ -103,7 +103,7 @@ export default async function BookDetailPage({ params }: Props) {
               <p style={{ fontSize: "24px", color: "#881337", fontWeight: "bold", margin: "0 0 24px" }}>
                 {formatPriceVND(book.price)}
               </p>
-              <h3 style={{ fontFamily: "serif", fontSize: "20px", margin: "0 0 8px" }}>Tóm tắt tác phẩm</h3>
+              <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "20px", margin: "0 0 8px" }}>Tóm tắt tác phẩm</h3>
               <p style={{ lineHeight: "1.7", color: "#333" }}>
                 {book.description || `"${title}" là một trong những tác phẩm tiêu biểu của ${author}, đưa người đọc qua những trải nghiệm cảm xúc phong phú và bài học nhân sinh giá trị.`}
               </p>
