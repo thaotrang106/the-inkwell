@@ -1,17 +1,21 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowLeft, RefreshCw, ShieldCheck, Clock, CheckCircle2, Mail, Phone, ArrowRight, HelpCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck, Mail, Phone } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Chính Sách Đổi Trả & Hoàn Tiền | The Inkwell Bookstore",
+  description: "Chính sách đổi trả minh bạch trong 7 ngày, miễn phí vận chuyển đối với sách lỗi và cam kết hoàn tiền nhanh chóng tại The Inkwell.",
+};
 
 export default function ReturnsPolicyPage() {
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#881337] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#881337] selection:text-white font-sans">
       
-      {/* 1. Nút quay lại trang chủ */}
+      {/* 1. Thanh điều hướng quay lại */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-sans text-stone-500 hover:text-[#881337] transition-colors font-medium group cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm text-stone-500 hover:text-[#881337] transition-colors font-medium group cursor-pointer"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
           <span>Quay lại Cửa hàng</span>
@@ -20,138 +24,148 @@ export default function ReturnsPolicyPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         
-        {/* Header trang */}
-        <div className="border-b border-stone-200 pb-8 mb-10">
-          <span className="uppercase tracking-[0.25em] text-xs font-bold text-[#881337] block mb-2.5 font-sans">
-            DỊCH VỤ &amp; HỖ TRỢ ĐỘC GIẢ
-          </span>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-[#1C1917] tracking-tight mb-4">
+        {/* Header trang phong cách Editorial thanh lịch */}
+        <header className="border-b border-stone-300/80 pb-8 mb-12">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold mb-2">
+            DỊCH VỤ KHÁCH HÀNG
+          </p>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-normal text-[#1C1917] tracking-tight leading-tight mb-4">
             Chính Sách Đổi Trả &amp; Hoàn Tiền
           </h1>
-          <p className="font-serif italic text-base sm:text-lg text-stone-600 max-w-2xl leading-relaxed">
-            “The Inkwell cam kết mỗi tác phẩm đến tay bạn đều là ấn bản trọn vẹn, được gìn giữ nguyên vẹn giá trị tinh hoa và thẩm mỹ xuất bản.”
+          <p className="text-sm sm:text-base text-stone-600 max-w-2xl leading-relaxed">
+            Mỗi ấn phẩm gửi đi đều được đóng gói cẩn thận. Nếu sách gặp bất kỳ lỗi kỹ thuật hoặc hư hại trong quá trình vận chuyển, The Inkwell hỗ trợ đổi sách mới tận nơi hoàn toàn miễn phí.
           </p>
-        </div>
+        </header>
 
-        {/* 3 Cam kết cốt lõi */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-          <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-[#881337]/10 text-[#881337] flex items-center justify-center mb-4">
-              <Clock size={20} />
-            </div>
-            <h3 className="font-serif font-bold text-base text-[#1C1917] mb-1.5">7 Ngày Đổi Trả</h3>
-            <p className="text-xs text-stone-600 leading-relaxed font-sans">
-              Thời gian linh hoạt trong vòng 7 ngày kể từ khi đơn hàng được giao thành công đến bạn.
+        {/* 3 Tiêu chí tóm lược (Dạng lưới phẳng, đường kẻ mảnh) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-12 mb-12 border-b border-stone-200">
+          <div className="pr-4">
+            <span className="font-mono text-xs text-stone-400 font-bold block mb-1">01</span>
+            <h3 className="font-serif text-lg font-bold text-[#1C1917] mb-1.5">Đổi hàng trong 7 ngày</h3>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Áp dụng kể từ ngày bạn nhận được kiện hàng thành công từ đơn vị vận chuyển.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-              <ShieldCheck size={20} />
-            </div>
-            <h3 className="font-serif font-bold text-base text-[#1C1917] mb-1.5">100% Sách Chính Hãng</h3>
-            <p className="text-xs text-stone-600 leading-relaxed font-sans">
-              Đảm bảo bản quyền từ các nhà xuất bản uy tín, đền bù gấp đôi nếu phát hiện sách lậu hoặc in sao chép.
+          <div className="pr-4 sm:border-l sm:border-stone-200 sm:pl-6">
+            <span className="font-mono text-xs text-stone-400 font-bold block mb-1">02</span>
+            <h3 className="font-serif text-lg font-bold text-[#1C1917] mb-1.5">Miễn phí vận chuyển 2 chiều</h3>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              The Inkwell chi trả toàn bộ cước phí thu hồi sách cũ và gửi sách mới đến bạn.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4">
-              <RefreshCw size={20} />
-            </div>
-            <h3 className="font-serif font-bold text-base text-[#1C1917] mb-1.5">Đổi Mới Miễn Phí</h3>
-            <p className="text-xs text-stone-600 leading-relaxed font-sans">
-              The Inkwell chi trả toàn bộ cước phí vận chuyển hai chiều đối với sách phát sinh lỗi từ nhà sản xuất.
+          <div className="pr-4 sm:border-l sm:border-stone-200 sm:pl-6">
+            <span className="font-mono text-xs text-stone-400 font-bold block mb-1">03</span>
+            <h3 className="font-serif text-lg font-bold text-[#1C1917] mb-1.5">Hoàn tiền trong 48 giờ</h3>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Nếu tựa sách đã hết hàng không thể đổi mới, chúng tôi hoàn trả 100% qua tài khoản ngân hàng.
             </p>
           </div>
         </div>
 
-        {/* Nội dung chi tiết chính sách */}
-        <div className="space-y-10 text-stone-700 text-sm sm:text-base leading-relaxed font-sans">
+        {/* Nội dung chi tiết chính sách (Dạng bài viết pháp lý xuất bản chuẩn mực) */}
+        <article className="space-y-12 text-[#1C1917]">
           
-          <section className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200/80 shadow-2xs space-y-4">
-            <h2 className="font-serif font-bold text-xl text-[#1C1917] flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#881337]"></span>
-              1. Các trường hợp được chấp nhận đổi trả
+          {/* Mục 1 */}
+          <section className="space-y-3">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1C1917]">
+              1. Trường hợp áp dụng đổi trả
             </h2>
-            <ul className="space-y-2.5 text-stone-600 pl-4 list-disc text-sm sm:text-[15px]">
-              <li><strong>Lỗi in ấn kỹ thuật:</strong> Sách bị mất trang, trùng trang, in nhòe chữ, ngược dòng hoặc thiếu nội dung nguyên tác.</li>
-              <li><strong>Lỗi gia công &amp; đóng bìa:</strong> Gáy sách bị bung chỉ, mép sách bị dập rách, keo gáy bong tróc khi mở hộp.</li>
-              <li><strong>Hư hại do vận chuyển:</strong> Hộp carton bị móp vỡ làm ảnh hưởng trực tiếp đến sách bên trong (kèm video đồng kiểm khi nhận hàng).</li>
-              <li><strong>Giao nhầm ấn bản:</strong> Nhầm tựa sách, tác giả, hoặc sai phiên bản bìa cứng/bìa mềm so với đơn đặt hàng.</li>
-            </ul>
+            <div className="text-sm text-stone-700 leading-relaxed space-y-2">
+              <p>Bạn có thể yêu cầu đổi hoặc hoàn trả sản phẩm trong các trường hợp sau:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-stone-600">
+                <li><strong>Lỗi in ấn kỹ thuật:</strong> Sách bị mất trang, trùng trang, nhòe mực không đọc được chữ, rách từ nhà in.</li>
+                <li><strong>Lỗi đóng bìa &amp; gia công:</strong> Gáy sách bị bong keo, bung chỉ may, bìa bị rách hoặc dập góc nghiêm trọng.</li>
+                <li><strong>Hư hại do vận chuyển:</strong> Kiện hàng bị va đập, ướt nước hoặc rách hộp ảnh hưởng trực tiếp đến sách.</li>
+                <li><strong>Giao sai đơn hàng:</strong> Giao nhầm tựa sách, sai số lượng hoặc phiên bản so với đơn đặt hàng.</li>
+              </ul>
+            </div>
           </section>
 
-          <section className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200/80 shadow-2xs space-y-4">
-            <h2 className="font-serif font-bold text-xl text-[#1C1917] flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#881337]"></span>
-              2. Điều kiện áp dụng đổi trả
+          {/* Mục 2 */}
+          <section className="space-y-3 pt-6 border-t border-stone-200">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1C1917]">
+              2. Điều kiện tình trạng sách
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-stone-600">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-                <span>Sách còn giữ nguyên tem niêm phong, bookmark và phụ kiện đính kèm (nếu có).</span>
+            <div className="text-sm text-stone-700 leading-relaxed space-y-2">
+              <ul className="list-disc pl-5 space-y-1.5 text-stone-600">
+                <li>Sách còn nguyên hiện trạng như khi nhận, chưa có vết viết vẽ, ghi chú, gạch chân hoặc làm gập mép trang sách.</li>
+                <li>Phụ kiện đi kèm như bookmark, bìa áo, thiệp hoặc bản đồ minh họa (nếu có) cần được hoàn lại cùng với cuốn sách.</li>
+                <li>Bạn chỉ cần cung cấp mã đơn hàng hoặc số điện thoại dùng để đặt sách, không cần giữ lại hóa đơn giấy.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Mục 3 */}
+          <section className="space-y-3 pt-6 border-t border-stone-200">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1C1917]">
+              3. Quy trình gửi đổi sách
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+              <div className="p-4 bg-white border border-stone-300/80 rounded-[4px]">
+                <p className="font-mono text-[11px] font-bold text-[#881337] uppercase tracking-wider mb-1">Bước 1</p>
+                <h4 className="font-serif font-bold text-sm text-[#1C1917] mb-1">Thông báo với nhà sách</h4>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Chụp 1-2 bức ảnh vị trí sách bị lỗi và gửi qua Zalo hoặc email <span className="font-mono text-[#1C1917]">support@theinkwell.vn</span>.
+                </p>
               </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-                <span>Không có dấu hiệu viết vẽ, gập gãy nếp góc trang do quá trình đọc cá nhân.</span>
+
+              <div className="p-4 bg-white border border-stone-300/80 rounded-[4px]">
+                <p className="font-mono text-[11px] font-bold text-[#881337] uppercase tracking-wider mb-1">Bước 2</p>
+                <h4 className="font-serif font-bold text-sm text-[#1C1917] mb-1">Xác nhận đổi mới</h4>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  The Inkwell xác nhận yêu cầu và tạo đơn đổi hàng 2 chiều qua đối tác vận chuyển trong 2 đến 4 giờ làm việc.
+                </p>
               </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-                <span>Yêu cầu đổi trả được gửi trong vòng 7 ngày kể từ thời điểm nhận hàng.</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-                <span>Cung cấp mã đơn hàng hoặc số điện thoại đã dùng để đặt mua trên The Inkwell.</span>
+
+              <div className="p-4 bg-white border border-stone-300/80 rounded-[4px]">
+                <p className="font-mono text-[11px] font-bold text-[#881337] uppercase tracking-wider mb-1">Bước 3</p>
+                <h4 className="font-serif font-bold text-sm text-[#1C1917] mb-1">Đổi sách tận nơi</h4>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Nhân viên giao vận mang cuốn sách mới tinh đến giao và thu lại cuốn sách cũ, bạn không cần ra bưu cục gửi hàng.
+                </p>
               </div>
             </div>
           </section>
 
-          <section className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200/80 shadow-2xs space-y-4">
-            <h2 className="font-serif font-bold text-xl text-[#1C1917] flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#881337]"></span>
-              3. Quy trình 3 bước xử lý đổi hàng
+          {/* Mục 4 */}
+          <section className="space-y-3 pt-6 border-t border-stone-200">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1C1917]">
+              4. Phương thức hoàn tiền
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-stone-200">
-                <span className="text-xs font-mono font-bold text-[#881337]">BƯỚC 01</span>
-                <h4 className="font-bold text-sm text-stone-900 mt-1 mb-1">Gửi thông tin</h4>
-                <p className="text-xs text-stone-600">Chụp ảnh tình trạng lỗi sách và gửi về Zalo/Email hỗ trợ của The Inkwell.</p>
-              </div>
-              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-stone-200">
-                <span className="text-xs font-mono font-bold text-[#881337]">BƯỚC 02</span>
-                <h4 className="font-bold text-sm text-stone-900 mt-1 mb-1">Xác nhận nhanh</h4>
-                <p className="text-xs text-stone-600">Đội ngũ CSKH phản hồi và gửi mã vận chuyển đổi hàng tận nơi trong 2-4 giờ làm việc.</p>
-              </div>
-              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-stone-200">
-                <span className="text-xs font-mono font-bold text-[#881337]">BƯỚC 03</span>
-                <h4 className="font-bold text-sm text-stone-900 mt-1 mb-1">Giao sách mới</h4>
-                <p className="text-xs text-stone-600">Bưu tá giao ấn bản mới tinh và thu hồi ấn bản lỗi tại nhà bạn, hoàn toàn miễn phí.</p>
-              </div>
+            <div className="text-sm text-stone-700 leading-relaxed space-y-2">
+              <p>
+                Trong trường hợp tựa sách cần đổi đã hết hàng trong kho, bạn có thể chọn đổi sang tựa sách khác có giá trị tương đương hoặc nhận hoàn tiền 100% giá trị sản phẩm.
+              </p>
+              <p className="text-stone-600">
+                Thời gian chuyển khoản hoàn tiền: từ <strong>24 đến 48 giờ làm việc</strong> kể từ khi có xác nhận hoàn tiền từ thủ thư hỗ trợ.
+              </p>
             </div>
           </section>
 
-        </div>
+        </article>
 
-        {/* Khối hỗ trợ nhanh cuối trang */}
-        <div className="mt-12 p-8 rounded-2xl bg-[#1C1917] text-white flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-1.5 text-center sm:text-left">
-            <h3 className="font-serif text-xl font-bold">Cần giải đáp thêm về đơn hàng?</h3>
-            <p className="text-xs sm:text-sm text-stone-300">
-              Bộ phận Chăm sóc Độc giả luôn sẵn sàng lắng nghe và hỗ trợ bạn trong mọi trường hợp.
+        {/* Khối liên hệ hỗ trợ thanh lịch ở chân trang */}
+        <div className="mt-14 pt-8 border-t border-stone-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div>
+            <h3 className="font-serif text-lg font-bold text-[#1C1917]">Cần hỗ trợ về một đơn hàng cụ thể?</h3>
+            <p className="text-xs text-stone-600 mt-0.5">
+              Vui lòng chuẩn bị sẵn mã đơn hàng và liên hệ trực tiếp với chúng tôi.
             </p>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
+
+          <div className="flex items-center gap-3">
             <Link 
               href="/contact" 
-              className="bg-[#881337] hover:bg-[#9f1239] text-white px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-colors inline-flex items-center gap-2"
+              className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#1C1917] text-[#1C1917] hover:bg-[#1C1917] hover:text-white rounded-[4px] text-xs font-medium transition-colors cursor-pointer"
             >
-              <Mail size={14} />
-              <span>Liên hệ hỗ trợ</span>
+              <Mail size={13} />
+              <span>Gửi yêu cầu hỗ trợ</span>
             </Link>
             <Link 
               href="/" 
-              className="bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-colors"
+              className="text-xs text-stone-500 hover:text-[#1C1917] font-medium"
             >
               Về Trang chủ
             </Link>

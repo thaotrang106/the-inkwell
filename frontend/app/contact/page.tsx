@@ -2,15 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Mail, Phone, MapPin, Clock, Send, Sparkles, CheckCircle2, MessageSquare } from "lucide-react";
-import { useMercy } from "@/context/MercyContext";
+import { ArrowLeft, Mail, Phone, MapPin, Clock, Send, Check } from "lucide-react";
 
 export default function ContactPage() {
-  const { openMercy } = useMercy();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "Tư vấn chọn sách",
+    subject: "Hỏi về đơn hàng",
     message: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -23,17 +21,17 @@ export default function ContactPage() {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 600);
+    }, 400);
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#881337] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1C1917] pb-24 selection:bg-[#881337] selection:text-white font-sans">
       
-      {/* 1. Nút quay lại trang chủ */}
+      {/* 1. Thanh điều hướng quay lại */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-sans text-stone-500 hover:text-[#881337] transition-colors font-medium group cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm text-stone-500 hover:text-[#881337] transition-colors font-medium group cursor-pointer"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
           <span>Quay lại Cửa hàng</span>
@@ -42,192 +40,179 @@ export default function ContactPage() {
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         
-        {/* Header trang */}
-        <div className="border-b border-stone-200 pb-8 mb-10">
-          <span className="uppercase tracking-[0.25em] text-xs font-bold text-[#881337] block mb-2.5 font-sans">
-            KẾT NỐI VĂN HỌC &amp; HỖ TRỢ
-          </span>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-[#1C1917] tracking-tight mb-4">
-            Liên Hệ &amp; Chăm Sóc Độc Giả
-          </h1>
-          <p className="font-serif italic text-base sm:text-lg text-stone-600 max-w-2xl leading-relaxed">
-            “Mọi thắc mắc về ấn bản, quy cách đóng gói hoặc góp ý cho không gian sách The Inkwell đều được chúng tôi lắng nghe với sự trân trọng cao nhất.”
+        {/* Header trang phong cách Biên tập thanh lịch */}
+        <header className="border-b border-stone-300/80 pb-8 mb-12">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#881337] font-semibold mb-2">
+            CHĂM SÓC KHÁCH HÀNG
           </p>
-        </div>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-normal text-[#1C1917] tracking-tight leading-tight mb-4">
+            Liên Hệ Với The Inkwell
+          </h1>
+          <p className="text-sm sm:text-base text-stone-600 max-w-2xl leading-relaxed">
+            Nếu bạn cần tra cứu tình trạng đơn hàng, yêu cầu đổi sách hoặc tìm kiếm một tựa sách cụ thể, đội ngũ The Inkwell luôn sẵn lòng hỗ trợ.
+          </p>
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           
-          {/* Cột trái: Thông tin liên hệ thực tế */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Cột trái: Thông tin liên hệ thực tế & minh bạch */}
+          <div className="lg:col-span-5 space-y-8">
             
-            <div className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-2xs space-y-5">
-              <h3 className="font-serif font-bold text-lg text-[#1C1917] border-b border-stone-100 pb-3">
-                Kênh Hỗ Trợ Trực Tiếp
+            <div className="space-y-6">
+              <h3 className="font-serif text-xl font-bold text-[#1C1917] pb-3 border-b border-stone-200">
+                Thông tin trực tiếp
               </h3>
 
-              <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-[#881337]/10 text-[#881337] flex items-center justify-center shrink-0 mt-0.5">
-                  <Phone size={18} />
-                </div>
+              <div className="space-y-5 text-sm">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-stone-400 font-mono font-medium">Hotline Độc Giả</p>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">1900 6868 <span className="font-normal text-stone-500 text-xs">(Phím 1)</span></p>
-                  <p className="text-[11px] text-stone-500 mt-0.5">08:30 – 21:00 (Thứ 2 – Chủ Nhật)</p>
+                  <p className="font-mono text-[11px] uppercase tracking-wider text-stone-400 font-semibold mb-1">
+                    Hotline đặt hàng &amp; hỗ trợ
+                  </p>
+                  <p className="font-semibold text-stone-900 text-base">
+                    1900 6868
+                  </p>
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    08:30 – 21:00, tất cả các ngày trong tuần
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-stone-200/60">
+                  <p className="font-mono text-[11px] uppercase tracking-wider text-stone-400 font-semibold mb-1">
+                    Hòm thư điện tử
+                  </p>
+                  <p className="font-semibold text-stone-900 text-base">
+                    support@theinkwell.vn
+                  </p>
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    Phản hồi trong vòng 2 – 4 giờ làm việc
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-stone-200/60">
+                  <p className="font-mono text-[11px] uppercase tracking-wider text-stone-400 font-semibold mb-1">
+                    Địa chỉ hiệu sách
+                  </p>
+                  <p className="font-semibold text-stone-900 text-sm leading-relaxed">
+                    126 Nguyễn Thị Minh Khai, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh
+                  </p>
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    Mở cửa đón bạn đọc: 09:00 – 21:30 hàng ngày
+                  </p>
                 </div>
               </div>
-
-              <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-[#881337]/10 text-[#881337] flex items-center justify-center shrink-0 mt-0.5">
-                  <Mail size={18} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-stone-400 font-mono font-medium">Hòm Thư Điện Tử</p>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">support@theinkwell.vn</p>
-                  <p className="text-[11px] text-stone-500 mt-0.5">Phản hồi thư trong vòng 2 – 4 giờ</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-[#881337]/10 text-[#881337] flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin size={18} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-stone-400 font-mono font-medium">Không Gian Trưng Bày</p>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">Tòa Nhà Tri Thức The Inkwell</p>
-                  <p className="text-[11px] text-stone-500 mt-0.5">126 Nguyễn Thị Minh Khai, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh</p>
-                </div>
-              </div>
-
             </div>
 
-            {/* Thẻ mở nhanh Mercy AI */}
-            <div className="bg-[#1C1917] rounded-2xl p-6 text-white space-y-3 shadow-lg">
-              <div className="flex items-center gap-2 text-amber-300">
-                <Sparkles size={16} />
-                <span className="text-xs uppercase tracking-wider font-mono font-bold">Cần Tư Vấn Sách Ngay?</span>
-              </div>
-              <p className="text-xs text-stone-300 leading-relaxed">
-                Trợ lý văn học Mercy AI hoạt động 24/7 để phân tích gu đọc và gợi ý chính xác tác phẩm phù hợp tâm trạng của bạn.
+            {/* Khối cam kết dịch vụ gọn gàng */}
+            <div className="p-4 bg-white border border-stone-200 rounded-[4px] text-xs text-stone-600 space-y-2">
+              <p className="font-serif font-bold text-stone-900 text-sm">Thời gian xử lý đơn hàng</p>
+              <p className="leading-relaxed">
+                Đơn hàng tại TP.HCM và Hà Nội được giao trong 1-2 ngày làm việc. Các tỉnh thành khác từ 2-4 ngày làm việc. Mọi kiện sách đều được đóng bọc chống sốc 2 lớp.
               </p>
-              <button
-                type="button"
-                onClick={() => openMercy()}
-                className="w-full mt-2 bg-[#881337] hover:bg-[#9f1239] text-white py-2.5 px-4 rounded-xl text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-              >
-                <MessageSquare size={14} />
-                <span>Trò chuyện cùng Mercy AI</span>
-              </button>
             </div>
 
           </div>
 
-          {/* Cột phải: Form gửi tin nhắn / liên hệ */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 border border-stone-200/80 shadow-2xs">
-            
+          {/* Cột phải: Biểu mẫu gửi thư ngắn gọn, nghiêm túc */}
+          <div className="lg:col-span-7 bg-white border border-stone-300/80 rounded-[4px] p-6 sm:p-8">
+            <h3 className="font-serif text-xl font-bold text-[#1C1917] mb-2">
+              Gửi tin nhắn cho chúng tôi
+            </h3>
+            <p className="text-xs text-stone-500 mb-6">
+              Điền thông tin bên dưới và chúng tôi sẽ phản hồi qua email của bạn trong thời gian sớm nhất.
+            </p>
+
             {isSubmitted ? (
-              <div className="py-12 text-center space-y-4">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 size={32} />
+              <div className="py-12 text-center space-y-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center mx-auto">
+                  <Check size={20} />
                 </div>
-                <h3 className="font-serif font-bold text-2xl text-stone-900">
-                  Cảm Ơn Bạn Đã Kết Nối!
-                </h3>
-                <p className="text-stone-600 text-sm max-w-md mx-auto leading-relaxed">
-                  Tin nhắn của bạn đã được chuyển đến bộ phận Chăm sóc Độc giả The Inkwell. Chúng tôi sẽ phản hồi qua email <strong>{formData.email}</strong> trong thời gian sớm nhất.
+                <h4 className="font-serif text-lg font-bold text-stone-900">Tin nhắn đã được gửi thành công</h4>
+                <p className="text-xs text-stone-600 max-w-sm mx-auto leading-relaxed">
+                  Cảm ơn bạn đã liên hệ. Thủ thư The Inkwell đã tiếp nhận thư và sẽ gửi thư hồi đáp tới địa chỉ <span className="font-semibold text-stone-800">{formData.email}</span>.
                 </p>
-                <div className="pt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsSubmitted(false);
-                      setFormData({ name: "", email: "", subject: "Tư vấn chọn sách", message: "" });
-                    }}
-                    className="text-xs font-semibold text-[#881337] hover:underline cursor-pointer"
-                  >
-                    Gửi thêm tin nhắn khác
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    setFormData({ name: "", email: "", subject: "Hỏi về đơn hàng", message: "" });
+                  }}
+                  className="mt-4 text-xs text-[#881337] hover:underline font-medium cursor-pointer"
+                >
+                  Gửi một tin nhắn khác &rarr;
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5 font-sans">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1C1917] mb-1">
-                    Gửi Thư Cho The Inkwell
-                  </h3>
-                  <p className="text-xs text-stone-500">
-                    Điền thông tin bên dưới để gửi phản hồi, yêu cầu ấn bản hiếm hoặc phản ánh dịch vụ.
-                  </p>
-                </div>
-
+              <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                      Họ và tên của bạn <span className="text-[#881337]">*</span>
+                    <label className="block text-stone-700 font-medium mb-1">
+                      Họ và tên <span className="text-[#881337]">*</span>
                     </label>
                     <input 
                       type="text"
                       required
+                      placeholder="Nguyễn Văn A"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="VD: Nguyễn Văn An"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917]/20 outline-none text-sm text-stone-900 transition-all placeholder:text-stone-400"
+                      className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-300 rounded-[3px] focus:outline-none focus:border-[#1C1917] text-stone-900 text-xs transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                      Email nhận phản hồi <span className="text-[#881337]">*</span>
+                    <label className="block text-stone-700 font-medium mb-1">
+                      Địa chỉ Email <span className="text-[#881337]">*</span>
                     </label>
                     <input 
                       type="email"
                       required
+                      placeholder="email@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="VD: reader@gmail.com"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917]/20 outline-none text-sm text-stone-900 transition-all placeholder:text-stone-400"
+                      className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-300 rounded-[3px] focus:outline-none focus:border-[#1C1917] text-stone-900 text-xs transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    Chủ đề cần hỗ trợ
+                  <label className="block text-stone-700 font-medium mb-1">
+                    Chủ đề hỗ trợ
                   </label>
-                  <select
+                  <select 
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917]/20 outline-none text-sm text-stone-900 transition-all bg-white"
+                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-300 rounded-[3px] focus:outline-none focus:border-[#1C1917] text-stone-900 text-xs transition-colors"
                   >
-                    <option value="Tư vấn chọn sách">Tư vấn chọn sách theo sở thích</option>
-                    <option value="Tra cứu đơn hàng">Tra cứu tiến độ giao đơn hàng</option>
-                    <option value="Đổi trả ấn bản">Yêu cầu đổi trả hoặc bảo hành sách</option>
-                    <option value="Tìm ấn bản hiếm">Tìm kiếm ấn bản đặc biệt / sách hiếm</option>
-                    <option value="Đóng góp ý kiến">Góp ý cải thiện không gian sách</option>
+                    <option value="Hỏi về đơn hàng">Kiểm tra tình trạng đơn hàng</option>
+                    <option value="Đổi trả sách">Yêu cầu đổi trả / sách lỗi</option>
+                    <option value="Tư vấn sách">Tư vấn tựa sách hoặc bản dịch</option>
+                    <option value="Góp ý khác">Góp ý dịch vụ hoặc hợp tác</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
+                  <label className="block text-stone-700 font-medium mb-1">
                     Nội dung tin nhắn <span className="text-[#881337]">*</span>
                   </label>
                   <textarea 
-                    rows={4}
                     required
+                    rows={5}
+                    placeholder="Vui lòng cung cấp mã đơn hàng nếu bạn đang cần tra cứu tình trạng giao nhận..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Mô tả chi tiết nội dung bạn muốn chia sẻ cùng The Inkwell..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-[#1C1917] focus:ring-1 focus:ring-[#1C1917]/20 outline-none text-sm text-stone-900 transition-all placeholder:text-stone-400 resize-none"
+                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-300 rounded-[3px] focus:outline-none focus:border-[#1C1917] text-stone-900 text-xs transition-colors resize-y"
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#1C1917] hover:bg-[#881337] text-white py-3 px-6 rounded-xl text-sm font-semibold tracking-wide transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
-                >
-                  <Send size={15} />
-                  <span>{isSubmitting ? "Đang gửi đi..." : "Gửi tin nhắn"}</span>
-                </button>
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-[#1C1917] hover:bg-stone-800 text-white rounded-[3px] text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Send size={13} />
+                    <span>{isSubmitting ? "Đang gửi..." : "Gửi tin nhắn"}</span>
+                  </button>
+                </div>
               </form>
             )}
 
