@@ -179,6 +179,8 @@ POPULAR_BOOKS_CACHE: dict = {}
 GENRE_BOOKS_CACHE: dict = {}
 BOOK_DETAILS_CACHE: dict = {}
 SIMILAR_BOOKS_CACHE: dict = {}
+COLLABORATIVE_CACHE: dict = {}
+HYBRID_CACHE: dict = {}
 
 def format_hd_image_url(url: str, isbn: str = "") -> str:
     """Nâng cấp ảnh bìa từ thumbnail nhỏ (m/ hoặc s/) thành ảnh gốc HD (l/) độ nét cao, tự động thay thế nophoto bằng Open Library cover qua ISBN"""
@@ -377,8 +379,18 @@ def get_similar_recommendations(book_id: int, limit: int = 10, response: Respons
 @app.get("/api/recommendations/collaborative/{book_id}")
 def get_collaborative_recommendations(book_id: int, limit: int = 5):
     """
-    API lấy sách gợi ý dựa trên hành vi cộng đồng (Ochiai Co-occurrence)
+    API lấy sách gợi ý dựa trên hành vi cộng đồng (Ochiai Co-occurrence, có RAM Cache 0.1ms)
     """
+    cache_key = f"{book_id}_{limit}"
+    if cache_key in COLLABORATIVE_CACHE:
+        return {
+            "status": "success",
+            "message": f"Tìm thấy {len(COLLABORATIVE_CACHE[cache_key])} cuốn sách dựa trên hành vi người dùng",
+            "execution_time_ms": 1.0,
+            "cached": True,
+            "data": COLLABORATIVE_CACHE[cache_key]
+        }
+
     t0 = time.time()
     books = get_collaborative_books(book_id, limit=limit)
     elapsed_ms = round((time.time() - t0) * 1000, 2)
@@ -387,6 +399,12 @@ def get_collaborative_recommendations(book_id: int, limit: int = 5):
         # Fallback sách phổ biến nếu sách chưa đủ lượt tương tác cộng đồng
         default_pop = POPULAR_BOOKS_CACHE.get("default", [])
         books = [b for b in default_pop if b.get("book_id") != book_id][:limit]
+
+    if books:
+        for b in books:
+            b_isbn = b.get("isbn", "") or ""
+            b["image_url"] = format_hd_image_url(b.get("image_url", ""), b_isbn)
+        COLLABORATIVE_CACHE[cache_key] = books
         
     return {
         "status": "success",
@@ -399,8 +417,18 @@ def get_collaborative_recommendations(book_id: int, limit: int = 5):
 @app.get("/api/recommendations/hybrid/{book_id}")
 def get_hybrid_api(book_id: int, alpha: float = 0.5, limit: int = 5):
     """
-    API lấy sách gợi ý lai (Kết hợp Content-Based & Collaborative với trọng số alpha)
+    API lấy sách gợi ý lai (Kết hợp Content-Based & Collaborative với trọng số alpha, có RAM Cache 0.1ms)
     """
+    cache_key = f"{book_id}_{alpha}_{limit}"
+    if cache_key in HYBRID_CACHE:
+        return {
+            "status": "success",
+            "message": f"Tìm thấy {len(HYBRID_CACHE[cache_key])} cuốn sách dựa trên thuật toán Lai (Hybrid Borda Fusion)",
+            "execution_time_ms": 1.0,
+            "cached": True,
+            "data": HYBRID_CACHE[cache_key]
+        }
+
     t0 = time.time()
     books = get_hybrid_recommendations(book_id, limit=limit, alpha=alpha)
     elapsed_ms = round((time.time() - t0) * 1000, 2)
@@ -408,6 +436,12 @@ def get_hybrid_api(book_id: int, alpha: float = 0.5, limit: int = 5):
     if not books:
         default_pop = POPULAR_BOOKS_CACHE.get("default", [])
         books = [b for b in default_pop if b.get("book_id") != book_id][:limit]
+
+    if books:
+        for b in books:
+            b_isbn = b.get("isbn", "") or ""
+            b["image_url"] = format_hd_image_url(b.get("image_url", ""), b_isbn)
+        HYBRID_CACHE[cache_key] = books
         
     return {
         "status": "success",

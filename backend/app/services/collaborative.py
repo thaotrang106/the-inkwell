@@ -13,7 +13,7 @@ def get_collaborative_books(book_id: int, limit: int = 5):
                 SELECT user_id 
                 FROM ratings 
                 WHERE book_id = :book_id AND rating >= 4
-                LIMIT 1000
+                LIMIT 500
             ),
             co_occurrences AS (
                 SELECT r2.book_id, COUNT(r2.user_id) as co_count
@@ -21,12 +21,12 @@ def get_collaborative_books(book_id: int, limit: int = 5):
                 JOIN ratings r2 ON u.user_id = r2.user_id
                 WHERE r2.rating >= 4 AND r2.book_id != :book_id
                 GROUP BY r2.book_id
-                HAVING COUNT(r2.user_id) >= 3
+                HAVING COUNT(r2.user_id) >= 2
                 ORDER BY co_count DESC
-                LIMIT 40
+                LIMIT 30
             ),
             target_count AS (
-                SELECT COUNT(*) as cnt FROM ratings WHERE book_id = :book_id AND rating >= 4
+                SELECT GREATEST(COALESCE(ratings_count, 100), 1) as cnt FROM books WHERE book_id = :book_id
             )
             SELECT 
                 b.book_id, 
@@ -34,8 +34,7 @@ def get_collaborative_books(book_id: int, limit: int = 5):
                 b.image_url, 
                 ROUND(CAST(
                     (c.co_count / SQRT(
-                        (SELECT cnt FROM target_count) * 
-                        (SELECT COUNT(*) FROM ratings WHERE book_id = c.book_id AND rating >= 4)
+                        (SELECT cnt FROM target_count) * GREATEST(COALESCE(b.ratings_count, 100), 1)
                     )) AS NUMERIC
                 ), 4) as confidence_score
             FROM co_occurrences c
