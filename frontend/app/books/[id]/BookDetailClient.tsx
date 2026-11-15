@@ -425,10 +425,10 @@ export default function BookDetailClient({ initialBook }: BookDetailClientProps)
 
   const currentBookTitle = cleanTitle(book?.title || initialBook?.title);
   const personalizedTitle = activeReader
-    ? `Có Thể ${activeReader.shortName} Cũng Thích`
-    : "Có Thể Bạn Cũng Thích";
+    ? `Có Thể ${activeReader.shortName} Sẽ Thích`
+    : "Có Thể Bạn Sẽ Thích";
   const personalizedSubtitle = activeReader
-    ? `${activeReader.genre} • May đo riêng theo gu đọc của ${activeReader.shortName} & sự đồng điệu với tác phẩm "${currentBookTitle}"`
+    ? `${activeReader.genre} • Tuyển chọn phù hợp với gu đọc của ${activeReader.shortName} & tác phẩm "${currentBookTitle}"`
     : `Tuyển chọn tác phẩm tương đồng về nội dung & phong cách với "${currentBookTitle}" • Lọc kết hợp Hybrid`;
 
   // Hợp nhất danh sách đề xuất cá nhân hóa:
