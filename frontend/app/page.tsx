@@ -143,6 +143,7 @@ export default function Home() {
     desktopImg: string;
     mobileImg: string;
     objectPosition: string;
+    objectPositionStyle?: string;
     badge: string;
     layout: "left" | "center";
   }
@@ -169,7 +170,8 @@ export default function Home() {
       description: "Vượt xa công cụ tìm kiếm thông thường. Mercy AI ứng dụng mô hình lai để phân tích gu đọc và ngữ cảnh, giúp bạn tiếp cận chính xác tác phẩm cần tìm.",
       desktopImg: "/cozy_sunlit_reading_nook_banner.png",
       mobileImg: "/cozy_sunlit_reading_nook_banner.jpg",
-      objectPosition: "object-[left_center] md:object-[left_center]",
+      objectPosition: "object-[25%_center] md:object-[30%_center] lg:object-[35%_center]",
+      objectPositionStyle: "35% center",
       badge: "Trợ lý Văn học AI",
       layout: "left",
     },
@@ -457,6 +459,7 @@ export default function Home() {
                   src={slide.desktopImg} 
                   alt={slide.titleLine1} 
                   className={`w-full h-full object-cover ${slide.objectPosition}`}
+                  style={slide.objectPositionStyle ? { objectPosition: slide.objectPositionStyle } : undefined}
                   loading="eager"
                   decoding="async"
                 />
