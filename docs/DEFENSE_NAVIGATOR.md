@@ -2,7 +2,7 @@
 > **Đề tài:** Ứng dụng Trí tuệ Nhân tạo (AI) trong đề xuất sản phẩm cá nhân hoá trên website thương mại điện tử bán sách The Inkwell  
 > **Sinh viên:** Ngô Thảo Trang (MSSV: 030239230260) – Ngành Hệ thống Thông tin Quản lý (MIS)  
 > **Trường Đại học Ngân hàng TP. Hồ Chí Minh (HUB)**  
-> **Giảng viên hướng dẫn:** NCS.ThS Trần Việt Tâm  
+> **Giảng viên hướng dẫn:** Trần Việt Tâm  
 
 ---
 

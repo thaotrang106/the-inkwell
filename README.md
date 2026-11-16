@@ -3,13 +3,13 @@
 
 > **Đề tài:** “Ứng dụng Trí tuệ Nhân tạo (AI) trong đề xuất sản phẩm cá nhân hoá trên website thương mại điện tử bán sách The Inkwell”  
 > **Sinh viên thực hiện:** Ngô Thảo Trang (MSSV: **030239230260**) — Lớp: **ITS703_261_1_D01**  
-> **Giảng viên hướng dẫn:** NCS.ThS **Trần Việt Tâm**  
+> **Giảng viên hướng dẫn:** **Trần Việt Tâm**  
 > **Khoa:** Hệ thống Thông tin Quản lý (MIS) — **Trường Đại học Ngân hàng TP. Hồ Chí Minh (HUB)**  
 
 ---
 
 > [!NOTE]
-> **MỤC ĐÍCH SỬ DỤNG:** Tài liệu này được biên soạn độc lập đi kèm tập tin Báo cáo khóa luận chính thức (`Bao_cao_do_an_The_Inkwell_v3.docx` và `Bao_cao.docx`) nhằm hướng dẫn Quý Thầy/Cô trong Hội đồng chấm khóa luận tốt nghiệp dễ dàng truy cập bản demo trực tuyến, kích hoạt kiểm thử các API, duyệt xem minh chứng thực nghiệm và tái lập kết quả nghiên cứu một cách thuận tiện nhất.
+> **MỤC ĐÍCH SỬ DỤNG:** Tài liệu này được biên soạn độc lập đi kèm tập tin Báo cáo đồ án chính thức (`030239230260_NgoThaoTrang.docx`) nhằm hướng dẫn Quý Thầy/Cô trong Hội đồng chấm đồ án tốt nghiệp dễ dàng truy cập bản demo trực tuyến, kích hoạt kiểm thử các API, duyệt xem minh chứng thực nghiệm và tái lập kết quả nghiên cứu một cách thuận tiện nhất.
 
 ---
 
@@ -25,8 +25,7 @@ Toàn bộ mã nguồn, cơ sở dữ liệu và hệ sinh thái dịch vụ c�
 | **Cơ sở dữ liệu Vector Cloud** | Supabase PostgreSQL 16+ | Lưu trữ quan hệ ACID 9 bảng kết hợp chỉ mục pgvector HNSW 768 chiều |
 | **Hồ sơ Độc giả mẫu A** | User #35 (Độc giả Minh Anh) | Gu: Kỳ ảo & Thiếu nhi (Xem hàng *Dành riêng cho Minh Anh*) |
 | **Hồ sơ Độc giả mẫu B** | User #1 (Độc giả Hoàng Nam) | Gu: Kinh điển & Triết học xã hội (Xem hàng *Dành riêng cho Hoàng Nam*) |
-| **Báo cáo khóa luận chính thức** | `Bao_cao_do_an_The_Inkwell_v3.docx` | Bản Báo cáo chính thức 5 chương hoàn chỉnh, hình ảnh độ phân giải cao |
-| **Báo cáo mở rộng chuyên sâu** | `Bao_cao.docx` (~78 trang nội dung) | Bản Báo cáo mở rộng chi tiết (~155.000 ký tự, 20 bảng, 15 hình) |
+| **Báo cáo đồ án chính thức** | `030239230260_NgoThaoTrang.docx` | Bản Báo cáo đồ án chính thức 5 chương hoàn chỉnh, hình ảnh độ phân giải cao (~78 trang) |
 
 ---
 
@@ -57,13 +56,13 @@ D:\Do An Tot nghiep 2026-2027\   (hoặc D:\THE_INKWELL_NGO_THAO_TRANG_030239230
 ├── database/                 # Mã nguồn DDL schema.sql khởi tạo 9 bảng và pgvector HNSW index
 ├── evaluation/               # Kịch bản thực nghiệm khoa học (evaluate_recommenders.py, benchmark)
 ├── docs/                     # Tài liệu đặc tả kỹ thuật, sơ đồ quan hệ và từ điển dữ liệu
-├── Bao_cao.docx              # Bản Báo cáo khóa luận chính thức 5 chương hoàn chỉnh (~78 trang)
+├── 030239230260_NgoThaoTrang.docx # Bản Báo cáo đồ án chính thức 5 chương hoàn chỉnh (~78 trang)
 ├── README.docx               # Tài liệu bàn giao kỹ thuật và hướng dẫn nghiệm thu này
 ├── start_backend.bat         # Kịch bản 1-Click khởi chạy Backend FastAPI tự động
 └── start_frontend.bat        # Kịch bản 1-Click khởi chạy Frontend Next.js tự động
 ```
 
-### Bảng đối chiếu minh chứng thực nghiệm với các chương trong Báo cáo khóa luận:
+### Bảng đối chiếu minh chứng thực nghiệm với các chương trong Báo cáo đồ án:
 
 | Thư mục Minh chứng | Nội dung Tệp tin & Minh chứng Cụ thể | Vị trí Đối chiếu trong Báo cáo |
 | :--- | :--- | :--- |
